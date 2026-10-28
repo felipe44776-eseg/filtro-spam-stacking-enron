@@ -16,13 +16,13 @@ Como cada número do projeto foi produzido. As decisões e os números estão em
 - **Vocabulário:** as 3000 colunas vêm prontas no CSV, escolhidas pelo autor do dataset sobre o Enron1 inteiro (seleção sem rótulo que incluiu o que hoje é teste).
 
 ## 2. Protocolo contra vazamento
-- **Grupos:** e-mails com o mesmo vetor de contagens formam um grupo (hash da linha). Toda divisão treino/teste usa `StratifiedGroupKFold`, de modo que cópias ficam sempre do mesmo lado.
+- **Grupos:** e-mails com o mesmo vetor de contagens formam um grupo (hash da linha). Toda divisão treino/teste usa `StratifiedGroupKFold`, de modo que cópias ficam sempre do mesmo lado. "Cópia" quer dizer a mesma linha de contagens, não o mesmo texto. Como até as letras soltas são colunas, os textos de um grupo têm as mesmas letras; só muda o que o vocabulário não vê. Nos originais da AUEB, dos 286 grupos, 120 têm texto idêntico; nos outros 166, mudam só os espaços (93), os algarismos e sinais (67) ou a ordem dos trechos (6) (`resultados/01_dados.json`, `base.copias`).
 - **Base de teste trancada:** 20% dos e-mails (1035), sorteados uma vez (`SEED_TESTE = 123`). Foi usada 4 vezes, todas para relatar e todas registradas: no experimento 02, no experimento 03, no relato do Stacking 8 depois da decisão D10 e no relato do TabPFN sozinho (D11). Uma ressalva: o critério de desempate da D8 citou o fato de o candidato já ter sido avaliado nela (o resultado foi empate). Antes de ela existir, o torneio e a escolha do TF-IDF com log usaram validação cruzada nos 5172 e-mails.
-- **Quase-cópias:** o agrupamento só junta cópias idênticas. E-mails quase iguais (cosseno ≥ 0,95) podem cair dos dois lados; o efeito no MCC é medido no contra-estudo (`scripts/07_contra_estudo.py`, seção 2) e é pequeno.
+- **Quase-cópias:** o agrupamento só junta linhas iguais. E-mails quase iguais (cosseno ≥ 0,95) podem cair dos dois lados; o efeito no MCC é medido no contra-estudo (`scripts/07_contra_estudo.py`, seção 2) e é pequeno.
 - **Notas out-of-fold:** o meta-modelo do stacking só vê notas que cada modelo deu a e-mails fora do seu próprio treino, com uma CV interna por grupo dentro de cada treino. Duas exceções, de efeito provável desprezível: a CV do meta-modelo que escolhe o limiar usa `StratifiedKFold` sem grupo, e o *early stopping* do MLP sorteia a validação por linha.
 - **Busca × confirmação:** o algoritmo genético e a corrida escolhem em um conjunto de divisões (sementes 11 e 12; 201 e 202) e confirmam em outro (sementes 201 a 204; 203 e 204).
 - **Pré-registro:** a decisão sobre a terceira base (D10) foi escrita antes de rodar qualquer modelo nela (os horários estão no registro; é um registro interno, sem carimbo externo).
-- **Teste de sinal:** com os rótulos embaralhados 999 vezes, o MCC da Reg. Logística vai a zero. Isso mostra que o MCC não vem do acaso; não é um teste de vazamento.
+- **Teste de permutação:** com os rótulos embaralhados 999 vezes, o MCC da Reg. Logística vai a zero. Isso mostra que o MCC não vem do acaso; não é um teste de vazamento.
 
 ## 3. Métricas
 | Métrica | O que mede | Por quê |

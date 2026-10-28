@@ -31,10 +31,21 @@ sn = lambda x, c=4: f"{x:+.{c}f}".replace(".", ",")          # com sinal: +0,006
 
 # %% [markdown]
 # ## 1. O problema e a base
-# Cada e-mail do CSV é descrito pela contagem das palavras de um vocabulário fixo. Descobrimos que o CSV é o
-# **Enron1** do corpus Enron-Spam (Metsis et al., 2006): e-mails reais da caixa de um funcionário da Enron e spams
-# de uma coleção de spam de outra época. E descobrimos **como** as palavras foram contadas: `texto.count(palavra)`,
-# como *substring*, diferenciando maiúsculas.
+# **De onde vêm os e-mails.**
+# 1. **A Enron** era uma empresa de energia de Houston (EUA) que faliu em 2001 num escândalo de fraude contábil.
+#    Na investigação, a agência reguladora de energia dos EUA (FERC) publicou os e-mails de cerca de 150
+#    funcionários: a maior coleção pública de e-mails reais de uma empresa.
+# 2. **Metsis, Androutsopoulos e Paliouras (2006)** juntaram os e-mails reais de seis desses funcionários com spams
+#    de coleções públicas e montaram o corpus **Enron-Spam** (Enron1 a Enron6). O artigo compara cinco versões do
+#    Naive Bayes, retreinando o filtro a cada 100 e-mails, como faria um usuário novo; a versão preferida pelos
+#    autores olha só se a palavra aparece ou não. Usamos os dados do artigo, não a análise dele (resumo em
+#    `dados/LEIA-ME.md`).
+# 3. **O CSV do Kaggle** (o arquivo do enunciado) traz 5172 e-mails e 3000 colunas de contagem, descritos como
+#    escolhidos ao acaso.
+# 4. **O que descobrimos:** refazendo a contagem a partir dos textos originais da AUEB, o CSV é o **Enron1 inteiro**:
+#    e-mails reais da caixa `farmer-d` e spams da coleção GP, recebidos por um dos autores, Paliouras, de 2003 a 2005. E descobrimos **como** as palavras foram
+#    contadas: `texto.count(palavra)`, como *substring*, diferenciando maiúsculas. Cada coluna conta um pedaço de
+#    texto achado até dentro de outras palavras; não é um *token* (a palavra recortada do texto), e sim uma substring.
 
 # %%
 base = dados.carregar()
@@ -52,8 +63,8 @@ v = conversao.vetor(conversao.para_aueb(exemplo), base.vocab)
 print({w: int(v[i]) for i, w in enumerate(base.vocab) if v[i] and len(w) >= 3})
 
 # %% [markdown]
-# Um detalhe muda a leitura das colunas: como a contagem é por substring, o vocabulário tem letras soltas, e "ect"
-# aparece em todos os e-mails, porque está dentro de "subj**ect**".
+# Um detalhe muda a leitura das colunas: o vocabulário do autor do CSV tem letras soltas, e a contagem é por substring.
+# Então a coluna "e" conta toda letra "e", e "ect" aparece em todos os e-mails, porque está dentro de "subj**ect**".
 
 # %%
 j_ect = list(base.vocab).index("ect")
@@ -67,18 +78,30 @@ fig_("01_palavras_que_separam")
 
 # %% [markdown]
 # ## 2. Qualidade dos dados: duplicata indica spam? Não.
+# **Cópia** aqui quer dizer dois e-mails com a **mesma linha de 3000 contagens**. Como até as letras soltas são colunas,
+# os textos precisam ter as mesmas letras; só muda o que o vocabulário não vê: algarismos, pontuação, espaços e a ordem
+# dos trechos (o mesmo aviso diário com outro dia vira a mesma linha).
 
 # %%
 d = dados.resumo_duplicatas(base)
+cp = b["copias"]
 print(f"cópias excedentes: {d['duplicatas_excedentes']}, das quais {pct(d['fracao_duplicatas_email_real'])} são e-mails reais "
-      f"(avisos automáticos de modelo fixo)")
+      f"(avisos automáticos de trabalho)")
+print(f"grupos de cópias: {cp['grupos']} ({cp['grupos_pares']} pares; o maior tem {cp['maior_grupo']} e-mails: "
+      f"\"{cp['maior']['exemplo_assunto']}\", {cp['maior']['textos_distintos']} textos diferentes)")
+print(f"nos textos originais: {cp['grupos_texto_identico']} grupos de texto idêntico; nos outros {cp['grupos_texto_diferente']}, "
+      f"mudam só os espaços ({cp['grupos_diferem_so_em_espacos']}), os algarismos e sinais ({cp['grupos_diferem_em_numeros_e_sinais']}) "
+      f"ou a ordem dos trechos ({cp['grupos_diferem_na_ordem']})")
 dev, teste = dados.indices_teste(base)
-print(f"protocolo: cópias idênticas ficam sempre do mesmo lado (StratifiedGroupKFold por grupo). "
+print(f"protocolo: as cópias ficam sempre do mesmo lado (StratifiedGroupKFold, grupo = hash da linha). "
       f"Base de teste trancada: {len(teste)} e-mails, sorteada uma vez e guardada.")
 
 # %% [markdown]
-# O agrupamento só junta cópias **idênticas**. Quase-cópias (o mesmo aviso com outra data) podem cair dos dois
-# lados da divisão; o efeito delas é medido no contra-estudo (seção 10).
+# **Folds.** Na validação cruzada, os e-mails são divididos em cinco partes (*folds*): o filtro treina em quatro e
+# faz a prova na quinta, girando até cada parte ser a prova uma vez. Todas as cópias de um grupo caem na mesma parte.
+#
+# O agrupamento só junta cópias (linhas iguais). Quase-cópias (o mesmo aviso com uma ou outra palavra diferente)
+# podem cair dos dois lados da divisão; o efeito delas é medido no contra-estudo (seção 10).
 
 # %% [markdown]
 # ## 3. Olhando sem rótulo (não supervisionado) e com meio rótulo (semissupervisionado)

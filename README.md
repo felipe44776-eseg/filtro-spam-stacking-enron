@@ -9,16 +9,18 @@ São 5172 e-mails (3672 e-mails reais e 1500 spams), cada um descrito pela conta
 |---|---|
 | 📓 Notebook para o professor | [`Projeto3_Classificacao_Spam.ipynb`](Projeto3_Classificacao_Spam.ipynb): a história completa, com o código principal visível, em poucos minutos · [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/felipe44776-eseg/filtro-spam-stacking-enron/blob/main/Projeto3_Classificacao_Spam.ipynb) |
 | 🧪 Notebooks técnicos | uma etapa por notebook, todos executados e prontos para o Colab ([lista abaixo](#os-notebooks)) |
-| 🎞️ Apresentações | [banca](https://felipe44776-eseg.github.io/filtro-spam-stacking-enron/apresentacao/banca/) (técnica) · [equipe](https://felipe44776-eseg.github.io/filtro-spam-stacking-enron/apresentacao/equipe/) (didática, com glossário) |
+| 🎞️ Apresentações | [banca](https://felipe44776-eseg.github.io/filtro-spam-stacking-enron/apresentacao/banca/) (técnica) · [equipe](https://felipe44776-eseg.github.io/filtro-spam-stacking-enron/apresentacao/equipe/) (didática); nas duas, passar o mouse num termo sublinhado mostra a explicação, e a tecla G abre o glossário |
 | ✉️ Demonstração | `streamlit run demo/app.py`: cole um e-mail e veja cada etapa até a decisão |
 | ✅ Para a banca | [INSTALACAO.md](INSTALACAO.md) · [COMO_TESTAR.md](COMO_TESTAR.md) |
 | 🧠 Os modelos, explicados | [docs/MODELOS.md](docs/MODELOS.md): cada modelo em uma frase, uma analogia e como ele decide; o stacking, o algoritmo genético e o TabPFN |
+| 📖 Glossário | [docs/GLOSSARIO.md](docs/GLOSSARIO.md): cada sigla, métrica e método explicado para quem não é da área (o mesmo texto das notas que aparecem ao passar o mouse nos slides) |
+| 📚 De onde vêm os dados | [dados/LEIA-ME.md](dados/LEIA-ME.md): a Enron, o corpus Enron-Spam, o CSV do Kaggle e o resumo do artigo de Metsis et al. (2006) |
 | ⏱️ Testar em 5 minutos | [COMO_TESTAR.md](COMO_TESTAR.md#teste-rápido-5-minutos): pelo Colab, sem instalar nada, ou com 3 comandos no computador |
 | 🧭 Decisões e números | [docs/REGISTRO_DECISOES.md](docs/REGISTRO_DECISOES.md) · [docs/METODOLOGIA.md](docs/METODOLOGIA.md) · [docs/MODEL_CARD.md](docs/MODEL_CARD.md) · [docs/REFERENCIAS.md](docs/REFERENCIAS.md) |
 
 ## A história em 8 capítulos
 
-1. **A pergunta e os dados.** Separar spam de e-mail real em 5172 e-mails. Descobrimos que o CSV é o Enron1 e que as palavras foram contadas como pedaços de texto.
+1. **A pergunta e os dados.** Separar spam de e-mail real em 5172 e-mails. Os e-mails reais são de um funcionário da Enron, empresa de energia americana que faliu num escândalo de fraude e cujos e-mails ficaram públicos na investigação, e foram reunidos com spams de um dos pesquisadores no corpus Enron-Spam (Metsis et al., 2006). Descobrimos que o CSV é o Enron1 inteiro, que as palavras foram contadas como pedaços de texto (substrings, achadas até dentro de outras palavras) e que as cópias são quase todas e-mails reais.
 2. **Primeiro, sem rótulo.** O K-means agrupa os e-mails por assunto (ARI -0,07). O NMF acha um tópico de propaganda com 96,5% do spam, mas um em cada três e-mails dele é real (MCC 0,69 como filtro). Conclusão: há pista sem rótulo, mas, para um filtro bom, precisamos das respostas, ou seja, de aprendizado supervisionado.
 3. **Um torneio de 22 modelos supervisionados, com um ranking.** Mesma prova para todos, incluindo uma referência que nunca marca spam. Os lineares lideraram (o melhor modelo único foi o LinearSVC TF-IDF, com MCC 0,963). O detalhe que mudou o ranking foi o TF-IDF com log. Os melhores ficaram muito perto uns dos outros, e o 1º lugar já era uma combinação simples de 4 modelos. Ranking completo: [docs/MODELOS.md](docs/MODELOS.md).
 4. **Combinar um de cada família: o stacking.** Os modelos erram em e-mails diferentes, e um meta-modelo aprende a pesar as 7 notas. No limiar 0,5, o Stacking 7 superou o melhor modelo único no MCC (p de Holm 0,042); no custo, ficou mais barato em média.
@@ -65,7 +67,7 @@ Todos usam o **limiar de custo**: perder 1 e-mail real custa o mesmo que receber
 ## O que descobrimos
 
 1. **O CSV é o Enron1, e as palavras foram contadas como substring.** Reproduzimos 5172 de 5172 linhas a partir dos textos originais. Há 26 colunas de uma letra só, e "ect" aparece em todos os e-mails, porque está dentro de "subject".
-2. **Duplicata não indica spam.** 93% das 541 cópias são e-mails reais. Cópias idênticas ficam sempre do mesmo lado da divisão treino/teste.
+2. **Duplicata não indica spam.** 93% das 541 cópias são e-mails reais. Cópia quer dizer a mesma linha de contagens, não o mesmo texto: como até as letras soltas são colunas, os textos têm as mesmas letras, e só mudam algarismos, pontuação, espaços ou a ordem dos trechos. 120 dos 286 grupos têm texto idêntico; o maior, com 31 e-mails, é um mês inteiro de um aviso diário (muda o dia, o mês não). As cópias ficam sempre do mesmo lado da divisão treino/teste.
 3. **Sem rótulo, os grupos naturais são assuntos, não "spam × real".** O K-means tem ARI de -0,07. Sem nenhum spam rotulado, treinando só com e-mails reais (semissupervisionado), a melhor pista é "não se parece com meus e-mails reais", o erro de reconstrução, com PR-AUC 0,80.
 4. **A representação vale mais que o algoritmo.** Com TF-IDF com log, a Reg. Logística sobe de 0,923 para 0,961, e o kNN, de 0,746 para 0,940.
 5. **Modelos que erram diferente se completam.** O kNN, fraco sozinho, é um dos que menos erram junto com os outros e recebe o maior peso do meta-modelo (1,67). Treze modelos empatam com sete.

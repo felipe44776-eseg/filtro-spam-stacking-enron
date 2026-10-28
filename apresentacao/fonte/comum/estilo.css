@@ -63,6 +63,45 @@ h2 { font-size: 30px; line-height: 1.16; font-weight: 650; letter-spacing: -.012
 .mono { font-family: var(--mono); }
 mark { background: #ffe8a3; color: inherit; border-radius: 3px; padding: 0 2px; }
 abbr[data-g] { text-decoration: underline dotted var(--tinta-muda); text-underline-offset: 3px; cursor: help; }
+/* dicas do glossário: termos marcados pelo deck.js; a explicação aparece ao passar o mouse */
+.termo-g { text-decoration: underline dotted var(--tinta-muda); text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: help; }
+.termo-g:hover, abbr[data-g]:hover { background: #fff1bf; border-radius: 3px; }
+#dica-termo { position: fixed; z-index: 70; left: 0; top: 0; max-width: 360px; padding: 11px 14px 12px; background: #fff; color: var(--tinta);
+  border: 1px solid var(--eixo); border-radius: 10px; box-shadow: 0 10px 28px rgba(20, 20, 19, .16); font: 14px/1.45 var(--fonte);
+  pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity .12s, transform .12s, visibility 0s .12s; }
+#dica-termo.aberta { opacity: 1; visibility: visible; transform: none; transition: opacity .12s, transform .12s; }
+#dica-termo b { display: block; font-size: 15.5px; letter-spacing: -.01em; }
+#dica-termo i { display: block; font-style: normal; color: var(--tinta-muda); font-size: 12.5px; margin: 1px 0 5px; }
+#dica-termo p { margin: 0; }
+#dica-termo small { display: block; margin-top: 7px; color: var(--tinta-muda); font-size: 11.5px; }
+/* trilha: passos numerados por CSS, com seta entre eles (de onde vêm os dados) */
+.trilha { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; counter-reset: passo; }
+.trilha > div { position: relative; counter-increment: passo; background: var(--papel); border: 1px solid var(--grade); border-radius: 12px;
+  padding: 20px 16px 14px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.trilha > div::before { content: counter(passo); position: absolute; top: -13px; left: 14px; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--tinta); color: #fff; font: 700 13px/26px var(--fonte); text-align: center; }
+.trilha > div:not(:last-child)::after { content: "→"; position: absolute; right: -25px; top: 42%; color: var(--tinta-muda); font-size: 22px; }
+.trilha .rotulo-caixa { margin-bottom: 0; }
+.trilha h3 { font-size: 18px; font-weight: 650; letter-spacing: -.01em; }
+.trilha p { font-size: 14.5px; line-height: 1.42; color: var(--tinta-2); }
+.trilha .quando { font-size: 12.5px; color: var(--tinta-muda); margin-top: auto; }
+/* folds: a grade das rodadas da validação cruzada (linha = rodada, coluna = parte) */
+.folds { display: grid; grid-template-columns: 64px repeat(5, 1fr); gap: 4px; font-size: 11.5px; color: var(--tinta-muda); }
+.folds > span { height: 22px; border-radius: 4px; background: var(--grade); display: grid; place-items: center; color: var(--tinta-2); }
+.folds { counter-reset: rod parte; }
+.folds > span.r, .folds > span.h, .folds > span.v { background: none; color: var(--tinta-muda); }
+.folds > span.r { justify-content: start; counter-increment: rod; }
+.folds > span.r::before { content: "rodada " counter(rod); }
+.folds > span.h { counter-increment: parte; height: 16px; }
+.folds > span.h::before { content: "parte " counter(parte); }
+.folds > span.v { height: 16px; }
+.folds > span.p { background: var(--tinta); color: #fff; }
+.folds > span.c::after { content: "◆◆"; font-size: 10px; letter-spacing: 1px; color: var(--spam); }
+.folds > span.p.c::after { color: #ffd2bd; }
+.folds-leg { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--tinta-2); margin-top: 6px; }
+.folds-leg i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; background: var(--grade); }
+.folds-leg i.p { background: var(--tinta); }
+.folds-leg b { color: var(--spam); font-weight: 400; letter-spacing: 1px; margin-right: 4px; }
 
 /* ------------------------------------------------------------------ grades de layout */
 .grade { display: grid; gap: 28px; height: 100%; min-height: 0; }
@@ -225,15 +264,17 @@ abbr[data-g] { text-decoration: underline dotted var(--tinta-muda); text-underli
 [data-painel].ativo:not(.lt-painel) { display: block; }
 
 /* ------------------------------------------------------------------ glossário */
-.gl-indice { display: flex; flex-direction: column; gap: 10px; }
-.gl-grupo h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-muda); margin-bottom: 5px; }
-.gl-grupo .botoes button { font-size: 13px; padding: 3px 10px; }
+.gl-indice { display: block; columns: 2; column-gap: 18px; }
+.gl-grupo { break-inside: avoid; margin-bottom: 7px; }
+.gl-grupo h4 { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-muda); margin-bottom: 3px; }
+.gl-grupo .botoes { gap: 3px; }
+.gl-grupo .botoes button { font-size: 11px; line-height: 1.45; padding: 0 6px; }
 .gl-def { display: flex; flex-direction: column; gap: 8px; }
 .gl-def .termo { font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
 .gl-def .nome { font-size: 16px; color: var(--tinta-2); }
 .gl-def .def { font-size: 19px; line-height: 1.5; color: var(--tinta); }
-.gl-lista { columns: 3; column-gap: 28px; font-size: 12.5px; line-height: 1.38; color: var(--tinta-2); }
-.gl-lista div { break-inside: avoid; margin-bottom: 8px; }
+.gl-lista { columns: 3; column-gap: 26px; font-size: 12px; line-height: 1.36; color: var(--tinta-2); }
+.gl-lista div { break-inside: avoid; margin-bottom: 7px; }
 .gl-lista b { color: var(--tinta); }
 
 /* ------------------------------------------------------------------ capa */
@@ -407,6 +448,23 @@ body.com-glossario #glossario { transform: none; visibility: visible; }
   html, body { background: #fff; scroll-snap-type: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .quadro { position: static; width: auto !important; height: auto; overflow: visible; break-after: page; page-break-after: always; }
   .quadro.ultimo { break-after: auto; page-break-after: auto; }
+  .termo-g { text-decoration: none; }             /* no PDF não há mouse: o glossário vai no apêndice */
   .slide { position: relative; left: auto; top: auto; transform: none !important; box-shadow: none; }
   .no-print, .hud, #painel-notas, #ajuda, #glossario, .g-dica, .link-lt { display: none !important; }
 }
+
+/* ---- animações dos modelos (v2) ---- */
+/* legenda de cores, eixos, passo a passo e rótulos com halo dentro das figuras (modelos.js) */
+.m-svg .m-leg { font-size: 10.5px; fill: var(--tinta-2); }
+.m-svg .m-eixo { font-size: 10px; fill: var(--tinta-muda); }
+.m-svg .m-passo { font-size: 10.5px; fill: var(--tinta-2); }
+.m-svg .m-passo.forte { fill: var(--tinta); font-weight: 650; }
+.m-svg .m-passo-n { font-size: 8.5px; fill: #fff; font-weight: 700; }
+.m-svg .m-no { font-size: 9.5px; fill: var(--tinta); font-weight: 600; }
+.m-svg .halo { paint-order: stroke; stroke: var(--fundo-2); stroke-width: 3.5px; stroke-linejoin: round; }
+.anim.mini .m-svg .halo { stroke: var(--papel); }
+/* cartão de modelo: analogia em duas ou três frases e a linha "Na figura" */
+.modelo .analog { padding: 6px 10px; }
+.modelo .nafig { font-size: 13px; line-height: 1.36; color: var(--tinta-2); }
+.modelo .nafig b { color: var(--tinta); font-weight: 650; }
+.modelo .nafig .m { width: 9px; height: 9px; margin: 0 2px 0 1px; vertical-align: 0; }

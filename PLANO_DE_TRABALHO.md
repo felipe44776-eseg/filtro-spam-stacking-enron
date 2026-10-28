@@ -285,6 +285,20 @@ O usuário pediu tudo de uma vez: testes, documentação, apresentações e GitH
 
 ---
 
+## Fase 12: vocabulário para leigos nos decks (pedido de 2026-10-28)
+
+Revisão do usuário depois dos decks em forma de história: o texto ainda supõe que o leitor conhece os termos. Cada tarefa vale para os dois decks (banca e equipe); o que for conteúdo de referência vai também para `docs/`.
+
+- [x] **V1 · Enron.** Explicar que empresa era a Enron, por que os e-mails dela são públicos e de quem é a caixa usada. *Feito:* slide "De onde vêm os e-mails" (banca `fontes`, equipe `e-fontes`), glossário e `dados/LEIA-ME.md`, seção 0.
+- [x] **V2 · De onde vieram os dados.** O caminho das fontes: o CSV do Kaggle → a descoberta de que é o Enron1 da AUEB → o Enron2–6 e o SpamAssassin como bases externas, com os endereços. *Feito:* mesma trilha em quatro passos; endereços em `dados/LEIA-ME.md`.
+- [x] **V3 · Metsis et al. (2006).** Confirmar que o CSV vem desse artigo e resumir o que ele fez e concluiu (num slide do apêndice e em `docs/`). *Feito:* sim, o CSV é o Enron1 do artigo, mas a análise do artigo é outra (cinco versões do Naive Bayes, retreino a cada 100 e-mails). Resumo no apêndice da banca (`metsis`), na equipe (`e-metsis`) e em `dados/LEIA-ME.md`, seção 3b.
+- [x] **V4 · Folds.** Explicar o que é um fold na primeira vez que a palavra aparece (validação cruzada, partes, rodadas). *Feito:* grade das cinco rodadas no slide das cópias, dica no glossário e texto na história.
+- [x] **V5 · Token.** Dizer que "pedaço de texto" também se chama *token* (e *substring*). *Feito*, com a ressalva de que aqui a contagem é por substring.
+- [x] **V6 · As cópias.** Na primeira menção aos e-mails iguais, explicar os detalhes: o que conta como cópia, quantas são, de que tipo, por que importam e o que fizemos. *Feito:* slide "As cópias" no corpo dos dois decks; medidas novas no `scripts/01` (`base.copias`). Achado: cópia é a mesma linha de contagens, não o mesmo texto (D12).
+- [x] **V7 · Notas explicativas ao passar o mouse.** Toda métrica, método e sigla (SVD, K-means, NMF, MCC, PR-AUC, TF-IDF, TCR, λ…) com uma explicação para leigo que aparece ao passar o mouse; uma fonte única de glossário para os dois decks; glossário também na banca (tecla G e apêndice para o PDF). *Feito:* `apresentacao/fonte/comum/glossario.json` (120 termos) → dicas nos dois decks, glossário na banca e `docs/GLOSSARIO.md`. O "Como medir" subiu para o corpo da banca.
+- [x] **V8 · Animações dos modelos.** Cada animação deixa explícito o que é cada elemento (o que é um ponto, quais são os dois lados, o que é a linha) e cada modelo ganha uma analogia completa, com os dois lados nomeados. *Feito:* as 11 animações do `modelos.js` com legenda de cores, eixos em palavras reais, os dois lados escritos no desenho, passo a passo numerado e o "e-mail novo" decidido no fim; cartões com analogia de duas a três frases e a linha "Na figura:".
+- [x] **V9 · Fechamento.** Regenerar decks e documentos, verificar (build, geometria, testes), revisão crítica independente e publicação. *Feito:* a revisão crítica achou dois erros de conteúdo (as letras soltas também são colunas; os spams não são da caixa do funcionário) e outros dez menores, todos corrigidos (D12, item 4).
+
 ## Fase 11 (opcional): a caixa ESEG do Felipe
 
 Feita só depois da Fase 8, porque reaproveita a demo e o pacote. Tudo roda **localmente**, e nada entra no repositório.

@@ -1,7 +1,7 @@
 {
  "versao_contrato": 2,
  "meta": {
-  "gerado_em": "2026-10-28T16:24:45",
+  "gerado_em": "2026-10-28T19:53:43",
   "versao_pacote": "0.1.0",
   "python": "3.11.9",
   "seed_teste": 123,
@@ -25,6 +25,32 @@
   "duplicatas_spam": 39,
   "acuracia_regra_copia_spam": 0.572892498066512,
   "linhas_reproduzidas": 5172,
+  "copias": {
+   "criterio": "mesmas 3000 contagens (hash da linha)",
+   "grupos": 286,
+   "linhas_em_grupos": 827,
+   "grupos_pares": 240,
+   "maior_grupo": 31,
+   "grupos_so_email_real": 266,
+   "grupos_so_spam": 20,
+   "grupos_texto_identico": 120,
+   "grupos_texto_diferente": 166,
+   "grupos_diferem_so_em_espacos": 93,
+   "grupos_diferem_em_numeros_e_sinais": 67,
+   "grupos_diferem_na_ordem": 6,
+   "maior": {
+    "n": 31,
+    "classe": "e-mail real",
+    "textos_distintos": 18,
+    "exemplo_assunto": "hpl nom for march 1 , 2001",
+    "diferenca": "numeros_e_sinais"
+   },
+   "maior_spam": {
+    "n": 18,
+    "textos_distintos": 3,
+    "sem_letras": true
+   }
+  },
   "origem": "Enron1 (caixa farmer-d + spams GP), corpus Enron-Spam da AUEB",
   "contagem": "substring, sensível a maiúsculas, sobre o texto pré-processado da AUEB"
  },

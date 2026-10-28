@@ -42,7 +42,7 @@
     <div class="pagina" style="flex:1;height:auto">
       <div class="bloco"><span class="rotulo-caixa">O problema</span>
         <p class="recado">Separar spam de e-mail real.</p>
-        <p>{{base.n_emails|int}} e-mails de um funcionário da Enron. Jogar um e-mail real na lixeira é bem pior que deixar passar um spam.</p></div>
+        <p>{{base.n_email_real|int}} e-mails reais de um funcionário da Enron e {{base.n_spam|int}} spams. Jogar um e-mail real na lixeira é bem pior que deixar passar um spam.</p></div>
       <div class="bloco"><span class="rotulo-caixa">O que fizemos</span>
         <ol class="lista-num">
           <li>Investigamos a base.</li>
@@ -149,6 +149,78 @@
   <aside class="notas"><ul><li>Fixar o vocabulário: “e-mail real na lixeira” e “spam que passou”. Eles aparecem em todos os gráficos.</li><li>O peso {{meta.custo_fp|n}} é uma escolha, tirada da literatura; no fim mostramos o que muda com outros pesos.</li><li>“Não filtrar” volta no fim: é a referência que decide se um filtro vale a pena.</li></ul></aside>
 </section>
 
+<!-- ============================================================ PASSO: DE ONDE VÊM OS E-MAILS -->
+<section class="slide" data-id="e-fontes" data-capitulo="1">
+  <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
+  <header class="cab"><div class="sobre">Etapa · de onde vêm os e-mails</div>
+    <h2>Os e-mails reais são de um funcionário da Enron; os spams, de um dos pesquisadores que montaram a base</h2></header>
+  <div class="corpo">
+    <div class="col" style="height:100%;gap:18px;justify-content:center">
+      <div class="trilha">
+        <div><span class="rotulo-caixa">A empresa</span><h3>Enron</h3>
+          <p>Empresa de energia de Houston, nos EUA, que faliu em {{lit.enron_falencia|n}} num escândalo de fraude contábil. Numa investigação sobre o mercado de energia, a agência reguladora (FERC) publicou os e-mails da empresa; a versão usada em pesquisa tem cerca de {{lit.enron_funcionarios|n}} funcionários.</p>
+          <p class="quando">por isso há e-mails reais de uma empresa disponíveis para pesquisa</p></div>
+        <div><span class="rotulo-caixa">Os pesquisadores</span><h3>Metsis et al., 2006</h3>
+          <p>Juntaram os e-mails reais de {{lit.metsis_caixas|n}} funcionários com spams de outras coleções e montaram seis caixas, o corpus <strong>Enron-Spam</strong>. A primeira, o <strong>Enron1</strong>, é a de farmer-d com os spams da coleção GP, recebidos pelo próprio Paliouras, um dos autores.</p>
+          <p class="quando">e-mails reais de {{der.anos.Enron1.real|txt}}; spams de {{der.anos.Enron1.spam|txt}}</p></div>
+        <div><span class="rotulo-caixa">O arquivo do enunciado</span><h3>Kaggle</h3>
+          <p>Um CSV com {{base.n_emails|int}} e-mails e {{base.n_palavras|int}} colunas de contagem, descrito como e-mails escolhidos ao acaso, com as palavras mais comuns como colunas.</p>
+          <p class="quando">uma linha por e-mail e a resposta certa na última coluna</p></div>
+        <div><span class="rotulo-caixa">O que descobrimos</span><h3>É o Enron1 inteiro</h3>
+          <p>Refizemos a contagem a partir dos textos originais, guardados pela AUEB: bateu em <strong>{{base.linhas_reproduzidas|int}} de {{base.n_emails|int}}</strong> linhas. Não é uma amostra do Enron1: é ele inteiro.</p>
+          <p class="quando">as outras cinco caixas e o SpamAssassin viraram a prova fora da caixa</p></div>
+      </div>
+      <div class="grade" style="grid-template-columns: 1.35fr 1fr; height:auto; gap:16px">
+        <div class="analogia"><b>Analogia: a fotocópia de um livro famoso.</b> O professor nos deu uma fotocópia sem capa. Comparando página por página, descobrimos de que livro ela é e quem o escreveu. Saber a origem mudou o que confiamos nos dados e onde mais podíamos testar.</div>
+        <div class="fizemos"><b>O que fizemos.</b> Usamos os dados do artigo, mas não a análise dele: o artigo compara {{lit.metsis_versoes_nb|n}} versões do Naive Bayes; nós fizemos um torneio de {{der.n_torneio|n}} concorrentes. O resumo do artigo vem no próximo slide.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><ul>
+    <li>A Enron faliu em dezembro de {{lit.enron_falencia|n}}; a FERC publicou os e-mails em {{lit.ferc_publicou|n}}. Os funcionários eram sobretudo da diretoria.</li>
+    <li>farmer-d é a caixa de Daren Farmer; os e-mails dele tratam de entregas de gás natural. Os endereços das três fontes estão em dados/LEIA-ME.md.</li>
+  </ul></aside>
+</section>
+
+<!-- ============================================================ PASSO: O ARTIGO DE METSIS ET AL. -->
+<section class="slide" data-id="e-metsis" data-capitulo="1">
+  <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
+  <header class="cab"><div class="sobre">Etapa · o artigo de onde vem a base</div>
+    <h2>Metsis et al., 2006: seis caixas da Enron para comparar cinco versões do Naive Bayes</h2></header>
+  <div class="corpo">
+    <div class="grade" style="grid-template-columns: 1fr 1fr">
+      <div class="col" style="gap:10px">
+        <div class="cartao"><h3>O que eles fizeram</h3>
+          <ul class="lista" style="font-size:14px;gap:5px">
+            <li><strong>Montaram as caixas.</strong> Os e-mails reais de {{lit.metsis_caixas|n}} funcionários da Enron, cada caixa com spams de uma coleção (GP, BG ou SpamAssassin + HoneyPot).</li>
+            <li><strong>Limparam o texto.</strong> Ficaram só o assunto e o corpo. Saíram os cabeçalhos, o HTML, os e-mails enviados pelo próprio dono da caixa e o spam em alfabeto não latino.</li>
+            <li><strong>Simularam um usuário novo.</strong> Os e-mails chegam em ordem, e o filtro é retreinado a cada {{lit.metsis_lote|n}} e-mails.</li>
+            <li><strong>Mediram</strong> quanto do spam o filtro pega e quanto dos e-mails reais ele entrega.</li>
+          </ul></div>
+        <div class="cartao"><h3>O que eles concluíram</h3>
+          <ul class="lista" style="font-size:14px;gap:5px">
+            <li>A versão que os autores tendem a preferir é um Naive Bayes que só olha se a palavra aparece ou não, sem contar quantas vezes (eles pedem mais experimentos para ter certeza).</li>
+            <li>Algumas caixas são bem mais fáceis que outras; o Enron1 está entre as difíceis.</li>
+            <li>No Enron1, essa versão pegou {{lit.metsis_enron1_spam_pego|pct}} do spam e entregou {{lit.metsis_enron1_real_mantido|pct}} dos e-mails reais.</li>
+          </ul></div>
+      </div>
+      <div class="col" style="gap:10px">
+        <div class="analogia"><b>Por que isso importa para nós.</b> O artigo é a “certidão de nascimento” da base: diz de quem são os e-mails, de onde veio o spam e como o texto foi limpo. Mas a prova dele é outra (ordem de chegada, cinco versões de um só modelo); por isso não comparamos os nossos números com os dele.</div>
+        <div class="cartao"><h3>Três detalhes do artigo que aparecem no nosso trabalho</h3>
+          <ul class="lista" style="font-size:14px;gap:5px">
+            <li><strong>As cópias.</strong> Eles tiraram as cópias das coleções de spam de armadilha, mas mantiveram as da coleção GP, a do Enron1.</li>
+            <li><strong>A época.</strong> Em cada caixa, o spam é de outra época que os e-mails reais.</li>
+            <li><strong>O SpamAssassin.</strong> Eles avisam que os e-mails reais dele vêm de muitas pessoas e não servem para avaliar um filtro pessoal. Observação nossa: foi lá que os nossos filtros mais caíram.</li>
+          </ul></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notas"><ul>
+    <li>Referência completa: V. Metsis, I. Androutsopoulos e G. Paliouras, “Spam Filtering with Naive Bayes – Which Naive Bayes?”, Conference on Email and Anti-Spam (CEAS), {{lit.metsis_ano|n}}.</li>
+    <li>O λ que usamos vem de um trabalho anterior de Androutsopoulos, coautor do artigo.</li>
+  </ul></aside>
+</section>
+
 <!-- ============================================================ PASSO: OS DADOS -->
 <section class="slide" data-id="e-dados" data-capitulo="1">
   <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
@@ -159,11 +231,11 @@
       <div class="col">
         <div class="analogia"><b>Analogia: a lista de compras.</b> Em vez de guardar o texto, guardamos quantas vezes cada “item” aparece. São {{base.n_palavras|int}} itens fixos; {{base.fracao_zeros|pct}} das casas da tabela ficam em zero.</div>
         <div class="cartao suave">
-          <div class="pequeno" style="margin-bottom:6px">A contagem procura <strong>pedaços</strong>, não palavras inteiras, e diferencia maiúsculas:</div>
+          <div class="pequeno" style="margin-bottom:6px">A contagem procura <strong>pedaços de texto</strong>, até dentro de outras palavras, e diferencia maiúsculas. Não são <em>tokens</em> (as palavras recortadas do texto): são substrings.</div>
           <div class="mono" style="font-size:22px">Subj<mark class="pisca">ect</mark>: survey takers needed …</div>
-          <div class="pequeno" style="margin-top:6px">Por isso “ect” aparece em todos os e-mails ({{dominio_d.ect.fracao_email_real|pct}}), e {{base.colunas_1_letra|int}} colunas são letras soltas.</div>
+          <div class="pequeno" style="margin-top:6px">Por isso “ect” aparece em todos os e-mails ({{dominio_d.ect.fracao_email_real|pct}}). E, como {{base.colunas_1_letra|int}} colunas são letras soltas, a coluna “e” conta toda letra “e”.</div>
         </div>
-        <div class="fizemos"><b>O que fizemos.</b> Descobrimos que o arquivo <abbr data-g="CSV">CSV</abbr> (uma tabela em texto puro) é o <b>Enron1</b>: e-mails de um funcionário da Enron e spams, publicados pela <abbr data-g="AUEB">AUEB</abbr> (Universidade de Economia e Negócios de Atenas). Refizemos a contagem a partir dos textos originais e ela bateu em {{base.linhas_reproduzidas|int}} de {{base.n_emails|int}} linhas.</div>
+        <div class="fizemos"><b>O que fizemos.</b> Descobrimos que o arquivo <abbr data-g="CSV">CSV</abbr> (uma tabela em texto puro) é o <b>Enron1</b>: e-mails reais de um funcionário da Enron e spams de um dos pesquisadores, publicados pela <abbr data-g="AUEB">AUEB</abbr> (Universidade de Economia e Negócios de Atenas). Refizemos a contagem a partir dos textos originais e ela bateu em {{base.linhas_reproduzidas|int}} de {{base.n_emails|int}} linhas.</div>
       </div>
       <div class="col">
         <div class="tit-g">Palavras da empresa: em quantos e-mails de cada tipo aparecem</div>
@@ -183,27 +255,44 @@
     <h2>E-mails repetidos não denunciam spam: {{base.fracao_duplicatas_email_real|pct}} das cópias são e-mails reais</h2></header>
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 1fr 1fr">
-      <div class="col">
-        <div class="tit-g">As {{base.duplicatas_excedentes|int}} cópias, por tipo</div>
-        <div data-graf="copias"></div>
-        <div class="fizemos" style="margin-top:6px"><b>O que fizemos.</b> Testamos a ideia “se repete, é spam”. Ela caiu: essa regra acerta {{base.acuracia_regra_copia_spam|pct}}, menos que não fazer nada ({{dummy_acuracia|pct}}). As cópias são avisos automáticos que a caixa recebe muitas vezes.</div>
-        <div class="analogia"><b>Analogia: a cola na prova.</b> Se a mesma questão está na lista de exercícios e na prova, quem decorou parece saber mais do que sabe. Com cópias dos dois lados, o filtro “decora” e a nota fica inflada.</div>
+      <div class="col" style="gap:10px">
+        <div class="cartao"><h3>O que conta como cópia</h3><p>Dois e-mails com a <strong>mesma linha de {{base.n_palavras|int}} contagens</strong>. Como até as letras soltas são colunas, os textos precisam ter as mesmas letras; só muda o que o vocabulário não vê: algarismos, pontuação, espaços e a ordem dos trechos.</p></div>
+        <div class="tiles" style="grid-template-columns: repeat(3, 1fr)">
+          <div class="cartao suave"><div class="numero medio">{{base.duplicatas_excedentes|int}}</div><div class="numero-rot">linhas repetidas, em {{base.copias.grupos|int}} grupos de cópias</div></div>
+          <div class="cartao suave"><div class="numero medio">{{base.copias.grupos_texto_identico|int}}</div><div class="numero-rot">grupos com texto idêntico, e outros {{base.copias.grupos_diferem_so_em_espacos|int}} que só mudam nos espaços e quebras de linha</div></div>
+          <div class="cartao suave"><div class="numero medio">{{base.copias.maior_grupo|int}}</div><div class="numero-rot">e-mails no maior grupo: o aviso diário de gás de um mês inteiro; muda o dia, o mês não</div></div>
+        </div>
+        <div class="cartao suave" style="padding:10px 14px"><div class="mono" style="font-size:16px">Subject: {{base.copias.maior.exemplo_assunto|txt}}</div><div class="pequeno" style="margin-top:4px">{{base.copias.maior.textos_distintos|int}} textos diferentes, uma só linha de contagens</div></div>
+        <div><div class="tit-g">De que tipo são as cópias</div><div data-graf="copias"></div></div>
+        <div class="fizemos"><b>O que fizemos.</b> Testamos a ideia “se repete, é spam”. Ela caiu: essa regra acerta {{base.acuracia_regra_copia_spam|pct}}, menos que não fazer nada ({{dummy_acuracia|pct}}).</div>
       </div>
-      <div class="col">
-        <div class="cartao">
-          <h3>Cópias sempre do mesmo lado</h3>
-          <p>Na <abbr data-g="CV">validação cruzada</abbr> (CV), os dados são divididos em partes; o filtro treina em todas menos uma e é testado na que ficou de fora, girando. Todas as cópias de um texto ficam sempre na mesma parte.</p>
-          <p class="pequeno" style="margin-top:6px">As <abbr data-g="quase-cópia">quase-cópias</abbr> (quase iguais, mas não idênticas) escapam: nos {{protocolo.folds|n}} folds, estão em {{contra.quase_copias.folds_fracao|pct}} dos e-mails de teste. No subconjunto sem elas, o MCC é {{contra.quase_copias.mcc_sem_quase_copias|d4}} ({{contra.quase_copias.mcc|d4}} no total): muda só na terceira casa.</p>
+      <div class="col" style="gap:10px">
+        <div class="analogia"><b>Analogia: a cola na prova.</b> Se a mesma questão está na lista de exercícios e na prova, quem decorou parece saber mais do que sabe. Com cópias dos dois lados, o filtro “decora” e a nota fica inflada.</div>
+        <div class="cartao"><h3>Como é a prova: validação cruzada em folds</h3>
+          <p>Os e-mails são divididos em cinco partes, os <strong>folds</strong>. O filtro treina em quatro e faz a prova na quinta; depois gira, até cada parte ser a prova uma vez. Todas as cópias de um grupo ficam na mesma parte.</p>
+          <div class="folds" style="margin-top:8px" role="img" aria-label="cinco rodadas: em cada uma, uma parte é a prova e as outras quatro são o treino; um grupo de cópias fica sempre na mesma parte">
+            <span class="v"></span><span class="h"></span><span class="h"></span><span class="h"></span><span class="h"></span><span class="h"></span>
+            <span class="r"></span><span class="p"></span><span></span><span class="c"></span><span></span><span></span>
+            <span class="r"></span><span></span><span class="p"></span><span class="c"></span><span></span><span></span>
+            <span class="r"></span><span></span><span></span><span class="p c"></span><span></span><span></span>
+            <span class="r"></span><span></span><span></span><span class="c"></span><span class="p"></span><span></span>
+            <span class="r"></span><span></span><span></span><span class="c"></span><span></span><span class="p"></span>
+          </div>
+          <div class="folds-leg"><span><i></i>treino</span><span><i class="p"></i>prova</span><span><b>◆◆</b>um grupo de cópias</span></div>
         </div>
         <div class="cartao">
           <h3>O envelope lacrado</h3>
-          <p>{{protocolo.teste_n|int}} e-mails ({{der.frac_teste|pct}}) foram separados no início e abertos {{protocolo.teste_usos|n}} vezes no projeto inteiro, sempre para relatar um resultado. Numa decisão (D8), o fato de um candidato já ter passado por ele serviu de desempate.</p>
-          <div data-graf="divisao" style="margin-top:10px"></div>
+          <p>{{protocolo.teste_n|int}} e-mails ({{der.frac_teste|pct}}), também separados por grupo, foram guardados no início e abertos {{protocolo.teste_usos|n}} vezes, para relatar; numa decisão (D8), serviram de desempate.</p>
+          <div data-graf="divisao" style="margin-top:8px"></div>
         </div>
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>A intuição comum (spam se repete) estava errada nesta base.</li><li>Separar por grupo evita a “cola”; o teste trancado é a prova final de verdade.</li></ul></aside>
+  <aside class="notas"><ul>
+    <li>A intuição comum (spam se repete) estava errada nesta base: as cópias são avisos automáticos de trabalho. {{base.copias.grupos_so_email_real|int}} dos {{base.copias.grupos|int}} grupos só têm e-mails reais; nenhum grupo mistura as classes.</li>
+    <li>As quase-cópias (quase iguais, mas não cópias) escapam do grupo: nos {{protocolo.folds|n}} folds, estão em {{contra.quase_copias.folds_fracao|pct}} dos e-mails de teste. Sem elas, o MCC é {{contra.quase_copias.mcc_sem_quase_copias|d4}} ({{contra.quase_copias.mcc|d4}} no total): muda só na terceira casa.</li>
+    <li>Numa decisão (D8), o fato de um candidato já ter passado pelo envelope lacrado serviu de desempate.</li>
+  </ul></aside>
 </section>
 
 <section class="slide" data-id="e-sem-rotulo" data-capitulo="2">
@@ -287,10 +376,10 @@
   <div class="faixa-cap"><span><b>A pergunta</b>Que conselho funciona, e por quê?</span><span><b>O que fizemos</b>Um modelo de cada família e um chefe.</span><span><b>O que descobrimos</b>Os que menos erram junto são os mais ouvidos.</span><span><b>Por isso</b>Dá para afinar os botões?</span></div>
   <div class="corpo">
     <div class="mapa-modelos">
-      <div class="jeito"><div><h3>A balança</h3><div class="quem"><span><span class="m" style="background:#2a78d6"></span>Regressão logística</span><span><span class="m" style="background:#898781"></span>LinearSVC</span></div><p>Cada palavra puxa para um lado; a soma decide.</p></div><div class="anim mini" data-anim="lr"></div></div>
-      <div class="jeito"><div><h3>Os vizinhos</h3><div class="quem"><span><span class="m" style="background:#1baf7a"></span>kNN</span><span><span class="m" style="background:#eb6834"></span>SVM</span></div><p>Parecido com spam? Então é spam.</p></div><div class="anim mini" data-anim="knn"></div></div>
-      <div class="jeito"><div><h3>Os detetives</h3><div class="quem"><span><span class="m" style="background:#e87ba4"></span>Naive Bayes</span><span><span class="m" style="background:#eda100"></span>Rede neural</span></div><p>Multiplicam pistas, ou combinam pistas em equipe.</p></div><div class="anim mini" data-anim="nb"></div></div>
-      <div class="jeito"><div><h3>As árvores</h3><div class="quem"><span><span class="m" style="background:#008300"></span>Extra Trees</span><span><span class="m" style="background:#6250d6"></span>LightGBM</span></div><p>Perguntas em sequência; um júri vota ou uma fila corrige.</p></div><div class="anim mini" data-anim="et"></div></div>
+      <div class="jeito"><div><h3>A balança</h3><div class="quem"><span><span class="m" style="background:#2a78d6"></span>Regressão logística</span><span><span class="m" style="background:#898781"></span>LinearSVC</span></div><p>Cada palavra puxa para o prato do e-mail real ou para o prato do spam; a soma decide.</p></div><div class="anim mini" data-anim="lr"></div></div>
+      <div class="jeito"><div><h3>Os vizinhos</h3><div class="quem"><span><span class="m" style="background:#1baf7a"></span>kNN</span><span><span class="m" style="background:#eb6834"></span>SVM</span></div><p>Parecido com os spams do treino? Então é spam. Parecido com os e-mails reais? É e-mail real.</p></div><div class="anim mini" data-anim="knn"></div></div>
+      <div class="jeito"><div><h3>Os detetives</h3><div class="quem"><span><span class="m" style="background:#e87ba4"></span>Naive Bayes</span><span><span class="m" style="background:#eda100"></span>Rede neural</span></div><p>Cada pista empurra um placar para o e-mail real ou para o spam; ou uma equipe combina as pistas.</p></div><div class="anim mini" data-anim="nb"></div></div>
+      <div class="jeito"><div><h3>As árvores</h3><div class="quem"><span><span class="m" style="background:#008300"></span>Extra Trees</span><span><span class="m" style="background:#6250d6"></span>LightGBM</span></div><p>Perguntas de sim ou não levam a uma folha: e-mail real ou spam. Um júri vota, ou uma fila corrige.</p></div><div class="anim mini" data-anim="et"></div></div>
     </div>
   </div>
   <aside class="notas"><ul><li>Sete deles formam o conselho. O LinearSVC fica de fora: é o filtro simples que o conselho precisa vencer. Tudo explicado também em docs/MODELOS.md.</li></ul></aside>
@@ -303,15 +392,17 @@
     <div class="modelo-par">
       <div class="modelo">
         <h3><span class="m" style="background:#2a78d6"></span>Regressão logística<span class="fam">linear</span></h3>
-        <p class="analog"><b>Analogia:</b> uma balança. Palavras de spam num prato, de e-mail real no outro.</p>
+        <p class="analog"><b>Analogia: a balança.</b> Dois pratos: o do e-mail real e o do spam. Cada palavra do e-mail cai num deles, com o peso aprendido no treino (“enron” pesa no do e-mail real; palavras de propaganda, no do spam). Para onde a balança pende vira a chance de spam.</p>
         <p class="frase">Cada palavra tem um peso; a soma vira uma chance de spam.</p>
+        <p class="nafig"><b>Na figura:</b> cada ficha é uma palavra (<span class="m real"></span>típica de e-mail real, <span class="m spam"></span>de spam); a barra embaixo é a chance de spam. Os pesos são ilustrativos.</p>
         <div class="anim" data-anim="lr"></div>
         <dl class="ficha"><dt>Nota sozinha</dt><dd>MCC <b>{{der.mod.lr.mcc|mcc}}</b></dd><dt>No conselho</dt><dd>{{der.mod.lr.papel_peso|txt}}; {{der.mod.lr.esp_txt|txt}}</dd></dl>
       </div>
       <div class="modelo">
         <h3><span class="m" style="background:#898781"></span>LinearSVC<span class="fam">linear · o filtro simples</span></h3>
-        <p class="analog"><b>Analogia:</b> a rua mais larga entre dois bairros.</p>
-        <p class="frase">Traça a fronteira reta que deixa a maior folga dos dois lados.</p>
+        <p class="analog"><b>Analogia: a avenida entre dois bairros.</b> Cada casa é um e-mail de treino, no bairro do e-mail real ou no bairro do spam. Ele abre a avenida reta mais larga entre os dois; as casas da beira decidem por onde ela passa. E-mail novo do lado do bairro do spam é spam.</p>
+        <p class="frase">Traça a fronteira reta com a maior folga entre os e-mails reais e os spams.</p>
+        <p class="nafig"><b>Na figura:</b> <span class="m real"></span>e-mails reais e <span class="m spam"></span>spams de treino; a faixa cinza é a avenida, e os círculos, as casas da beira. A nota é a distância até o meio da avenida, não uma chance.</p>
         <div class="anim" data-anim="lsvc"></div>
         <dl class="ficha"><dt>Nota sozinho</dt><dd>MCC <b>{{der.mod.lsvc.mcc|mcc}}</b>: o melhor entre os sozinhos</dd><dt>No conselho</dt><dd>fica de fora: é o filtro simples a vencer</dd></dl>
       </div>
@@ -327,15 +418,17 @@
     <div class="modelo-par">
       <div class="modelo">
         <h3><span class="m" style="background:#1baf7a"></span>kNN, os vizinhos<span class="fam">vizinhos</span></h3>
-        <p class="analog"><b>Analogia:</b> perguntar aos vizinhos mais parecidos.</p>
+        <p class="analog"><b>Analogia: perguntar aos vizinhos.</b> O e-mail novo procura os {{der.mod.knn.cfg_padrao_d.k|txt}} e-mails de treino mais parecidos com ele: os que usam as mesmas palavras. Se a maioria desses vizinhos é spam, ele é spam; se é e-mail real, é e-mail real.</p>
         <p class="frase">Copia a decisão da maioria dos e-mails de treino mais parecidos com o novo.</p>
+        <p class="nafig"><b>Na figura:</b> cada ponto é um e-mail de treino; o de contorno preto é o e-mail novo. As linhas o ligam aos vizinhos que votam.</p>
         <div class="anim" data-anim="knn"></div>
         <dl class="ficha"><dt>Nota sozinho</dt><dd>MCC <b>{{der.mod.knn.mcc|mcc}}</b></dd><dt>No conselho</dt><dd>{{der.mod.knn.papel_peso|txt}}</dd><dt>Cuidado</dt><dd>decora a caixa</dd></dl>
       </div>
       <div class="modelo">
         <h3><span class="m" style="background:#eb6834"></span>SVM com kernel RBF<span class="fam">kernel</span></h3>
-        <p class="analog"><b>Analogia:</b> bairros de qualquer formato.</p>
+        <p class="analog"><b>Analogia: uma cerca de qualquer formato.</b> Às vezes o spam forma uma ilha cercada de e-mails reais, e nenhuma avenida reta separa os dois. O SVM desenha uma cerca curva em volta da ilha: dentro, o lado do spam; fora, o lado do e-mail real.</p>
         <p class="frase">Resume as palavras em temas; o kernel RBF deixa a fronteira se curvar.</p>
+        <p class="nafig"><b>Na figura:</b> os eixos são dois “temas” (palavras que andam juntas); a linha preta fechada é a cerca, e o ponto de contorno preto, um e-mail novo.</p>
         <div class="anim" data-anim="svm"></div>
         <dl class="ficha"><dt>Nota sozinho</dt><dd>MCC <b>{{der.mod.svm.mcc|mcc}}</b></dd><dt>No conselho</dt><dd>{{der.mod.svm.papel_peso|txt}}</dd></dl>
       </div>
@@ -351,15 +444,17 @@
     <div class="modelo-par">
       <div class="modelo">
         <h3><span class="m" style="background:#e87ba4"></span>Naive Bayes<span class="fam">probabilística</span></h3>
-        <p class="analog"><b>Analogia:</b> um detetive que olha cada pista sozinha e multiplica as chances.</p>
+        <p class="analog"><b>Analogia: o detetive que olha uma pista por vez.</b> Um placar entre e-mail real e spam começa no meio. Cada palavra-pista empurra o placar para um dos lados, como se uma pista não tivesse nada a ver com a outra: por isso, “ingênuo”.</p>
         <p class="frase">Cada palavra muda a chance de spam, uma de cada vez.</p>
+        <p class="nafig"><b>Na figura:</b> cada linha é o placar depois de mais uma pista; o anel vazio é onde ele estava, e a seta, o empurrão daquela palavra.</p>
         <div class="anim" data-anim="nb"></div>
         <dl class="ficha"><dt>Nota sozinho</dt><dd>MCC <b>{{der.mod.nb.mcc|mcc}}</b>: fraco</dd><dt>No conselho</dt><dd>{{der.mod.nb.papel_junto|txt}}: {{der.mod.nb.papel_peso|txt}}</dd></dl>
       </div>
       <div class="modelo">
         <h3><span class="m" style="background:#eda100"></span>Rede neural<span class="fam">rede neural</span></h3>
-        <p class="analog"><b>Analogia:</b> uma equipe de detetives e um chefe que soma as pistas.</p>
+        <p class="analog"><b>Analogia: uma equipe de detetives e um chefe.</b> Cada “neurônio” do meio é um detetive que aprendeu a reconhecer uma combinação de palavras, como duas palavras de propaganda juntas. O chefe junta as opiniões e dá a nota de spam.</p>
         <p class="frase">Uma camada de “neurônios” aprende combinações de palavras.</p>
+        <p class="nafig"><b>Na figura:</b> à esquerda, as palavras (cinza: não aparecem no e-mail); no meio, os detetives; à direita, o chefe. Linha grossa: opinião que pesa mais.</p>
         <div class="anim" data-anim="mlp"></div>
         <dl class="ficha"><dt>Nota sozinha</dt><dd>MCC <b>{{der.mod.mlp.mcc|mcc}}</b></dd><dt>No conselho</dt><dd>{{der.mod.mlp.papel_peso|txt}}</dd></dl>
       </div>
@@ -375,15 +470,17 @@
     <div class="modelo-par">
       <div class="modelo">
         <h3><span class="m" style="background:#008300"></span>Extra Trees<span class="fam">árvores aleatórias (média)</span></h3>
-        <p class="analog"><b>Analogia:</b> um júri: cada jurado olhou pistas diferentes, e vale a média.</p>
-        <p class="frase">Centenas de árvores de perguntas, com cortes e palavras sorteados, tiram a média dos votos.</p>
+        <p class="analog"><b>Analogia: um júri.</b> Cada jurado é uma árvore de perguntas de sim ou não (“o e-mail tem a palavra X?”). Os cortes foram sorteados, então cada jurado pensa diferente. Cada um vota e-mail real ou spam, e vale a maioria.</p>
+        <p class="frase">Centenas de árvores com perguntas sorteadas votam juntas.</p>
+        <p class="nafig"><b>Na figura:</b> à esquerda, um jurado inteiro e o caminho do e-mail até a folha; à direita, os outros jurados e as urnas com os votos.</p>
         <div class="anim" data-anim="et"></div>
         <dl class="ficha"><dt>Nota sozinho</dt><dd>MCC <b>{{der.mod.et.mcc|mcc}}</b></dd><dt>No conselho</dt><dd>{{der.mod.et.papel_peso|txt}}; {{der.mod.et.papel_junto|txt}}</dd></dl>
       </div>
       <div class="modelo">
         <h3><span class="m" style="background:#6250d6"></span>LightGBM<span class="fam">boosting</span></h3>
-        <p class="analog"><b>Analogia:</b> um aluno que revisa a prova várias vezes, corrigindo um pouco cada resposta.</p>
-        <p class="frase">Árvores em fila: cada uma corrige um pouco o erro que sobra, mais onde ele é maior.</p>
+        <p class="analog"><b>Analogia: o aluno que revisa a prova.</b> A primeira árvore dá um palpite; a segunda olha onde a primeira errou e corrige um pouco; a terceira corrige o que ainda sobrou. A soma do palpite com as correções vira a nota de spam.</p>
+        <p class="frase">Árvores em fila: cada uma corrige um pouco o erro que sobra.</p>
+        <p class="nafig"><b>Na figura:</b> cada árvore é uma rodada; a barra embaixo dela é o erro que ainda sobra, e diminui a cada correção.</p>
         <div class="anim" data-anim="lgbm"></div>
         <dl class="ficha"><dt>Nota sozinho</dt><dd>MCC <b>{{der.mod.lgbm.mcc|mcc}}</b></dd><dt>No conselho</dt><dd>{{der.mod.lgbm.papel_peso|txt}}; {{der.mod.lgbm.papel_junto|txt}}</dd></dl>
       </div>
@@ -399,11 +496,11 @@
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 1.2fr 1fr">
       <div class="col">
-        <div class="anim" data-anim="stacking" style="flex:1"></div>
-        <p class="legenda-g">Um spam de uma caixa que o filtro nunca viu, no conselho padrão. Clique para ver de novo.</p>
+        <div class="anim" data-anim="stacking" data-presidente="chefe" style="flex:1"></div>
+        <p class="legenda-g"><b>Na figura:</b> um spam de uma caixa que o filtro nunca viu, no conselho padrão. As barras são as notas dos membros (zero: e-mail real; um: spam); a cor e a espessura de cada linha dizem quanto o chefe ouve aquele membro. Clique para ver de novo.</p>
       </div>
       <div class="col">
-        <div class="analogia"><b>Analogia: o conselho.</b> Sete especialistas dão nota; o chefe aprendeu quanto ouvir cada um. Cada um só dá nota a e-mails que <b>não viu</b> no treino.</div>
+        <div class="analogia"><b>Analogia: o conselho e o chefe.</b> Sete especialistas dão nota ao mesmo e-mail. O chefe (uma regressão logística) aprendeu, com e-mails que os membros <b>não viram</b> no treino, quanto confiar em cada um; ele soma as notas pesadas e compara com o limiar.</div>
         <div class="tit-g">Quanto o chefe ouve cada um (média ± variação entre os testes)</div>
         <div class="g" data-graf="pesos" style="height:170px"></div>
         <div class="fizemos"><b>Por que funciona:</b> {{der.junto_top3_txt|txt}} são os que menos erram junto com os outros e os que mais salvam quando a maioria erra. O Naive Bayes erra muito e junto: quase não é ouvido.</div>
@@ -454,10 +551,10 @@
     <div class="grade" style="grid-template-columns: 1.25fr 1fr">
       <div class="col">
         <div class="anim" data-anim="ga" style="flex:1"></div>
-        <p class="legenda-g">A melhor nota e a média, geração após geração, contra a configuração padrão (dados reais).</p>
+        <p class="legenda-g"><b>Na figura:</b> a linha cheia é o melhor cavalo de cada geração, e a clara, a média (dados reais); a tracejada é a configuração padrão.</p>
       </div>
       <div class="col" style="justify-content:center">
-        <div class="analogia"><b>Analogia: criar cavalos de corrida.</b> Cruzar os mais rápidos e deixar surgir variações.</div>
+        <div class="analogia"><b>Analogia: criar cavalos de corrida.</b> Cada cavalo é uma combinação de ajustes dos sete modelos, e a nota dele (MCC) é a velocidade. Os mais rápidos cruzam, os filhos sofrem pequenas mutações, geração após geração.</div>
         <div class="fizemos"><b>O que fizemos.</b> O <abbr data-g="GA">GA</abbr> testou {{ga.avaliacoes|int}} de {{ga.combinacoes|int}} combinações. Cada ajuste foi treinado uma vez, e a nota ficou guardada.</div>
         <div class="analogia"><b>A maldição do vencedor.</b> O campeão de um torneio curto parece melhor do que é.</div>
       </div>
@@ -475,10 +572,10 @@
     <div class="grade" style="grid-template-columns: 1.2fr 1fr">
       <div class="col">
         <div class="anim" data-anim="tabpfn" style="flex:1"></div>
-        <p class="legenda-g">Os e-mails de treino, com as respostas, entram junto com o e-mail novo.</p>
+        <p class="legenda-g"><b>Na figura:</b> cada linha da tabela é um e-mail (cinza: as palavras; cor: a resposta). Os de treino entram junto com o e-mail novo, numa passada só.</p>
       </div>
       <div class="col">
-        <div class="analogia"><b>Analogia:</b> um aluno que já resolveu muitas provas de mentira e chega na sua sem estudar a matéria.</div>
+        <div class="analogia"><b>Analogia: o aluno que estudou milhões de provas de mentira.</b> Antes de conhecer esta base, ele estudou milhões de tabelas inventadas por computador. Aqui recebe, de uma vez, os e-mails de treino já respondidos e o e-mail novo, e responde sem estudar de novo.</div>
         <div class="fizemos"><b>O que fizemos.</b> Demos ao <abbr data-g="TabPFN">TabPFN</abbr>, pré-treinado em tabelas geradas por computador, os e-mails de treino com as respostas. Ele tem botões; não mexemos em nenhum.</div>
         <div class="cartao"><h3>O que ele fez</h3><p>Empatou com o melhor modelo sozinho (MCC <strong>{{der.tab_mcc|mcc}}</strong>), mas aqui deixa passar mais spam e sai mais caro. Nas caixas de outras pessoas, mandou só <strong>{{finais.tabpfn.externo.real_lixeira_custo|pct}}</strong> dos e-mails reais para a lixeira.</p></div>
       </div>
@@ -674,72 +771,27 @@
   <div class="corpo"><div class="gl-lista"></div></div>
 </section>
 
-<script type="application/json" id="glossario-dados">[
-{"t":"MCC","n":"coeficiente de correlação de Matthews","g":"Métricas","d":"Nota da decisão final que usa os quatro resultados (VP, VN, FP, FN). Vai de menos um a um; zero é o chute. Não se ilude quando uma classe é bem maior que a outra. Depende do limiar: o de custo ou o padrão, {{limiar_padrao|d1}}."},
-{"t":"PR-AUC","n":"área sob a curva de precisão e revocação","g":"Métricas","d":"Mede se o spam fica no topo da lista de suspeitos, sem escolher limiar. O piso é a fração de spam da base."},
-{"t":"ROC-AUC","n":"área sob a curva ROC","g":"Métricas","d":"Chance de um spam sorteado receber nota maior que um e-mail real sorteado. Meio é o chute. Com classes desiguais, a PR-AUC é mais exigente."},
-{"t":"AUC","n":"área sob a curva","g":"Métricas","d":"Nome genérico da área sob uma curva de desempenho (ROC ou precisão e revocação). Resume o modelo em todos os limiares de uma vez."},
-{"t":"VP/VN/FP/FN","n":"verdadeiro positivo, verdadeiro negativo, falso positivo, falso negativo","g":"Métricas","d":"Os quatro resultados possíveis. Positivo é “o filtro disse spam”: FP é e-mail real na lixeira (o erro caro); FN é spam que passou."},
-{"t":"λ","n":"lambda, o custo do erro","g":"Métricas","d":"Quantos spams recebidos equivalem a um e-mail real perdido. Usamos λ = {{meta.custo_fp|n}}, um dos cenários de Androutsopoulos et al. (2000). Custo por mil = mil × (λ × e-mails reais na lixeira + spams que passaram) ÷ número de e-mails."},
-{"t":"TCR","n":"total cost ratio, razão de custo total","g":"Métricas","d":"Custo de não filtrar dividido pelo custo do filtro (Androutsopoulos et al., 2000). Acima de um, filtrar compensa; abaixo de um, deixar tudo passar sai mais barato. Quando junta várias caixas ou folds, é o custo médio de não filtrar dividido pelo custo médio do filtro."},
-{"t":"não filtrar","n":"a referência mais simples","g":"Métricas","d":"Nunca marcar spam: nenhum e-mail real se perde e todo spam passa. O custo por mil dela é mil vezes a fração de spam. Todo filtro precisa custar menos que ela para valer a pena."},
-{"t":"limiar","n":"ponto de corte","g":"Métricas","d":"A partir de que probabilidade de spam o e-mail vai para a lixeira. O limiar de custo é o que dá o menor custo, escolhido só com dados de treino; o limiar padrão é {{limiar_padrao|d1}}."},
-{"t":"precisão e revocação","n":"precision e recall","g":"Métricas","d":"Precisão: dos e-mails mandados para a lixeira, quantos eram spam. Revocação: dos spams, quantos foram para a lixeira. O F1 é a média harmônica das duas."},
-{"t":"TF-IDF","n":"frequência do termo × inverso da frequência nos documentos","g":"Representação do texto","d":"Peso de cada palavra: sobe quando ela aparece muito no e-mail e desce quando aparece em quase todos. Com log, repetir não multiplica o peso. Usado nos modelos lineares, no SVM, no kNN e na rede neural."},
-{"t":"SVD/LSA","n":"decomposição em valores singulares / análise semântica latente","g":"Representação do texto","d":"Resume milhares de colunas em poucas direções que juntam palavras que andam juntas. Usado para desenhar a base e como entrada do SVM."},
-{"t":"PCA","n":"análise de componentes principais","g":"Representação do texto","d":"Encontra as direções de maior variação dos dados. Em tabelas de palavras, quase todas zeradas, o SVD faz o mesmo papel sem centralizar os dados."},
-{"t":"χ²","n":"qui-quadrado","g":"Representação do texto","d":"Teste que mede se uma palavra aparece mais numa classe do que o acaso explicaria. Serve para escolher palavras."},
-{"t":"AUEB","n":"Universidade de Economia e Negócios de Atenas","g":"Arquivos e fontes","d":"Universidade grega que publicou o corpus Enron-Spam (Metsis e colegas). O CSV do projeto veio do texto pré-processado por ela."},
-{"t":"CSV","n":"valores separados por vírgula","g":"Arquivos e fontes","d":"Tabela em texto puro. A base é um CSV com uma linha por e-mail e uma coluna por pedaço de texto contado."},
-{"t":"JSON","n":"notação de objetos JavaScript","g":"Arquivos e fontes","d":"Formato de texto para dados estruturados. Todos os números destes slides saem de um único JSON de resultados."},
-{"t":"HTML","n":"linguagem de marcação de hipertexto","g":"Arquivos e fontes","d":"A linguagem das páginas web. Estes slides são um único arquivo HTML que abre sem internet."},
-{"t":"SpamAssassin","n":"corpus público de e-mails","g":"Arquivos e fontes","d":"Coleção pública de mensagens de listas de discussão e e-mails pessoais, com spam, da mesma época dos e-mails da Enron. Foi a terceira base: decidiu a regra D10 e, na revisão D11, serviu também para decidir o que destacar."},
-{"t":"SVM","n":"máquina de vetores de suporte","g":"Modelos","d":"Traça a fronteira que deixa a maior folga possível entre as classes. A nota é a distância até essa fronteira."},
-{"t":"LinearSVC","n":"SVM linear","g":"Modelos","d":"SVM sem kernel: uma fronteira reta, rápida em textos com milhares de colunas. É a linha de base do projeto, com TF-IDF com log e limiar de custo."},
-{"t":"RBF","n":"função de base radial","g":"Modelos","d":"Kernel que mede semelhança pela distância. Permite ao SVM traçar fronteiras curvas."},
-{"t":"kNN","n":"k vizinhos mais próximos","g":"Modelos","d":"Dá a um e-mail a resposta dos k e-mails de treino mais parecidos com ele. Simples, e erra em lugares diferentes dos outros modelos."},
-{"t":"MLP","n":"perceptron de múltiplas camadas","g":"Modelos","d":"Rede neural pequena: camadas de neurônios que combinam as palavras de forma não linear."},
-{"t":"NB","n":"Naive Bayes","g":"Modelos","d":"Modelo probabilístico que supõe as palavras independentes entre si dentro de cada classe (spam ou e-mail real). Rápido; no stacking recebeu peso quase zero."},
-{"t":"NBSVM","n":"Naive Bayes com SVM","g":"Modelos","d":"Usa as razões de probabilidade do Naive Bayes para reescalar as entradas e treina um classificador linear sobre elas (Wang e Manning, 2012). Clássico em textos curtos."},
-{"t":"LR","n":"regressão logística","g":"Modelos","d":"Modelo linear: um peso por palavra, e a soma vira probabilidade. Também é o meta-modelo do stacking."},
-{"t":"RF","n":"Random Forest, floresta aleatória","g":"Modelos","d":"Muitas árvores de decisão treinadas em amostras diferentes; a resposta é a média delas (bagging)."},
-{"t":"ET","n":"Extra Trees, árvores extremamente aleatórias","g":"Modelos","d":"Árvores aleatórias que tiram a média: cada árvore vê todos os e-mails, mas os pontos de corte e as palavras candidatas são sorteados. Não é bagging. Mais variada e mais rápida que a Random Forest."},
-{"t":"LightGBM","n":"boosting de árvores (Microsoft)","g":"Modelos","d":"Árvores em fila: cada uma corrige um pouco o erro que ainda sobra, em todos os e-mails, com mais força onde o erro é maior. Rápido em tabelas grandes."},
-{"t":"XGBoost","n":"boosting de árvores","g":"Modelos","d":"Outra implementação de boosting de árvores, muito usada em competições de dados."},
-{"t":"modelo de fundação","n":"modelo pré-treinado de uso geral","g":"Modelos","d":"Modelo treinado antes, em muitos dados, que se usa direto num problema novo, sem ajuste. O TabPFN é um modelo de fundação para tabelas."},
-{"t":"TabPFN","n":"rede pré-treinada para tabelas (Prior Labs)","g":"Modelos","d":"Modelo de fundação pré-treinado em tabelas sintéticas geradas por computador (Hollmann et al., 2025, artigo sobre a versão 2; usamos a versão 3.5). Classifica sem ser treinado na base: recebe os exemplos como contexto e faz a média de alguns estimadores sobre a tabela embaralhada. Tem hiperparâmetros, que não ajustamos. Aqui foi usado sozinho e como oitavo membro do Stacking 8."},
-{"t":"supervisionado","n":"aprendizado com as respostas","g":"Combinação e busca","d":"O modelo aprende com exemplos já respondidos (este e-mail é spam, aquele é real) e depois decide sozinho em e-mails novos. Foi o caminho do campeonato."},
-{"t":"não supervisionado","n":"aprendizado sem as respostas","g":"Sem rótulo","d":"O computador procura padrões sem saber o que é spam: mapas, grupos e tópicos. Aqui, os grupos automáticos saíram por assunto, e um tópico de propaganda deu uma pista forte de spam, mas não um bom filtro."},
-{"t":"bagging","n":"muitos modelos em paralelo","g":"Modelos","d":"Treina muitas árvores, cada uma num sorteio diferente dos e-mails, e faz a média. A Random Forest é desse tipo. As Extra Trees não: cada árvore vê todos os e-mails, e o sorteio está nos cortes e nas palavras candidatas."},
-{"t":"boosting","n":"muitos modelos em fila","g":"Modelos","d":"Árvores em fila: cada nova corrige um pouco o erro que sobra, mais onde ele é maior. LightGBM, XGBoost e CatBoost são desse tipo."},
-{"t":"aprendizado em contexto","n":"in-context learning","g":"Modelos","d":"O modelo recebe, de uma vez, os exemplos respondidos e os casos novos, e responde sem treinar. É assim que o TabPFN funciona."},
-{"t":"stacking","n":"empilhamento","g":"Combinação e busca","d":"Combinação de modelos: cada membro dá uma nota e um meta-modelo aprende quanto pesar cada um."},
-{"t":"Stacking 7 e Stacking 8","n":"os conselhos do projeto","g":"Combinação e busca","d":"O Stacking 7 combina um modelo de cada uma das sete famílias. O Especialista é o Stacking 7 com os ajustes do algoritmo genético. O Stacking 8 é o Stacking 7 padrão com o TabPFN como oitavo membro."},
-{"t":"meta-modelo","n":"o modelo de cima","g":"Combinação e busca","d":"Recebe as notas dos membros do stacking e decide. Aqui é uma regressão logística; os pesos dela mostram quanto cada nota conta, mas as notas se parecem entre si, então peso não é só confiança."},
-{"t":"Caruana","n":"seleção de ensembles (Caruana et al., 2004)","g":"Combinação e busca","d":"Monta a combinação escolhendo, passo a passo, o modelo que mais melhora o conjunto, podendo repetir modelos. Foi uma das combinações comparadas com o stacking."},
-{"t":"GA","n":"algoritmo genético","g":"Combinação e busca","d":"Busca inspirada na evolução: as melhores configurações se cruzam e sofrem pequenas mutações, geração após geração."},
-{"t":"Jaccard","n":"índice de Jaccard","g":"Combinação e busca","d":"Fração de erros em comum entre dois modelos: erros que os dois cometem, divididos pelos erros de qualquer um deles. Cuidado: favorece quem erra muito. Para saber quem erra junto, usamos a chance de um errar quando o outro erra."},
-{"t":"CV","n":"validação cruzada","g":"Validação e estatística","d":"Divide os dados em partes (folds), treina em todas menos uma e testa na que ficou de fora, girando. A nota é a média."},
-{"t":"OOF","n":"out-of-fold, fora da dobra","g":"Validação e estatística","d":"Nota que um modelo dá a um e-mail que ele não viu no treino. O meta-modelo só aprende com notas OOF, para não premiar quem decorou."},
-{"t":"teste trancado","n":"o envelope lacrado","g":"Validação e estatística","d":"Os {{protocolo.teste_n|int}} e-mails separados no início, por grupo de cópias, e abertos {{protocolo.teste_usos|n}} vezes, sempre para relatar um resultado."},
-{"t":"quase-cópia","n":"e-mail quase idêntico a outro","g":"Validação e estatística","d":"E-mail com cosseno de pelo menos {{contra.quase_copias.limiar_cosseno|d2}} com algum e-mail do treino, sem ser idêntico. O agrupamento só junta cópias idênticas, então as quase-cópias podem cair dos dois lados e inflar um pouco a nota."},
-{"t":"bootstrap","n":"reamostragem com reposição","g":"Validação e estatística","d":"Sorteia de novo, com reposição, os e-mails (ou os grupos de cópias) para ver quanto um resultado varia. Dá o IC95 e o P(redução) da regra D10."},
-{"t":"IC95","n":"intervalo de confiança de noventa e cinco por cento","g":"Validação e estatística","d":"Faixa de valores plausíveis para uma diferença, calculada aqui por bootstrap ou pelo t corrigido. Se cruza o zero, a diferença pode não existir."},
-{"t":"t corrigido de Nadeau-Bengio","n":"teste t para validação cruzada","g":"Validação e estatística","d":"Teste t que aumenta a variância porque os treinos dos folds se sobrepõem (Nadeau e Bengio, 2003). Sem a correção, diferenças pequenas pareceriam significativas."},
-{"t":"teste bayesiano correlacionado","n":"comparação bayesiana nos mesmos folds","g":"Validação e estatística","d":"Compara dois modelos nos mesmos folds, levando em conta que eles se sobrepõem (Benavoli et al., 2017). Dá a chance de A ser melhor, de B ser melhor e de serem equivalentes (dentro da ROPE)."},
-{"t":"ROPE","n":"região de equivalência prática","g":"Validação e estatística","d":"Faixa de diferença pequena demais para importar. No teste bayesiano, “equivalentes” quer dizer diferença dentro dela (aqui, um centésimo de MCC)."},
-{"t":"p de Holm","n":"valor-p corrigido por Holm","g":"Validação e estatística","d":"Ajuste do valor-p quando várias comparações são feitas ao mesmo tempo, para não achar diferença por acaso."},
-{"t":"poder","n":"poder estatístico","g":"Validação e estatística","d":"Chance de um teste detectar uma diferença que existe de verdade. O piso do projeto é a menor diferença que os folds detectam com {{ga.piso_poder|pct0}} de poder."},
-{"t":"teste de permutação","n":"teste de sinal","g":"Validação e estatística","d":"Embaralha os rótulos e refaz a avaliação muitas vezes. Se o MCC verdadeiro fica muito acima dos embaralhados, ele não vem do acaso. Não prova que não houve vazamento."},
-{"t":"McNemar","n":"teste de McNemar","g":"Validação e estatística","d":"Compara dois filtros nos mesmos e-mails, contando onde só um deles acerta."},
-{"t":"ARI","n":"índice de Rand ajustado","g":"Sem rótulo","d":"Mede se os grupos encontrados sem as respostas coincidem com as classes reais. Zero é o acaso e um é coincidência total; fica negativo quando a coincidência é pior que o acaso (o K-means deu {{ns.kmeans_ari|mcc}})."},
-{"t":"NMF","n":"fatoração em matrizes não negativas","g":"Sem rótulo","d":"Separa a base em tópicos: cada tópico é um conjunto de palavras que aparecem juntas."},
-{"t":"K-means","n":"agrupamento por k médias","g":"Sem rótulo","d":"Divide os e-mails em k grupos, juntando cada um ao centro mais próximo. Não usa as respostas."},
-{"t":"semissupervisionado","n":"aprendizado com parte dos rótulos","g":"Sem rótulo","d":"Usa só uma parte das respostas: aqui, treinar só com e-mails reais conhecidos e marcar como suspeito o que foge deles (detecção de novidade). Não é “sem rótulo”."},
-{"t":"substring","n":"pedaço de texto","g":"Termos do projeto","d":"Trecho dentro de uma palavra maior. A base conta substrings: “ect” é contado dentro de “Subject”."},
-{"t":"e-mail real","n":"e-mail legítimo","g":"Termos do projeto","d":"O e-mail que não é spam. É o termo que usamos em todo o projeto."},
-{"t":"ham","n":"nome em inglês para e-mail real","g":"Termos do projeto","d":"Termo da literatura em inglês para o e-mail legítimo, em oposição a spam. Neste projeto escrevemos sempre “e-mail real”."}
-]</script>
+<section class="slide" data-id="glossario-d">
+  <header class="cab"><div class="sobre">Glossário completo · parte D</div><h2>Termos <span class="gl-faixa"></span></h2></header>
+  <div class="corpo"><div class="gl-lista"></div></div>
+</section>
+
+<section class="slide" data-id="glossario-e">
+  <header class="cab"><div class="sobre">Glossário completo · parte E</div><h2>Termos <span class="gl-faixa"></span></h2></header>
+  <div class="corpo"><div class="gl-lista"></div></div>
+</section>
+
+<section class="slide" data-id="glossario-f">
+  <header class="cab"><div class="sobre">Glossário completo · parte F</div><h2>Termos <span class="gl-faixa"></span></h2></header>
+  <div class="corpo"><div class="gl-lista"></div></div>
+</section>
+
+<section class="slide" data-id="glossario-g">
+  <header class="cab"><div class="sobre">Glossário completo · parte G</div><h2>Termos <span class="gl-faixa"></span></h2></header>
+  <div class="corpo"><div class="gl-lista"></div></div>
+</section>
+
+<!--@GLOSSARIO@-->
 
 <!--@DADOS@-->
 <script src="comum/graficos.js"></script>

@@ -3,7 +3,7 @@
 Agrupadas pelo uso no projeto. O texto integral dos artigos não é redistribuído (direito autoral): só a citação.
 
 ## Dados
-- **Enron-Spam e o pré-processamento da AUEB.** V. Metsis, I. Androutsopoulos e G. Paliouras. *Spam Filtering with Naive Bayes – Which Naive Bayes?* Third Conference on Email and Anti-Spam (CEAS), 2006. Dados: http://www2.aueb.gr/users/ion/data/enron-spam/
+- **Enron-Spam e o pré-processamento da AUEB.** V. Metsis, I. Androutsopoulos e G. Paliouras. *Spam Filtering with Naive Bayes – Which Naive Bayes?* Third Conference on Email and Anti-Spam (CEAS), 2006. Dados: http://www2.aueb.gr/users/ion/data/enron-spam/ · Artigo: http://www2.aueb.gr/users/ion/docs/ceas2006_paper.pdf · Resumo do que o artigo fez e concluiu: [`dados/LEIA-ME.md`, seção 3b](../dados/LEIA-ME.md#3b-resumo-do-artigo-de-metsis-et-al-2006).
 - **Corpus Enron (origem dos e-mails reais).** B. Klimt e Y. Yang. *The Enron Corpus: A New Dataset for Email Classification Research*. ECML 2004, LNCS 3201, p. 217–226.
 - **SpamAssassin public corpus** (versão 20030228). Apache SpamAssassin Project. https://spamassassin.apache.org/old/publiccorpus/
 - **CSV do enunciado.** balaka18. *Email Spam Classification Dataset CSV*. Kaggle. https://www.kaggle.com/datasets/balaka18/email-spam-classification-dataset-csv

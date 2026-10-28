@@ -59,8 +59,8 @@ if F is None:
     st.stop()
 if R:
     fin = R["finais"]
-    st.info(f"ℹ️ Os filtros foram treinados numa única caixa de e-mail (a de um funcionário da Enron: "
-            f"{R['base']['n_email_real']} e-mails reais e {R['base']['n_spam']} spams). Em caixas diferentes eles erram muito mais: "
+    st.info(f"ℹ️ Os filtros foram treinados numa única caixa de e-mail: {R['base']['n_email_real']} e-mails reais de um "
+            f"funcionário da Enron e {R['base']['n_spam']} spams recebidos por um dos pesquisadores que montaram a base. Em caixas diferentes eles erram muito mais: "
             f"no SpamAssassin, {fin['especialista']['spamassassin']['real_lixeira_custo']:.0%} dos e-mails reais foram para a lixeira "
             f"com o Especialista e {fin['generalista_sem_chave']['spamassassin']['real_lixeira_custo']:.0%} com o Stacking 7 padrão. "
             "Leia a decisão como um exercício, não como um veredito sobre o seu e-mail.")

@@ -3,7 +3,7 @@
 #
 # **Pergunta:** qual tipo de modelo lida melhor com estas contagens de palavras?
 #
-# **Protocolo.** Os mesmos 5 folds para todos (`StratifiedGroupKFold`, cópias idênticas sempre do mesmo lado).
+# **Protocolo.** Os mesmos 5 folds para todos (`StratifiedGroupKFold`, cópias, isto é, linhas de contagem iguais, sempre do mesmo lado).
 # Rodada 1: os 22 modelos, 1 × 5 folds. Rodada 2: os 5 melhores em 3 × 5 folds, com teste t corrigido
 # (Nadeau-Bengio) + Holm e o teste bayesiano correlacionado.
 #

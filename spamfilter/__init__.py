@@ -2,7 +2,7 @@
 
 Módulos:
 - caminhos: onde ficam dados, caches e resultados.
-- dados: carga do CSV, grupos de e-mails idênticos, base de teste trancada, divisões sem vazamento.
+- dados: carga do CSV, grupos de cópias (linhas de contagem iguais), base de teste trancada, divisões sem vazamento.
 - representacao: contagem por substring, TF-IDF com log, NBSVM.
 - modelos: torneio de 22 modelos, os 13 de base, espaço de busca do Stacking 7 e os dois filtros finais.
 - metricas: MCC, PR-AUC, e-mails reais na lixeira, spam que passou, custo e limiar de custo.

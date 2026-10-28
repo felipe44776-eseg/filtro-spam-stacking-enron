@@ -25,6 +25,7 @@ const Deck = (() => {
     if (!fn) return;
     try { fn(sl, { animar: animar && !G.semMovimento }); }
     catch (e) { console.error("erro ao desenhar o slide", sl.dataset.id, e); }
+    anotar(sl);                                   // o gráfico pode ter criado texto novo (legendas, tabelas)
     desenhados.add(sl);
   }
 
@@ -90,11 +91,101 @@ const Deck = (() => {
     else document.exitFullscreen?.();
   }
 
+  /* ------------------------------------------------------------ dicas: termos do glossário marcados no texto */
+  // Cada forma de um termo (campo "a" do glossário, ou o próprio termo) vira <span class="termo-g" data-g="termo">
+  // no texto dos slides. Passar o mouse mostra a explicação para leigo; clicar abre o glossário nesse termo.
+  // Formas que começam em minúscula também valem com a inicial maiúscula (início de frase). Não marca código,
+  // comandos, botões, gráficos (SVG), notas do apresentador nem o próprio glossário.
+  // gráficos e animações ficam de fora: o CSS das legendas estiliza qualquer <span> e a marcação mudaria o desenho
+  const PULAR = "script, style, code, pre, .cmd, svg, button, input, textarea, select, h1, .notas, .gl-indice, .gl-def, .gl-lista, " +
+                ".termo-g, abbr, .url-grande, [data-graf], [data-anim], .g-legenda, .g-dica, .folds, .folds-leg";
+  let reTermos = null, formaTermo = null, itemTermo = null, dica = null;
+  function prepararTermos(brutos) {
+    itemTermo = new Map(brutos.map(i => [i.t, i]));
+    formaTermo = new Map();
+    brutos.forEach(i => {
+      if (i.auto === false) return;
+      (i.a && i.a.length ? i.a : [i.t]).forEach(f => {
+        formaTermo.set(f, i.t);
+        const ini = f.charAt(0);
+        if (ini !== ini.toUpperCase()) formaTermo.set(ini.toUpperCase() + f.slice(1), i.t);
+      });
+    });
+    const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const formas = [...formaTermo.keys()].sort((a, b) => b.length - a.length);   // a forma mais longa vence
+    reTermos = new RegExp(`(?<![\\p{L}\\p{N}_])(?:${formas.map(esc).join("|")})(?![\\p{L}\\p{N}_])`, "gu");
+  }
+  function anotar(raiz) {
+    if (!reTermos || !raiz || params.has("semdicas")) return;     // ?semdicas: deck sem as marcações (depuração)
+    const andar = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => !n.nodeValue.trim() || n.parentElement.closest(PULAR) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    const nos = [];
+    while (andar.nextNode()) nos.push(andar.currentNode);
+    nos.forEach(n => {
+      const txt = n.nodeValue;
+      let m, ultimo = 0, frag = null;
+      reTermos.lastIndex = 0;
+      while ((m = reTermos.exec(txt))) {
+        frag = frag || document.createDocumentFragment();
+        if (m.index > ultimo) frag.append(txt.slice(ultimo, m.index));
+        const s = document.createElement("span");
+        s.className = "termo-g";
+        s.dataset.g = formaTermo.get(m[0]);
+        s.textContent = m[0];
+        frag.append(s);
+        ultimo = m.index + m[0].length;
+      }
+      if (!frag) return;
+      if (ultimo < txt.length) frag.append(txt.slice(ultimo));
+      // num pai flex ou grid, cada pedaço viraria um item separado (com espaço entre eles): embrulha tudo num span
+      if (/flex|grid/.test(getComputedStyle(n.parentElement).display)) {
+        const w = document.createElement("span");
+        w.append(frag);
+        n.replaceWith(w);
+      } else n.replaceWith(frag);
+    });
+  }
+  function montarDicas() {
+    if (!itemTermo) return;
+    dica = el("div", { id: "dica-termo", class: "no-print", role: "tooltip" }, document.body);
+    let alvo = null, toque = false, abertaEm = 0;
+    const esconder = () => { dica.classList.remove("aberta"); alvo?.removeAttribute("aria-describedby"); alvo = null; };
+    const mostrar = a => {
+      const it = itemTermo.get(a.dataset.g);
+      if (!it || a === alvo) return;
+      alvo = a; abertaEm = performance.now();
+      dica.textContent = "";
+      el("b", {}, dica).textContent = it.t;
+      if (it.n) el("i", {}, dica).textContent = it.n;
+      el("p", {}, dica).textContent = it.d;
+      if (glossario) el("small", {}, dica).textContent = "clique para abrir no glossário (tecla G)";
+      dica.classList.add("aberta");
+      const r = a.getBoundingClientRect(), w = dica.offsetWidth, h = dica.offsetHeight, m = 8;
+      const x = Math.min(Math.max(m, r.left + r.width / 2 - w / 2), innerWidth - w - m);
+      const y = r.bottom + 8 + h > innerHeight - m ? Math.max(m, r.top - h - 8) : r.bottom + 8;
+      dica.style.left = x + "px"; dica.style.top = y + "px";
+      a.setAttribute("aria-describedby", "dica-termo");
+    };
+    document.addEventListener("pointerover", e => {
+      const a = e.target.closest?.(".slide [data-g]");
+      if (a) mostrar(a); else if (alvo) esconder();
+    });
+    // no toque, o primeiro toque num termo só mostra a dica; o segundo abre o glossário
+    document.addEventListener("pointerdown", e => { toque = e.pointerType === "touch"; }, true);
+    document.addEventListener("click", e => {
+      const a = e.target.closest?.(".slide .termo-g");
+      if (a && toque && a === alvo && performance.now() - abertaEm < 700) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
+    addEventListener("scroll", esconder, { passive: true });
+    addEventListener("keydown", esconder);
+  }
+
   /* ------------------------------------------------------------ glossário */
   function montarGlossario() {
     const fonte = document.getElementById("glossario-dados");
     if (!fonte) return null;
     const brutos = JSON.parse(fonte.textContent);
+    prepararTermos(brutos);
     const ordemGrupos = [...new Set(brutos.map(i => i.g))];          // grupos na ordem em que foram escritos
     const itens = [...brutos].sort((a, b) => a.t.localeCompare(b.t, "pt-BR", { sensitivity: "base" }));
     const p = el("aside", { id: "glossario", class: "no-print", "aria-label": "Glossário" }, document.body,
@@ -242,8 +333,17 @@ const Deck = (() => {
       });
       linhas.push(`${i + 1}\t${sl.dataset.id}\t${problemas.size ? [...problemas].join(" | ") : "ok"}`);
     });
+    // autoteste das dicas: simula o mouse sobre o primeiro termo marcado e confere se a explicação abriu
+    const termo = document.querySelector(".slide .termo-g");
+    let rel = "sem termos marcados";
+    if (termo) {
+      termo.dispatchEvent(new PointerEvent("pointerover", { bubbles: true }));
+      const ok = dica && dica.classList.contains("aberta") && dica.querySelector("b")?.textContent === termo.dataset.g;
+      rel = `${ok ? "ok" : "FALHOU"} · ${document.querySelectorAll(".slide .termo-g").length} termos marcados · "${termo.textContent}" → ${termo.dataset.g}`;
+      dica?.classList.remove("aberta");
+    }
     const pre = el("pre", { id: "relatorio-geometria" }, document.body);
-    pre.textContent = `slides=${slides.length}\n` + linhas.join("\n");
+    pre.textContent = `slides=${slides.length}\ndicas\t${rel}\n` + linhas.join("\n");
     console.log(pre.textContent);
   }
 
@@ -286,13 +386,15 @@ const Deck = (() => {
       '<div class="pn-topo"><span class="pn-pos"></span><span>R zera</span></div><div class="pn-relogio"></div>' +
       '<p class="pn-tit" style="font-weight:650;margin:10px 0 12px;color:#fff"></p><div class="pn-texto"></div><div class="pn-prox"></div>');
     glossario = montarGlossario();
+    slides.forEach(anotar);
+    montarDicas();
     const temLinha = !!document.querySelector('[data-id="linha-do-tempo"]');
     ajuda = el("div", { id: "ajuda", class: "no-print" }, document.body,
       '<div class="caixa"><h3>Atalhos</h3><dl>' +
       "<dt>→ espaço</dt><dd>próximo slide</dd><dt>← ⇧espaço</dt><dd>slide anterior</dd>" +
       "<dt>Home End</dt><dd>primeiro / último</dd><dt>F</dt><dd>tela cheia</dd>" +
       "<dt>N</dt><dd>notas do apresentador e cronômetro</dd><dt>R</dt><dd>zera o cronômetro</dd>" +
-      (glossario ? "<dt>G</dt><dd>glossário (ou clique numa sigla sublinhada)</dd>" : "") +
+      (glossario ? "<dt>G</dt><dd>glossário, com busca</dd><dt>mouse</dt><dd>passe o mouse num termo sublinhado com pontinhos para ler a explicação; clique para abri-lo no glossário</dd>" : "") +
       (temLinha ? "<dt>T</dt><dd>volta à linha do tempo</dd>" : "") +
       "<dt>P</dt><dd>imprimir / salvar PDF (margens: nenhuma; gráficos de fundo: ligado)</dd><dt>Esc</dt><dd>fecha painéis</dd></dl></div>");
     ajuda.addEventListener("click", e => { if (e.target === ajuda) ajuda.classList.remove("aberto"); });

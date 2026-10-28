@@ -1,4 +1,4 @@
-"""Carga da base, grupos de e-mails idênticos e divisões sem vazamento.
+"""Carga da base, grupos de cópias (linhas de contagem iguais) e divisões sem vazamento.
 
 Regra central: e-mails com o mesmo vetor de contagens formam um grupo e ficam sempre do mesmo lado
 (treino ou teste). Sem isso, uma cópia no treino "ensina" a resposta da cópia no teste.

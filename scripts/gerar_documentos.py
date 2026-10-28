@@ -137,16 +137,18 @@ São {B['n_emails']} e-mails ({B['n_email_real']} e-mails reais e {B['n_spam']} 
 |---|---|
 | 📓 Notebook para o professor | [`Projeto3_Classificacao_Spam.ipynb`](Projeto3_Classificacao_Spam.ipynb): a história completa, com o código principal visível, em poucos minutos · [![Abrir no Colab]({SELO})]({COLAB}/Projeto3_Classificacao_Spam.ipynb) |
 | 🧪 Notebooks técnicos | uma etapa por notebook, todos executados e prontos para o Colab ([lista abaixo](#os-notebooks)) |
-| 🎞️ Apresentações | [banca]({PAGES}/apresentacao/banca/) (técnica) · [equipe]({PAGES}/apresentacao/equipe/) (didática, com glossário) |
+| 🎞️ Apresentações | [banca]({PAGES}/apresentacao/banca/) (técnica) · [equipe]({PAGES}/apresentacao/equipe/) (didática); nas duas, passar o mouse num termo sublinhado mostra a explicação, e a tecla G abre o glossário |
 | ✉️ Demonstração | `streamlit run demo/app.py`: cole um e-mail e veja cada etapa até a decisão |
 | ✅ Para a banca | [INSTALACAO.md](INSTALACAO.md) · [COMO_TESTAR.md](COMO_TESTAR.md) |
 | 🧠 Os modelos, explicados | [docs/MODELOS.md](docs/MODELOS.md): cada modelo em uma frase, uma analogia e como ele decide; o stacking, o algoritmo genético e o TabPFN |
+| 📖 Glossário | [docs/GLOSSARIO.md](docs/GLOSSARIO.md): cada sigla, métrica e método explicado para quem não é da área (o mesmo texto das notas que aparecem ao passar o mouse nos slides) |
+| 📚 De onde vêm os dados | [dados/LEIA-ME.md](dados/LEIA-ME.md): a Enron, o corpus Enron-Spam, o CSV do Kaggle e o resumo do artigo de Metsis et al. (2006) |
 | ⏱️ Testar em 5 minutos | [COMO_TESTAR.md](COMO_TESTAR.md#teste-rápido-5-minutos): pelo Colab, sem instalar nada, ou com 3 comandos no computador |
 | 🧭 Decisões e números | [docs/REGISTRO_DECISOES.md](docs/REGISTRO_DECISOES.md) · [docs/METODOLOGIA.md](docs/METODOLOGIA.md) · [docs/MODEL_CARD.md](docs/MODEL_CARD.md) · [docs/REFERENCIAS.md](docs/REFERENCIAS.md) |
 
 ## A história em 8 capítulos
 
-1. **A pergunta e os dados.** Separar spam de e-mail real em {B['n_emails']} e-mails. Descobrimos que o CSV é o Enron1 e que as palavras foram contadas como pedaços de texto.
+1. **A pergunta e os dados.** Separar spam de e-mail real em {B['n_emails']} e-mails. Os e-mails reais são de um funcionário da Enron, empresa de energia americana que faliu num escândalo de fraude e cujos e-mails ficaram públicos na investigação, e foram reunidos com spams de um dos pesquisadores no corpus Enron-Spam (Metsis et al., 2006). Descobrimos que o CSV é o Enron1 inteiro, que as palavras foram contadas como pedaços de texto (substrings, achadas até dentro de outras palavras) e que as cópias são quase todas e-mails reais.
 2. **Primeiro, sem rótulo.** O K-means agrupa os e-mails por assunto (ARI {n(NS['kmeans_ari'], 2)}). O NMF acha um tópico de propaganda com {pct(NMF_FRAC_SPAM, 1)} do spam, mas um em cada três e-mails dele é real (MCC {n(MCC_NMF, 2)} como filtro). Conclusão: há pista sem rótulo, mas, para um filtro bom, precisamos das respostas, ou seja, de aprendizado supervisionado.
 3. **Um torneio de {len(R['torneio'])} modelos supervisionados, com um ranking.** Mesma prova para todos, incluindo uma referência que nunca marca spam. Os lineares lideraram (o melhor modelo único foi o {sorted((r for r in R['torneio'] if r['familia'] not in ('combinação', 'referência')), key=lambda r: -r['mcc'])[0]['modelo']}, com MCC {n(sorted((r for r in R['torneio'] if r['familia'] not in ('combinação', 'referência')), key=lambda r: -r['mcc'])[0]['mcc'])}). O detalhe que mudou o ranking foi o TF-IDF com log. Os melhores ficaram muito perto uns dos outros, e o 1º lugar já era uma combinação simples de 4 modelos. Ranking completo: [docs/MODELOS.md](docs/MODELOS.md).
 4. **Combinar um de cada família: o stacking.** Os modelos erram em e-mails diferentes, e um meta-modelo aprende a pesar as 7 notas. No limiar 0,5, o Stacking 7 superou o melhor modelo único no MCC (p de Holm {n(mcc_s7['p_holm'])}); no custo, ficou mais barato em média.
@@ -188,7 +190,7 @@ Todos usam o **limiar de custo**: perder 1 e-mail real custa o mesmo que receber
 ## O que descobrimos
 
 1. **O CSV é o Enron1, e as palavras foram contadas como substring.** Reproduzimos {B['linhas_reproduzidas']} de {B['n_emails']} linhas a partir dos textos originais. Há {B['colunas_1_letra']} colunas de uma letra só, e "ect" aparece em todos os e-mails, porque está dentro de "subject".
-2. **Duplicata não indica spam.** {pct(B['fracao_duplicatas_email_real'], 0)} das {B['duplicatas_excedentes']} cópias são e-mails reais. Cópias idênticas ficam sempre do mesmo lado da divisão treino/teste.
+2. **Duplicata não indica spam.** {pct(B['fracao_duplicatas_email_real'], 0)} das {B['duplicatas_excedentes']} cópias são e-mails reais. Cópia quer dizer a mesma linha de contagens, não o mesmo texto: como até as letras soltas são colunas, os textos têm as mesmas letras, e só mudam algarismos, pontuação, espaços ou a ordem dos trechos. {B['copias']['grupos_texto_identico']} dos {B['copias']['grupos']} grupos têm texto idêntico; o maior, com {B['copias']['maior_grupo']} e-mails, é um mês inteiro de um aviso diário (muda o dia, o mês não). As cópias ficam sempre do mesmo lado da divisão treino/teste.
 3. **Sem rótulo, os grupos naturais são assuntos, não "spam × real".** O K-means tem ARI de {n(NS['kmeans_ari'], 2)}. Sem nenhum spam rotulado, treinando só com e-mails reais (semissupervisionado), a melhor pista é "não se parece com meus e-mails reais", o erro de reconstrução, com PR-AUC {n(NS['anomalia_so_email_real']['reconstrucao_pr_auc'], 2)}.
 4. **A representação vale mais que o algoritmo.** Com TF-IDF com log, a Reg. Logística sobe de {n(A['lr_mcc_antes'])} para {n(A['lr_mcc_depois'])}, e o kNN, de {n(A['knn_mcc_antes'])} para {n(A['knn_mcc_depois'])}.
 5. **Modelos que erram diferente se completam.** O kNN, fraco sozinho, é um dos que menos erram junto com os outros e recebe o maior peso do meta-modelo ({n(R['stacking']['pesos_meta']['kNN cosseno'], 2)}). Treze modelos empatam com sete.
@@ -338,7 +340,7 @@ CFG_E, CFG_P = F["especialista"]["config"], F["generalista_sem_chave"]["config"]
 FICHAS = [
     ("Regressão Logística", "Reg. Logística", "Reg. Logística TF-IDF",
      "Dá um peso a cada palavra, soma os pesos das palavras do e-mail e transforma a soma numa probabilidade de spam.",
-     "Uma balança: as palavras típicas de spam pesam num prato, as típicas de e-mail real no outro.",
+     "A balança. Dois pratos: o do e-mail real e o do spam. Cada palavra do e-mail cai num deles, com o peso aprendido no treino (\"enron\" pesa no prato do e-mail real; palavras de propaganda, no do spam). Para onde a balança pende vira a chance de spam, de 0% a 100%.",
      ["Cada palavra recebe um peso positivo (puxa para spam) ou negativo (puxa para e-mail real), aprendido no treino.",
       "A soma passa por uma curva em S (a função logística), que a converte numa nota entre 0 e 1.",
       "O parâmetro C controla quanto os pesos podem crescer (C maior = menos freio); `cw=balanced` compensa o spam ser minoria."],
@@ -346,21 +348,21 @@ FICHAS = [
      "só traça fronteiras retas: não percebe combinações de palavras."),
     ("LinearSVC (a linha de base)", None, "LinearSVC TF-IDF",
      "Também traça uma fronteira reta entre spam e e-mail real, mas escolhe a que deixa a maior folga entre os dois lados.",
-     "A rua mais larga possível entre dois bairros: quanto mais larga, menos chance de errar o lado.",
+     "A avenida entre dois bairros. Cada casa é um e-mail de treino, no bairro do e-mail real ou no bairro do spam. Ele abre a avenida reta mais larga possível entre os dois; só as casas da beira (os vetores de suporte) decidem por onde ela passa. Um e-mail novo é spam se cair do lado do bairro do spam; a nota é a distância até o meio da avenida, não uma probabilidade.",
      ["Procura o hiperplano (a \"reta\" em 3000 dimensões) com a maior margem até os e-mails mais próximos de cada classe.",
       "A nota é a distância à fronteira, não uma probabilidade.",
       "Foi o melhor modelo único do torneio e virou a **linha de base**: o filtro simples que o stacking precisa superar."],
      "TF-IDF com log", "rápido e muito forte em texto.", "fronteira reta, como a Regressão Logística."),
     ("SVM com kernel RBF", "SVM RBF", "SVM RBF SVD300",
      "Resume as 3000 colunas em algumas centenas de \"temas\" e traça uma fronteira curva, comparando cada e-mail com e-mails de referência.",
-     "Um mapa de bairros com qualquer formato: o e-mail é classificado pelo bairro onde cai.",
+     "Uma cerca de qualquer formato. Às vezes o spam forma uma ilha cercada de e-mails reais, e nenhuma avenida reta separa os dois. Antes, o SVM resume as palavras em \"temas\" (palavras que andam juntas, pelo SVD); depois, o kernel RBF desenha uma cerca curva em volta da ilha: dentro, o lado do spam; fora, o lado do e-mail real.",
      ["Primeiro, o SVD (decomposição em valores singulares) comprime as 3000 colunas em 300 ou 500 direções que resumem os assuntos.",
       "Depois, o kernel RBF mede a semelhança do e-mail com os vetores de suporte, os e-mails de treino mais próximos da fronteira.",
       "Isso permite fronteiras curvas (a curvatura vem do kernel); o C troca folga por acertos no treino: C maior = fronteira mais colada ao treino."],
      "TF-IDF com log + SVD", "capta padrões que uma reta não capta.", "mais lento; a nota é uma distância, não uma probabilidade."),
     ("kNN (vizinhos mais próximos)", "kNN cosseno", "kNN TF-IDF cosseno",
      "Procura no treino os e-mails mais parecidos com o novo e copia a decisão da maioria deles.",
-     "Perguntar aos vizinhos: se os 5 e-mails mais parecidos eram spam, este provavelmente também é.",
+     "Perguntar aos vizinhos. O e-mail novo procura os k e-mails de treino mais parecidos com ele, os que usam as mesmas palavras (medido pelo cosseno), e copia a maioria: se a maioria dos vizinhos é spam, ele é spam; se é e-mail real, é e-mail real.",
      ["A semelhança é o cosseno entre os vetores TF-IDF: dois e-mails com as mesmas palavras, nas mesmas proporções, apontam para o mesmo lado.",
       "k é o número de vizinhos consultados (5 no padrão, 3 no Especialista).",
       "Não aprende pesos: guarda o treino inteiro e compara."],
@@ -368,13 +370,13 @@ FICHAS = [
      "decora a caixa: fora dela, e-mails reais de outro assunto não têm vizinhos parecidos e são confundidos com spam."),
     ("Rede neural (MLP)", "MLP", "MLP (rede neural)",
      "Uma rede neural pequena: uma camada de neurônios aprende combinações de palavras, e uma camada final junta tudo numa nota.",
-     "Uma equipe de detetives, cada um atento a um padrão diferente, e um chefe que soma as pistas.",
+     "Uma equipe de detetives e um chefe. Cada neurônio da camada do meio é um detetive que aprendeu a reconhecer uma combinação de palavras (por exemplo, duas palavras de propaganda juntas); o chefe junta as opiniões e dá a nota de spam.",
      ["Uma camada oculta com 128 neurônios (64 no Especialista); cada neurônio é uma soma ponderada das palavras seguida de um corte não linear.",
       "O treino ajusta os pesos aos poucos e para quando o desempenho numa parte separada do treino deixa de melhorar (*early stopping*)."],
      "TF-IDF com log", "capta combinações de palavras.", "é uma caixa-preta e varia com a semente."),
     ("Naive Bayes (Complement)", "Naive Bayes", "Naive Bayes Complement",
      "Conta, no treino, com que frequência cada palavra aparece em cada classe e combina essas chances para dar a nota.",
-     "Um detetive que olha cada pista isoladamente e multiplica as chances, sem pensar em como as pistas se relacionam.",
+     "O detetive que olha uma pista por vez. Um placar com dois lados, e-mail real e spam, começa no meio; cada palavra-pista empurra o placar para um lado, como se uma pista não tivesse nada a ver com a outra (por isso, \"ingênuo\").",
      ["\"Ingênuo\" porque supõe que as palavras são independentes dentro de cada classe, o que é falso, mas funciona razoavelmente.",
       "Com duas classes, a versão Complement equivale ao Naive Bayes multinomial sem a fração de spam da base como ponto de partida: o spam, que é minoria, não começa em desvantagem.",
       "O α suaviza as contagens, para uma palavra rara não zerar a conta."],
@@ -382,14 +384,14 @@ FICHAS = [
      "fraco sozinho, erra muito e erra junto com os outros: no stacking, recebe peso quase zero."),
     ("Extra Trees (árvores extremamente aleatórias)", "Extra Trees", "Extra Trees",
      "Centenas de árvores de decisão, cada uma com perguntas sorteadas, votam juntas.",
-     "Um júri de centenas de pessoas: cada uma olhou pistas diferentes, e a maioria decide.",
+     "Um júri. Cada jurado é uma árvore de perguntas de sim ou não (\"o e-mail tem a palavra X?\"); os cortes foram sorteados, então cada jurado pensa diferente. Cada um vota e-mail real ou spam, e vale a maioria.",
      ["Cada árvore faz perguntas do tipo \"a palavra X aparece mais de N vezes?\" até chegar a uma folha (spam ou e-mail real).",
       "Nas Extra Trees, cada árvore vê todos os e-mails, mas os pontos de corte e as palavras candidatas são sorteados: as árvores ficam diferentes entre si, e a média delas erra menos que cada uma.",
       "São 400 árvores no padrão e 800 no Especialista."],
      "contagens", "não precisa de TF-IDF e capta regras do tipo \"se... e se...\".", "decora detalhes da caixa do treino."),
     ("LightGBM (boosting de árvores)", "LightGBM", "LightGBM",
      "Também usa árvores, mas em sequência: cada árvore nova corrige um pouco o erro que ainda sobra.",
-     "Um aluno que revisa a prova várias vezes e, a cada revisão, corrige um pouco cada resposta, mais onde errou mais.",
+     "O aluno que revisa a prova. A primeira árvore dá um palpite; a segunda olha onde a primeira errou e corrige um pouco; a terceira corrige o que ainda sobrou, e assim por diante. A soma do palpite com as correções vira a nota.",
      ["São 400 árvores pequenas; cada uma é treinada para reduzir o erro que restou em todos os e-mails, com mais força onde o erro é maior (*gradient boosting*).",
       "A taxa de aprendizado (0,05) controla o tamanho de cada correção; o número de folhas, o tamanho de cada árvore."],
      "contagens", "muito forte em tabelas.", "aqui ficou atrás dos lineares: o texto favorece modelos lineares depois do TF-IDF com log."),
@@ -429,7 +431,7 @@ MODELOS_MD = f"""# Os modelos, explicados
 
 ## O torneio: o ranking dos {len(R['torneio'])} modelos supervisionados
 
-Todos fizeram a mesma prova: os mesmos {B['n_emails']} e-mails, a mesma validação cruzada (5 folds, com cópias idênticas sempre do mesmo lado) e a mesma régua (MCC, de −1 a 1; 0 = acaso). O "Dummy" é a referência: nunca marca spam.
+Todos fizeram a mesma prova: os mesmos {B['n_emails']} e-mails, a mesma validação cruzada (5 folds: o filtro treina em quatro partes e é testado na quinta, girando; as cópias, e-mails com a mesma linha de contagens, ficam sempre na mesma parte) e a mesma régua (MCC, de −1 a 1; 0 = acaso). O "Dummy" é a referência: nunca marca spam.
 
 | # | Modelo | Família | MCC | PR-AUC | Treino (s) |
 |---|---|---|---|---|---|
@@ -449,7 +451,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Os 7 modelos dão uma nota a cada e-mail, e um oitavo modelo, o **meta-modelo** (uma Regressão Logística), aprende quanto confiar em cada nota.
 
-**Analogia.** Um conselho de 7 especialistas e um presidente que aprendeu, pelo histórico, quanto ouvir cada um.
+**Analogia.** O conselho e o presidente. Sete especialistas dão notas ao mesmo e-mail; o presidente (uma Regressão Logística) aprendeu, com e-mails que os membros não viram no treino, quanto confiar em cada um. Ele soma as notas pesadas e compara com o limiar.
 
 **Como funciona:**
 1. Cada modelo é treinado várias vezes, cada vez sem uma parte do treino, e dá nota justamente à parte que não viu. São as notas *out-of-fold*: ninguém dá nota a um e-mail que usou para aprender.
@@ -469,7 +471,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Uma busca inspirada na evolução: combinações de ajustes competem, as melhores se cruzam e sofrem pequenas mutações, por {len(G['historico'])} gerações.
 
-**Analogia.** Criar cavalos de corrida: cruzar os mais rápidos e, de vez em quando, deixar surgir uma variação.
+**Analogia.** Criar cavalos de corrida. Cada candidato é uma combinação de ajustes dos sete modelos; a nota dele (MCC) é a velocidade. Os mais rápidos cruzam, os filhos sofrem pequenas mutações, e assim geração após geração.
 
 **Como funciona:**
 - Cada indivíduo é uma combinação de 8 genes: o ajuste de cada um dos 7 modelos e o C do meta-modelo. São {milhar(G['combinacoes'])} combinações possíveis.
@@ -481,7 +483,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Uma rede neural do tipo *transformer*, da Prior Labs, pré-treinada em tabelas sintéticas geradas por computador, que classifica uma tabela nova sem ser treinada nela.
 
-**Analogia.** Um aluno que nunca estudou esta matéria, mas já resolveu milhões de provas parecidas e reconhece o padrão na hora.
+**Analogia.** O aluno que estudou milhões de provas de mentira. Antes de conhecer esta base, ele estudou milhões de tabelas inventadas por computador. Aqui recebe, de uma vez, os e-mails de treino já respondidos e o e-mail novo, e responde sem estudar de novo (aprendizado em contexto).
 
 **Como funciona:**
 - Recebe, de uma vez, a tabela de treino (os e-mails e os rótulos) e os e-mails a classificar, e devolve as notas sem ajustar os próprios pesos: é o aprendizado em contexto (*in-context learning*). Por dentro, faz a média de alguns estimadores sobre versões embaralhadas da tabela.

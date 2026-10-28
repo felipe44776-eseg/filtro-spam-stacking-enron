@@ -3,7 +3,7 @@
 #
 # Seis perguntas que um avaliador cético faria:
 # 1. **O MCC vem de sinal ou de acaso?** Com os rótulos embaralhados, o MCC deveria ir a zero (teste de permutação).
-# 2. **Quase-cópias inflam o resultado?** O agrupamento só junta cópias idênticas; e as quase idênticas?
+# 2. **Quase-cópias inflam o resultado?** O agrupamento só junta cópias (linhas de contagem iguais); e as quase iguais?
 # 3. **O filtro depende do vocabulário da Enron?** Tirando as palavras da empresa, quanto cai? (ablação)
 # 4. **Quantos e-mails são precisos?** Curva de aprendizado, com o TabPFN, que promete brilhar com poucos dados.
 # 5. **A escolha depende do peso dado a cada erro?** Sensibilidade ao custo λ (1, 3, 9 e 20).
@@ -54,8 +54,9 @@ print(f"MCC com os rótulos verdadeiros: {mcc_real:.3f} | com rótulos embaralha
 
 # %% [markdown]
 # ## 2. Quase-cópias
-# O protocolo põe cópias **idênticas** do mesmo lado da divisão. Quase-cópias (o mesmo aviso automático com outra
-# data, o mesmo spam com outro link) podem cair dos dois lados. Medida: para cada e-mail de teste, o cosseno com o
+# O protocolo põe as cópias (linhas de contagem **iguais**) do mesmo lado da divisão. O mesmo aviso com outro dia
+# já é cópia, porque algarismos não são contados. Quase-cópias (o mesmo aviso com uma ou outra palavra diferente, o
+# mesmo spam com outro texto no link) podem cair dos dois lados. Medida: para cada e-mail de teste, o cosseno com o
 # e-mail de treino mais parecido (TF-IDF log). Depois, o MCC do Stacking 7 padrão com e sem os e-mails de teste
 # que têm um vizinho acima de 0,95 no treino, nos 20 folds de confirmação. Nenhum modelo é escolhido aqui.
 

@@ -9,7 +9,7 @@
 
 ## O torneio: o ranking dos 22 modelos supervisionados
 
-Todos fizeram a mesma prova: os mesmos 5172 e-mails, a mesma validação cruzada (5 folds, com cópias idênticas sempre do mesmo lado) e a mesma régua (MCC, de −1 a 1; 0 = acaso). O "Dummy" é a referência: nunca marca spam.
+Todos fizeram a mesma prova: os mesmos 5172 e-mails, a mesma validação cruzada (5 folds: o filtro treina em quatro partes e é testado na quinta, girando; as cópias, e-mails com a mesma linha de contagens, ficam sempre na mesma parte) e a mesma régua (MCC, de −1 a 1; 0 = acaso). O "Dummy" é a referência: nunca marca spam.
 
 | # | Modelo | Família | MCC | PR-AUC | Treino (s) |
 |---|---|---|---|---|---|
@@ -49,7 +49,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Dá um peso a cada palavra, soma os pesos das palavras do e-mail e transforma a soma numa probabilidade de spam.
 
-**Analogia.** Uma balança: as palavras típicas de spam pesam num prato, as típicas de e-mail real no outro.
+**Analogia.** A balança. Dois pratos: o do e-mail real e o do spam. Cada palavra do e-mail cai num deles, com o peso aprendido no treino ("enron" pesa no prato do e-mail real; palavras de propaganda, no do spam). Para onde a balança pende vira a chance de spam, de 0% a 100%.
 
 **Como decide:**
 - Cada palavra recebe um peso positivo (puxa para spam) ou negativo (puxa para e-mail real), aprendido no treino.
@@ -67,7 +67,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Também traça uma fronteira reta entre spam e e-mail real, mas escolhe a que deixa a maior folga entre os dois lados.
 
-**Analogia.** A rua mais larga possível entre dois bairros: quanto mais larga, menos chance de errar o lado.
+**Analogia.** A avenida entre dois bairros. Cada casa é um e-mail de treino, no bairro do e-mail real ou no bairro do spam. Ele abre a avenida reta mais larga possível entre os dois; só as casas da beira (os vetores de suporte) decidem por onde ela passa. Um e-mail novo é spam se cair do lado do bairro do spam; a nota é a distância até o meio da avenida, não uma probabilidade.
 
 **Como decide:**
 - Procura o hiperplano (a "reta" em 3000 dimensões) com a maior margem até os e-mails mais próximos de cada classe.
@@ -83,7 +83,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Resume as 3000 colunas em algumas centenas de "temas" e traça uma fronteira curva, comparando cada e-mail com e-mails de referência.
 
-**Analogia.** Um mapa de bairros com qualquer formato: o e-mail é classificado pelo bairro onde cai.
+**Analogia.** Uma cerca de qualquer formato. Às vezes o spam forma uma ilha cercada de e-mails reais, e nenhuma avenida reta separa os dois. Antes, o SVM resume as palavras em "temas" (palavras que andam juntas, pelo SVD); depois, o kernel RBF desenha uma cerca curva em volta da ilha: dentro, o lado do spam; fora, o lado do e-mail real.
 
 **Como decide:**
 - Primeiro, o SVD (decomposição em valores singulares) comprime as 3000 colunas em 300 ou 500 direções que resumem os assuntos.
@@ -101,7 +101,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Procura no treino os e-mails mais parecidos com o novo e copia a decisão da maioria deles.
 
-**Analogia.** Perguntar aos vizinhos: se os 5 e-mails mais parecidos eram spam, este provavelmente também é.
+**Analogia.** Perguntar aos vizinhos. O e-mail novo procura os k e-mails de treino mais parecidos com ele, os que usam as mesmas palavras (medido pelo cosseno), e copia a maioria: se a maioria dos vizinhos é spam, ele é spam; se é e-mail real, é e-mail real.
 
 **Como decide:**
 - A semelhança é o cosseno entre os vetores TF-IDF: dois e-mails com as mesmas palavras, nas mesmas proporções, apontam para o mesmo lado.
@@ -119,7 +119,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Uma rede neural pequena: uma camada de neurônios aprende combinações de palavras, e uma camada final junta tudo numa nota.
 
-**Analogia.** Uma equipe de detetives, cada um atento a um padrão diferente, e um chefe que soma as pistas.
+**Analogia.** Uma equipe de detetives e um chefe. Cada neurônio da camada do meio é um detetive que aprendeu a reconhecer uma combinação de palavras (por exemplo, duas palavras de propaganda juntas); o chefe junta as opiniões e dá a nota de spam.
 
 **Como decide:**
 - Uma camada oculta com 128 neurônios (64 no Especialista); cada neurônio é uma soma ponderada das palavras seguida de um corte não linear.
@@ -136,7 +136,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Conta, no treino, com que frequência cada palavra aparece em cada classe e combina essas chances para dar a nota.
 
-**Analogia.** Um detetive que olha cada pista isoladamente e multiplica as chances, sem pensar em como as pistas se relacionam.
+**Analogia.** O detetive que olha uma pista por vez. Um placar com dois lados, e-mail real e spam, começa no meio; cada palavra-pista empurra o placar para um lado, como se uma pista não tivesse nada a ver com a outra (por isso, "ingênuo").
 
 **Como decide:**
 - "Ingênuo" porque supõe que as palavras são independentes dentro de cada classe, o que é falso, mas funciona razoavelmente.
@@ -154,7 +154,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Centenas de árvores de decisão, cada uma com perguntas sorteadas, votam juntas.
 
-**Analogia.** Um júri de centenas de pessoas: cada uma olhou pistas diferentes, e a maioria decide.
+**Analogia.** Um júri. Cada jurado é uma árvore de perguntas de sim ou não ("o e-mail tem a palavra X?"); os cortes foram sorteados, então cada jurado pensa diferente. Cada um vota e-mail real ou spam, e vale a maioria.
 
 **Como decide:**
 - Cada árvore faz perguntas do tipo "a palavra X aparece mais de N vezes?" até chegar a uma folha (spam ou e-mail real).
@@ -172,7 +172,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Também usa árvores, mas em sequência: cada árvore nova corrige um pouco o erro que ainda sobra.
 
-**Analogia.** Um aluno que revisa a prova várias vezes e, a cada revisão, corrige um pouco cada resposta, mais onde errou mais.
+**Analogia.** O aluno que revisa a prova. A primeira árvore dá um palpite; a segunda olha onde a primeira errou e corrige um pouco; a terceira corrige o que ainda sobrou, e assim por diante. A soma do palpite com as correções vira a nota.
 
 **Como decide:**
 - São 400 árvores pequenas; cada uma é treinada para reduzir o erro que restou em todos os e-mails, com mais força onde o erro é maior (*gradient boosting*).
@@ -189,7 +189,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Os 7 modelos dão uma nota a cada e-mail, e um oitavo modelo, o **meta-modelo** (uma Regressão Logística), aprende quanto confiar em cada nota.
 
-**Analogia.** Um conselho de 7 especialistas e um presidente que aprendeu, pelo histórico, quanto ouvir cada um.
+**Analogia.** O conselho e o presidente. Sete especialistas dão notas ao mesmo e-mail; o presidente (uma Regressão Logística) aprendeu, com e-mails que os membros não viram no treino, quanto confiar em cada um. Ele soma as notas pesadas e compara com o limiar.
 
 **Como funciona:**
 1. Cada modelo é treinado várias vezes, cada vez sem uma parte do treino, e dá nota justamente à parte que não viu. São as notas *out-of-fold*: ninguém dá nota a um e-mail que usou para aprender.
@@ -209,7 +209,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Uma busca inspirada na evolução: combinações de ajustes competem, as melhores se cruzam e sofrem pequenas mutações, por 30 gerações.
 
-**Analogia.** Criar cavalos de corrida: cruzar os mais rápidos e, de vez em quando, deixar surgir uma variação.
+**Analogia.** Criar cavalos de corrida. Cada candidato é uma combinação de ajustes dos sete modelos; a nota dele (MCC) é a velocidade. Os mais rápidos cruzam, os filhos sofrem pequenas mutações, e assim geração após geração.
 
 **Como funciona:**
 - Cada indivíduo é uma combinação de 8 genes: o ajuste de cada um dos 7 modelos e o C do meta-modelo. São 7.077.888 combinações possíveis.
@@ -221,7 +221,7 @@ Daí a ideia seguinte: testar qual combinação funciona melhor e entender por q
 
 **Em uma frase.** Uma rede neural do tipo *transformer*, da Prior Labs, pré-treinada em tabelas sintéticas geradas por computador, que classifica uma tabela nova sem ser treinada nela.
 
-**Analogia.** Um aluno que nunca estudou esta matéria, mas já resolveu milhões de provas parecidas e reconhece o padrão na hora.
+**Analogia.** O aluno que estudou milhões de provas de mentira. Antes de conhecer esta base, ele estudou milhões de tabelas inventadas por computador. Aqui recebe, de uma vez, os e-mails de treino já respondidos e o e-mail novo, e responde sem estudar de novo (aprendizado em contexto).
 
 **Como funciona:**
 - Recebe, de uma vez, a tabela de treino (os e-mails e os rótulos) e os e-mails a classificar, e devolve as notas sem ajustar os próprios pesos: é o aprendizado em contexto (*in-context learning*). Por dentro, faz a média de alguns estimadores sobre versões embaralhadas da tabela.

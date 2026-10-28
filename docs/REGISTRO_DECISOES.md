@@ -30,7 +30,7 @@ Os números vêm dos notebooks (`notebooks/`, `experimentos/`) e dos arquivos de
 ## 2. Decisões e por quê
 
 ### D1. Duplicatas: separar por grupo, não apagar
-A hipótese "duplicata indica spam" foi **refutada**: há 7,1% de spam entre as linhas duplicadas, contra 33,2% entre as únicas. As cópias idênticas ficam sempre do mesmo lado na divisão entre treino e teste (`StratifiedGroupKFold` com o hash da linha); se caírem dos dois lados, a nota de teste fica inflada.
+A hipótese "duplicata indica spam" foi **refutada**: há 7,1% de spam entre as linhas duplicadas, contra 33,2% entre as únicas. As cópias (linhas de contagem idênticas; o texto pode diferir em espaços, algarismos, pontuação ou ordem, ver D12) ficam sempre do mesmo lado na divisão entre treino e teste (`StratifiedGroupKFold` com o hash da linha); se caírem dos dois lados, a nota de teste fica inflada.
 
 ### D2. Representação: TF-IDF com escala logarítmica (`sublinear_tf=True`)
 A Regressão Logística subiu de MCC 0,923 para 0,961, e o kNN de cerca de 0,75 para 0,94. A mudança inverteu o ranking: os modelos lineares passaram à frente do boosting. A explicação provável é que a contagem por substring infla as frequências, e o log amortece esse efeito.
@@ -329,6 +329,13 @@ Caso contrário, o Generalista fica como está. O Especialista não é decidido 
 - Os "857 a menos por mil" da D10 dependem de λ: com λ = 1, 3 e 20, o Stacking 8 padrão também custa menos que o Stacking 7 padrão, mas a diferença fica entre 42 e 97 por mil.
 - As quase-cópias: o MCC "sem quase-cópias" é medido num subconjunto com outra mistura de classes; ele mostra a ordem de grandeza do efeito, não o desconta exatamente.
 - O piso de detecção passou a usar quantis t com J − 1 graus de liberdade (0,0083 com 20 folds).
+
+### D12. Vocabulário para leigos e a definição exata de "cópia" (2026-10-28)
+Pedido do usuário depois dos decks em forma de história: o texto supunha que o leitor conhecia os termos. O que mudou e por quê:
+1. **Glossário único com dica ao passar o mouse.** `apresentacao/fonte/comum/glossario.json` (120 termos, cada um com uma explicação para leigo) alimenta os dois decks e `docs/GLOSSARIO.md`. O `deck.js` marca sozinho cada termo no texto dos slides; os números das definições vêm do JSON, como no resto.
+2. **"Cópia" é a mesma linha de contagens, não o mesmo texto.** Conferido nos textos originais da AUEB (`scripts/01`, seção 4): dos 286 grupos de cópias, 120 têm texto idêntico; nos outros 166, mudam só os espaços e quebras de linha (93), os algarismos e sinais (67) ou a ordem dos trechos (6). Como as 26 letras soltas são colunas, os textos de um grupo têm sempre as mesmas letras. O maior grupo, 31 avisos diários "hpl nom for …", é um mês inteiro: muda o dia, o mês não (os meses são colunas). Uma primeira versão do texto dizia que "palavras fora do vocabulário não são contadas", o que a revisão crítica derrubou: elas entram pelas letras. O apêndice da banca dizia "textos idênticos" e "hash do texto": corrigido. Não muda nenhum número nem o protocolo, que sempre agrupou pela linha. Consequência para a leitura das quase-cópias: "o mesmo aviso com outro dia" já é cópia; quase-cópia é o que muda em alguma letra.
+4. **Revisão crítica da camada nova** (mesmo dia): os 5172 e-mails não são todos "de um funcionário da Enron" (os 1500 spams são da coleção de Paliouras, de 2003 a 2005); "pedaço de texto" não é *token* (a contagem é de substrings); o "teste de sinal" passou a se chamar teste de permutação (teste do sinal é outro teste); o teste trancado foi citado num desempate (D8), e os textos deixaram de dizer "nunca para escolher"; as afirmações do artigo ficaram separadas da nossa leitura.
+3. **Fontes e artigo.** Os decks contam o caminho Enron → Enron-Spam (Metsis et al., 2006) → CSV do Kaggle → reprodução linha a linha, e resumem o artigo (`dados/LEIA-ME.md`, seção 3b). Fica explícito que usamos os dados do artigo, não o protocolo dele (retreino a cada 100 e-mails, cinco versões do Naive Bayes, revocação num limiar fixo); por isso os números não são comparáveis. Os fatos externos citados nos slides (anos, números do artigo) ficam no bloco `LITERATURA` do `apresentacao/build.py`, com a fonte.
 
 ## 3. Hipóteses descartadas
 - A duplicata indica spam (refutada em D1).

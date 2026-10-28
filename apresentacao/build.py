@@ -8,17 +8,21 @@ Entrada
     resultados/metricas_finais.json   fonte única dos números
     docs/REGISTRO_DECISOES.md         só os dois limites da regra pré-registrada D10
     apresentacao/fonte/               templates editáveis (comum/estilo.css, comum/deck.js, comum/graficos.js,
-                                      banca.html, equipe.html, index.html)
+                                      comum/modelos.js, banca.html, equipe.html, index.html)
+    apresentacao/fonte/comum/glossario.json   o glossário único (decks e docs/GLOSSARIO.md)
 Saída
     apresentacao/banca/index.html     deck técnico (banca)
     apresentacao/equipe/index.html    deck didático (equipe)
     apresentacao/index.html           página de entrada (GitHub Pages)
+    docs/GLOSSARIO.md                 o mesmo glossário, para ler no GitHub
 
 Regras dos templates
     * Número exibido entra como {{caminho|formato}}; o caminho é resolvido em DADOS na hora do build.
       Caminho inexistente interrompe o build. Formatos: int, mcc, d1..d4, pct, pct0, custo, s3, s4, spct, p, n, txt.
     * <link rel="stylesheet" href="..."> e <script src="..."></script> são trocados pelo conteúdo do arquivo.
     * <!--@DADOS@--> vira  <script>const DADOS = {...};</script>.
+    * <!--@GLOSSARIO@--> vira o glossário (JSON, com os {{tokens}} resolvidos); o deck.js usa os campos "a" para
+      marcar cada termo no texto dos slides com a explicação ao passar o mouse.
 
 Depois de gerar, o build verifica: tokens pendentes, recursos externos, a palavra em inglês para "e-mail real"
 fora do glossário e dígitos digitados à mão no texto dos slides. Qualquer falha devolve código de saída 1.
@@ -36,6 +40,8 @@ RAIZ = AQUI.parent
 FONTE = AQUI / "fonte"
 METRICAS = RAIZ / "resultados" / "metricas_finais.json"
 REGISTRO = RAIZ / "docs" / "REGISTRO_DECISOES.md"
+GLOSSARIO = FONTE / "comum" / "glossario.json"      # fonte única do glossário (decks e docs/GLOSSARIO.md)
+GLOSSARIO_MD = RAIZ / "docs" / "GLOSSARIO.md"
 
 DECKS = {"banca": "banca.html", "equipe": "equipe.html"}
 
@@ -47,6 +53,21 @@ ALFA = 0.05
 # Contagens esperadas do pytest, copiadas de COMO_TESTAR.md ("Teste rápido"): não estão no JSON.
 # Se o COMO_TESTAR.md mudar, atualize aqui (sugestão: um campo testes.* no JSON).
 TESTES = {"clone": "42 passed, 3 skipped", "com_filtros": "45 passed", "fonte": "COMO_TESTAR.md"}
+# Fatos de fontes externas citados nos slides: não são resultados do projeto, mas também não são digitados no
+# template. Cada um com a fonte.
+LITERATURA = {
+    # Enron: falência em dezembro de 2001; a FERC, que investigava o mercado de energia do oeste dos EUA, publicou os
+    # e-mails em março de 2003 (Federal Register, 14/04/2003); a versão organizada para pesquisa tem cerca de 150
+    # funcionários (Klimt e Yang, 2004; Metsis et al., 2006, seção 3).
+    "enron_falencia": 2001, "ferc_publicou": 2003, "enron_funcionarios": 150,
+    # Metsis, Androutsopoulos e Paliouras, CEAS 2006: seis caixas, cinco versões do Naive Bayes, retreino a cada
+    # 100 e-mails, 500/1000/3000 atributos por ganho de informação (seções 2 a 4).
+    "metsis_ano": 2006, "metsis_caixas": 6, "metsis_versoes_nb": 5, "metsis_lote": 100,
+    "metsis_atributos": "500, 1000 ou 3000",
+    # Tabelas 4 e 5 do artigo: Naive Bayes multinomial booleano, 3000 atributos, limiar 0,5, no Enron1.
+    "metsis_enron1_spam_pego": 0.96, "metsis_enron1_real_mantido": 0.9525,
+    "metsis_enron1_spam_pego_pct": 96.00, "metsis_enron1_real_mantido_pct": 95.25,     # como no artigo, duas casas
+}
 
 
 # --------------------------------------------------------------------------------------------- extração
@@ -87,7 +108,7 @@ def extrair(R: dict) -> dict:
     GA_, PAD_, LSO_ = "Stacking 7 do GA (Especialista)", "Stacking 7 padrão", "LinearSVC otimizado"
     D = {
         "meta": {k: R["meta"][k] for k in ("custo_fp", "custo_fn", "seed_teste")},
-        "limiar_padrao": LIMIAR_PADRAO, "alfa": ALFA, "testes": TESTES,
+        "limiar_padrao": LIMIAR_PADRAO, "alfa": ALFA, "testes": TESTES, "lit": LITERATURA,
         "base": {k: v for k, v in b.items() if k not in ("origem", "contagem")},
         "dummy_acuracia": R["metricas_didaticas"]["dummy_acuracia"],
         "palavras": R["palavras"],
@@ -303,6 +324,9 @@ def derivados(D: dict) -> dict:
     sa_dif = {l: sens[(l, "Stacking 7 padrão")] - sens[(l, "Stacking 8 padrão (+TabPFN)")]
               for l in sorted({r["custo_fp"] for r in tb["sensibilidade_custo"]})}
     return {
+        # anos dos e-mails reais e do spam de cada caixa (Summary.txt de cada caixa do Enron-Spam)
+        "anos": {r["base"]: {"real": f'{r["email_real_de"][:4]}–{r["email_real_ate"][:4]}',
+                             "spam": f'{r["spam_de"][:4]}–{r["spam_ate"][:4]}'} for r in tb["fontes_spam"]},
         "frac_spam": b["n_spam"] / b["n_emails"],
         "frac_real": b["n_email_real"] / b["n_emails"],
         "frac_teste": D["protocolo"]["teste_n"] / b["n_emails"],
@@ -573,11 +597,51 @@ def inline(html: str, pasta: Path) -> str:
     return re.sub(r'<script src="([^"]+)"></script>', js, html)
 
 
-def montar(template: Path, D: dict, extra: dict | None = None) -> str:
+def glossario(D: dict) -> list[dict]:
+    """Lê o glossário único, resolve os {{tokens}} e confere: campos obrigatórios, termos e apelidos sem repetição.
+    Campos: t (termo), n (nome por extenso), g (grupo), d (explicação para leigo), a (formas em que o termo aparece
+    no texto e é marcado com a dica ao passar o mouse; padrão: o próprio termo), auto (false = não marcar)."""
+    itens = json.loads(substituir(GLOSSARIO.read_text(encoding="utf-8"), D, GLOSSARIO.name))
+    erros, vistos = [], {}
+    for it in itens:
+        falta = [c for c in ("t", "g", "d") if not it.get(c)]
+        if falta:
+            erros.append(f"glossário: '{it.get('t')}' sem {', '.join(falta)}")
+        for forma in ([it["t"]] if it.get("auto") is False else it.get("a") or [it["t"]]):
+            if forma in vistos and vistos[forma] != it["t"]:
+                erros.append(f"glossário: a forma '{forma}' aparece em '{vistos[forma]}' e em '{it['t']}'")
+            vistos[forma] = it["t"]
+    if len({it["t"] for it in itens}) != len(itens):
+        erros.append("glossário: termo repetido")
+    if erros:
+        raise SystemExit("ERRO no build:\n  " + "\n  ".join(erros))
+    return itens
+
+
+def glossario_md(itens: list[dict]) -> str:
+    """docs/GLOSSARIO.md: o mesmo glossário dos decks, por grupo e em ordem alfabética."""
+    grupos = list(dict.fromkeys(it["g"] for it in itens))
+    linhas = ["# Glossário", "",
+              "Cada termo, sigla e métrica do projeto explicados para quem não é da área. É o mesmo texto das notas que "
+              "aparecem ao passar o mouse nos slides. Os números vêm de `resultados/metricas_finais.json`.", ""]
+    linhas += [" · ".join(f"[{g}](#{re.sub(r'[^a-z0-9à-ú -]', '', g.lower()).replace(' ', '-')})" for g in grupos), ""]
+    for g in grupos:
+        linhas += [f"## {g}", ""]
+        for it in sorted((i for i in itens if i["g"] == g), key=lambda i: i["t"].lower()):
+            nome = f" ({it['n']})" if it.get("n") else ""
+            linhas += [f"**{it['t']}**{nome}. {it['d']}", ""]
+    linhas += ["---", "*Gerado por `apresentacao/build.py` a partir de `apresentacao/fonte/comum/glossario.json`.*", ""]
+    return "\n".join(linhas)
+
+
+def montar(template: Path, D: dict, extra: dict | None = None, gloss: list[dict] | None = None) -> str:
     html = substituir(template.read_text(encoding="utf-8"), D, template.name)
     for k, v in (extra or {}).items():
         html = html.replace(k, v)
     html = inline(html, template.parent)
+    if gloss is not None:
+        texto = json.dumps(gloss, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+        html = html.replace("<!--@GLOSSARIO@-->", f'<script type="application/json" id="glossario-dados">{texto}</script>')
     dados = json.dumps(arred(D), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return html.replace("<!--@DADOS@-->", f"<script>const DADOS = {dados};</script>")
 
@@ -650,8 +714,13 @@ def main() -> int:
     if falsas:
         raise SystemExit("ERRO no build:\n  " + "\n  ".join(falsas))
     saidas, contagem = {}, {}
+    gloss = glossario(D)
+    GLOSSARIO_MD.write_text(glossario_md(gloss), encoding="utf-8")
+    print(f"gerado docs/GLOSSARIO.md  ({len(gloss)} termos)")
     for nome, arq in DECKS.items():
-        html = montar(FONTE / arq, D)
+        html = montar(FONTE / arq, D, gloss=gloss)
+        if "<!--@GLOSSARIO@-->" in html or 'id="glossario-dados"' not in html:
+            raise SystemExit(f"ERRO no build: {arq} precisa do marcador <!--@GLOSSARIO@--> (glossário e dicas)")
         contagem[nome] = len(re.findall(r'<section class="slide[ "]', html))
         destino = AQUI / nome / "index.html"
         destino.parent.mkdir(parents=True, exist_ok=True)
@@ -666,7 +735,7 @@ def main() -> int:
         n = f" · {contagem[nome.split('/')[0]]} slides" if "/" in nome else ""
         print(f"gerado apresentacao/{nome}  ({len(html.encode('utf-8')) / 1024:.0f} KB{n})")
     gl = RE_GLOSSARIO.search(saidas["equipe/index.html"])
-    print(f"glossário (equipe): a palavra em inglês aparece {len(RE_PROIBIDA.findall(gl.group(0))) if gl else 0} vez(es), só lá")
+    print(f"glossário: a palavra em inglês aparece {len(RE_PROIBIDA.findall(gl.group(0))) if gl else 0} vez(es), só lá")
 
     erros = verificar(saidas)
     if erros:

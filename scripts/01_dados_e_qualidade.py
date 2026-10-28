@@ -7,6 +7,9 @@
 # palavra aparece no e-mail.
 
 # %%
+import re
+from collections import defaultdict
+
 import numpy as np
 import pandas as pd
 
@@ -73,9 +76,10 @@ top = [j for j in np.argsort(-v) if longas[j]][:8]
 print("\npalavras (3+ letras) mais contadas nesse e-mail:", {str(vocab[j]): int(v[j]) for j in top})
 
 # %% [markdown]
-# **Um detalhe que muda a leitura das colunas:** como a contagem é por *substring*, o vocabulário inclui as 26 letras
-# soltas e 127 pares de letras. A coluna "e" conta quantas letras "e" o e-mail tem; "ect" também conta pedaços de
-# "subject", "project" e "direct". As colunas medem mais *tamanho e estilo do texto* do que palavras inteiras.
+# **Um detalhe que muda a leitura das colunas:** o vocabulário do autor do CSV inclui as 26 letras soltas e 127 pares
+# de letras, e a contagem é por *substring*. Então a coluna "e" conta todas as letras "e" do e-mail, e "ect" também
+# conta pedaços de "subject", "project" e "direct". As colunas medem mais *tamanho e estilo do texto* do que palavras
+# inteiras. Não há coluna com algarismo nem com sinal de pontuação.
 
 # %%
 tamanhos = pd.Series([min(len(w), 6) for w in vocab]).value_counts().sort_index()
@@ -84,9 +88,9 @@ print(tamanhos.to_string())
 print(f"\ncontagem da letra 'e' nesse spam: {int(v[base.vocab.index('e')])}")
 
 # %% [markdown]
-# ## 4. Cópias idênticas: são e-mails reais, não spam
+# ## 4. Cópias (linhas de contagem iguais): são e-mails reais, não spam
 # Hipótese inicial: "duplicata indica spam" (campanhas repetidas). Os dados dizem o contrário: as cópias são
-# sobretudo e-mails reais de modelo fixo (avisos e relatórios automáticos sem números).
+# sobretudo e-mails reais de modelo fixo (avisos e relatórios automáticos).
 #
 # **Consequência para o protocolo:** se uma cópia fica no treino e a outra no teste, o modelo "lembra" a resposta.
 # Por isso toda divisão treino/teste é feita **por grupo** (cópias sempre do mesmo lado).
@@ -102,6 +106,63 @@ print(f"cópias excedentes: {dup['duplicatas_excedentes']} ({dup['fracao_duplica
 print(excedentes_por_classe.to_string())
 print(f"grupos com rótulos diferentes para o mesmo vetor: {int(conflito)}")
 print(f"acurácia da regra 'tem cópia => spam': {regra:.1%} (pior que nunca marcar spam: {dummy_acuracia:.1%})")
+
+# %% [markdown]
+# **O que conta como cópia.** Duas linhas com as **mesmas 3000 contagens**. Como as 26 letras também são colunas, isso
+# só acontece quando os textos têm exatamente as mesmas letras; o que pode mudar são algarismos, pontuação, espaços e
+# a ordem dos trechos, que o vocabulário não vê. Com os textos originais da AUEB, separamos os grupos de cópias pelo
+# que muda entre os textos.
+
+# %%
+chave_aueb = [r.astype(np.int64).tobytes() for r in X1]
+membros = defaultdict(list)
+for k, t, n, c in zip(chave_aueb, textos, nomes, y_aueb):
+    membros[k].append((t, n, int(c)))
+grupos_copia = {k: v for k, v in membros.items() if len(v) > 1}
+tam = pd.Series({k: len(v) for k, v in grupos_copia.items()})
+identico = {k: len({t for t, _, _ in v}) == 1 for k, v in grupos_copia.items()}
+# o que muda entre os textos de um grupo: só espaços e quebras de linha; algarismos e sinais (as letras, na mesma
+# ordem, são iguais); ou a ordem dos trechos (as mesmas letras em outra ordem)
+so_espacos = lambda t: re.sub(r"\s+", " ", t).strip()
+so_letras = lambda t: re.sub(r"[^a-z]", "", t.lower())
+def diferenca(v):
+    ts = {t for t, _, _ in v}
+    if len(ts) == 1:
+        return "identico"
+    if len({so_espacos(t) for t in ts}) == 1:
+        return "espacos"
+    return "numeros_e_sinais" if len({so_letras(t) for t in ts}) == 1 else "ordem"
+dif = {k: diferenca(v) for k, v in grupos_copia.items()}
+sem_letras = lambda t: not re.search(r"[a-z]", t.lower().removeprefix("subject:"))
+classe_grupo = {k: {c for _, _, c in v} for k, v in grupos_copia.items()}
+assunto = lambda t: t.split("\n", 1)[0].removeprefix("Subject:").strip()
+k_maior = tam.idxmax()
+k_spam = max((k for k in grupos_copia if classe_grupo[k] == {1}), key=lambda k: tam[k])
+COPIAS = dict(
+    criterio="mesmas 3000 contagens (hash da linha)",
+    grupos=int(len(grupos_copia)), linhas_em_grupos=int(tam.sum()), grupos_pares=int((tam == 2).sum()),
+    maior_grupo=int(tam.max()),
+    grupos_so_email_real=sum(1 for k in grupos_copia if classe_grupo[k] == {0}),
+    grupos_so_spam=sum(1 for k in grupos_copia if classe_grupo[k] == {1}),
+    grupos_texto_identico=sum(identico.values()), grupos_texto_diferente=sum(not v for v in identico.values()),
+    grupos_diferem_so_em_espacos=sum(d == "espacos" for d in dif.values()),
+    grupos_diferem_em_numeros_e_sinais=sum(d == "numeros_e_sinais" for d in dif.values()),
+    grupos_diferem_na_ordem=sum(d == "ordem" for d in dif.values()),
+    maior=dict(n=int(tam[k_maior]), classe="e-mail real" if classe_grupo[k_maior] == {0} else "spam",
+               textos_distintos=len({t for t, _, _ in grupos_copia[k_maior]}),
+               exemplo_assunto=assunto(grupos_copia[k_maior][0][0]),
+               diferenca=dif[k_maior]),
+    maior_spam=dict(n=int(tam[k_spam]), textos_distintos=len({t for t, _, _ in grupos_copia[k_spam]}),
+                    sem_letras=all(sem_letras(t) for t, _, _ in grupos_copia[k_spam])),
+)
+print(f"grupos de cópias: {COPIAS['grupos']} ({COPIAS['linhas_em_grupos']} linhas); pares: {COPIAS['grupos_pares']}; "
+      f"maior grupo: {COPIAS['maior_grupo']}")
+print(f"só e-mails reais: {COPIAS['grupos_so_email_real']} | só spam: {COPIAS['grupos_so_spam']}")
+print(f"texto idêntico: {COPIAS['grupos_texto_identico']} | texto diferente, mesma contagem: {COPIAS['grupos_texto_diferente']} "
+      f"(só espaços: {COPIAS['grupos_diferem_so_em_espacos']}; algarismos e sinais: {COPIAS['grupos_diferem_em_numeros_e_sinais']}; "
+      f"ordem dos trechos: {COPIAS['grupos_diferem_na_ordem']})")
+print("maior grupo:", COPIAS["maior"])
+print("maior grupo de spam:", COPIAS["maior_spam"])
 
 # %% [markdown]
 # ## 5. As palavras que mais separam as classes
@@ -144,7 +205,7 @@ saidas.gravar("01_dados", {
                  colunas_1_letra=int(tamanhos.iloc[0]), colunas_2_letras=int(tamanhos.iloc[1]),
                  duplicatas_email_real=int(excedentes_por_classe.get("e-mail real", 0)),
                  duplicatas_spam=int(excedentes_por_classe.get("spam", 0)),
-                 acuracia_regra_copia_spam=float(regra), linhas_reproduzidas=reproduzidas,
+                 acuracia_regra_copia_spam=float(regra), linhas_reproduzidas=reproduzidas, copias=COPIAS,
                  origem="Enron1 (caixa farmer-d + spams GP), corpus Enron-Spam da AUEB",
                  contagem="substring, sensível a maiúsculas, sobre o texto pré-processado da AUEB"),
     "metricas_didaticas": dict(dummy_acuracia=dummy_acuracia),
