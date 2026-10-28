@@ -225,8 +225,17 @@ const G = (() => {
       const p = s("path", { d: caminhoBarra(x0, xv, yc - esp / 2, esp), fill: it.cor || COR.tinta2, class: "g-barra" }, g);
       p.style.transformOrigin = xv >= x0 ? "0% 50%" : "100% 50%";
       anim(p, [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: 650, delay: atraso }, A);
+      let xt = xv;
+      if (it.erro) {                                    // ± desvio padrão: traço fino sobre a barra
+        const a = x(it.valor - it.erro), b = x(it.valor + it.erro);
+        const w = s("g", { class: "g-erro" }, g);
+        s("line", { x1: a, x2: b, y1: yc, y2: yc, stroke: COR.tinta, "stroke-width": 1.2 }, w);
+        [a, b].forEach(xx => s("line", { x1: xx, x2: xx, y1: yc - 4, y2: yc + 4, stroke: COR.tinta, "stroke-width": 1.2 }, w));
+        anim(w, [{ opacity: 0 }, { opacity: 1 }], { duration: 250, delay: atraso + 500 }, A);
+        xt = Math.max(xv, b);
+      }
       if (o.fmt) {
-        const v = t(g, xv + (xv >= x0 ? 6 : -6), yc, o.fmt(it.valor),
+        const v = t(g, xt + (xv >= x0 ? 6 : -6), yc, it.txt ?? o.fmt(it.valor),
           { class: "g-val" + (it.forte ? " forte" : ""), "text-anchor": xv >= x0 ? "start" : "end", "dominant-baseline": "central" });
         anim(v, [{ opacity: 0 }, { opacity: 1 }], { duration: 250, delay: atraso + 450 }, A);
       }
@@ -238,6 +247,46 @@ const G = (() => {
       if (r.rotulo) t(sv, xr + (r.esquerda ? -4 : 4), T - 8, r.rotulo, { class: "g-ref-rot", "text-anchor": r.esquerda ? "end" : "start" });
     }
     return sv;
+  }
+
+  /* ---------------------------------------------------------------- corrida: barras que crescem e se ordenam */
+  // o.itens: [{ rotulo, valor, cor, dica?, forte? }]; o.inicio: ordem de partida (índices), se faltar usa a dada.
+  // O desenho final é o ranking ordenado (impressão e modo sem movimento saem completos).
+  // o.anterior: { valores, posicoes } de um desenho anterior, para animar a troca (botão antes × depois).
+  function corrida(cont, o) {
+    const [W, H] = medidas(cont, o), A = o.animar && !api.semMovimento, sv = svgEm(cont, W, H, o.rotulo);
+    const L = o.margemE ?? 200, R = o.margemD ?? 54, T = 2, B = 22, n = o.itens.length, banda = (H - T - B) / n;
+    const esp = Math.min(o.espessura ?? 12, banda - 3), [d0, d1] = o.dom;
+    const x = v => L + (Math.max(d0, Math.min(d1, v)) - d0) / (d1 - d0) * (W - L - R);
+    const ordem = o.itens.map((_, i) => i).sort((a, b) => o.itens[b].valor - o.itens[a].valor || a - b);
+    const pos = []; ordem.forEach((idx, r) => { pos[idx] = r; });
+    const ini = o.anterior ? o.anterior.posicoes : (() => { const p = []; (o.inicio || o.itens.map((_, i) => i)).forEach((idx, r) => { p[idx] = r; }); return p; })();
+    (o.eixo || []).forEach(tk => {
+      s("line", { x1: x(tk), x2: x(tk), y1: T, y2: H - B, class: "g-grade" }, sv);
+      t(sv, x(tk), H - 6, (o.fmtEixo || o.fmt)(tk), { class: "g-tick", "text-anchor": "middle" });
+    });
+    s("line", { x1: x(d0), x2: x(d0), y1: T, y2: H - B, class: "g-base" }, sv);
+    const crescer = o.anterior ? 0 : 1500, mover = 900;
+    o.itens.forEach((it, i) => {
+      const y = T + banda * (pos[i] + 0.5), externo = s("g", { transform: `translate(0,${y.toFixed(1)})` }, sv);
+      const g = s("g", null, externo);
+      const dy = (ini[i] - pos[i]) * banda;
+      if (A && dy) anim(g, [{ transform: `translateY(${dy}px)` }, { transform: `translateY(${dy}px)`, offset: crescer / (crescer + mover) }, { transform: "translateY(0px)" }],
+        { duration: crescer + mover, easing: "ease-in-out" }, true);
+      t(g, 0, 0, it.rotulo, { class: "g-rot" + (it.forte ? " forte" : ""), "dominant-baseline": "central" });
+      const xv = x(it.valor), p = s("path", { d: caminhoBarra(x(d0), xv, -esp / 2, esp), fill: it.cor, class: "g-barra" }, g);
+      p.style.transformOrigin = "0% 50%";
+      if (A && !o.anterior) anim(p, [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: 650, delay: (o.atraso ? o.atraso(i) : ini[i] * 50) }, true);
+      if (A && o.anterior && o.anterior.valores[i] !== it.valor) {
+        const r = Math.max(0.001, (x(o.anterior.valores[i]) - x(d0)) / Math.max(0.001, xv - x(d0)));
+        anim(p, [{ transform: `scaleX(${r})` }, { transform: "scaleX(1)" }], { duration: mover, easing: "ease-in-out" }, true);
+      }
+      const v = t(g, xv + 6, 0, o.fmt(it.valor), { class: "g-val" + (it.forte ? " forte" : ""), "dominant-baseline": "central" });
+      if (A && !o.anterior) anim(v, [{ opacity: 0 }, { opacity: 1 }], { duration: 250, delay: crescer }, true);
+      if (it.anel) s("rect", { x: -4, y: -banda / 2 + 1, width: W - 2, height: banda - 2, rx: 4, fill: "none", stroke: COR.tinta, "stroke-width": 1.2 }, g);
+      if (it.dica) dica(s("rect", { x: 0, y: -banda / 2, width: W, height: banda, class: "g-alvo" }, g), it.dica);
+    });
+    return { posicoes: pos, valores: o.itens.map(it => it.valor) };
   }
 
   /* ---------------------------------------------------------------- halteres (duas classes por linha) */
@@ -288,30 +337,33 @@ const G = (() => {
   }
 
   /* ---------------------------------------------------------------- mapa triangular de erros em comum */
+  // o.completo: matriz assimétrica inteira (sem a diagonal), linha = "este erra", coluna = "quando este erra".
   function mapaTriangular(cont, modelos, M, o) {
     const [W, H] = medidas(cont, o), A = o.animar, sv = svgEm(cont, W, H, o.rotulo);
-    const n = modelos.length, L = 62, B = 34, T = 2;
-    const c = Math.min((W - L - 4) / (n - 1), (H - T - B) / (n - 1));
-    const vals = [];
-    for (let i = 1; i < n; i++) for (let j = 0; j < i; j++) vals.push(M[i][j]);
-    const vmin = Math.min(...vals), vmax = Math.max(...vals);
+    const n = modelos.length, L = 62, B = 34, T = 2, cheio = !!o.completo;
+    const nl = cheio ? n : n - 1, nc = cheio ? n : n - 1;
+    const c = Math.min((W - L - 4) / nc, (H - T - B) / nl);
+    const celulas = [];
+    for (let i = cheio ? 0 : 1; i < n; i++) for (let j = 0; j < (cheio ? n : i); j++) if (i !== j) celulas.push([i, j]);
+    const vals = celulas.map(([i, j]) => M[i][j]), vmin = Math.min(...vals), vmax = Math.max(...vals);
     const sig = m => (MEMBRO[m] || {}).sigla || m;
-    for (let i = 1; i < n; i++) {
-      const y = T + (i - 1) * c, forte = modelos[i] === o.destaque;
+    const fmtD = o.fmtDica || ((i, j, v) => `<b>${esc(modelos[i])} × ${esc(modelos[j])}</b><br>Jaccard dos erros: ${F.dec(v, 2)}`);
+    for (let i = cheio ? 0 : 1; i < n; i++) {
+      const y = T + (cheio ? i : i - 1) * c, forte = modelos[i] === o.destaque;
       s("circle", { cx: 6, cy: y + c / 2, r: 5, fill: corMembro(modelos[i]) }, sv);
       t(sv, 16, y + c / 2, sig(modelos[i]), { class: "g-rot" + (forte ? " forte" : ""), "dominant-baseline": "central" });
-      for (let j = 0; j < i; j++) {
-        const x = L + j * c, v = M[i][j], cor = rampa((v - vmin) / (vmax - vmin));
-        const g = s("g", { class: "g-pop" }, sv);
-        const ret = s("rect", { x: x + 1, y: y + 1, width: c - 2, height: c - 2, rx: 3, fill: cor }, g);
-        const tx = t(g, x + c / 2, y + c / 2, F.dec(v, 2), { "text-anchor": "middle", "dominant-baseline": "central", class: "g-cel" });
-        tx.style.fill = luminancia(cor) < 0.3 ? "#ffffff" : COR.tinta;
-        anim(g, [{ opacity: 0, transform: "scale(.5)" }, { opacity: 1, transform: "scale(1)" }], { duration: 420, delay: (i - j) * 160 + j * 25 }, A);
-        dica(ret, `<b>${esc(modelos[i])} × ${esc(modelos[j])}</b><br>Jaccard dos erros: ${F.dec(v, 2)}`);
-      }
     }
-    for (let j = 0; j < n - 1; j++) {
-      const xc = L + j * c + c / 2, yb = T + (n - 1) * c + 10, forte = modelos[j] === o.destaque;
+    celulas.forEach(([i, j]) => {
+      const y = T + (cheio ? i : i - 1) * c, x = L + j * c, v = M[i][j], cor = rampa((v - vmin) / (vmax - vmin));
+      const g = s("g", { class: "g-pop" }, sv);
+      const ret = s("rect", { x: x + 1, y: y + 1, width: c - 2, height: c - 2, rx: 3, fill: cor }, g);
+      const tx = t(g, x + c / 2, y + c / 2, F.dec(v, 2), { "text-anchor": "middle", "dominant-baseline": "central", class: "g-cel" });
+      tx.style.fill = luminancia(cor) < 0.3 ? "#ffffff" : COR.tinta;
+      anim(g, [{ opacity: 0, transform: "scale(.5)" }, { opacity: 1, transform: "scale(1)" }], { duration: 420, delay: Math.abs(i - j) * 160 + j * 25 }, A);
+      dica(ret, fmtD(i, j, v));
+    });
+    for (let j = 0; j < (cheio ? n : n - 1); j++) {
+      const xc = L + j * c + c / 2, yb = T + nl * c + 10, forte = modelos[j] === o.destaque;
       s("circle", { cx: xc, cy: yb, r: 4, fill: corMembro(modelos[j]) }, sv);
       t(sv, xc, yb + 15, sig(modelos[j]), { class: "g-rot" + (forte ? " forte" : ""), "text-anchor": "middle" });
     }
@@ -746,6 +798,6 @@ const G = (() => {
     COR, FAMILIA, ORDEM_FAMILIAS, MEMBRO, FILTRO, ORDEM_FILTROS, REFERENCIA, F, corMembro, corMetodo,
     chaveMetodo, nomeMetodo, ordemMetodo, tabela,
     h, s, t, svgEm, anim, contar, dica, mk, esc, legenda, legendaFamilias, ticksLin, ticksLog,
-    barras, halteres, dispersao, mapaTriangular, curvas, tira, envelopes, empilhada, caminho, simulador, finalTres,
+    barras, corrida, halteres, dispersao, mapaTriangular, curvas, tira, envelopes, empilhada, caminho, simulador, finalTres,
   });
 })();

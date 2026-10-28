@@ -4,7 +4,7 @@
    AUEB, como *substring* e diferenciando maiúsculas (`texto.count(palavra)`). Foi assim que o CSV foi gerado:
    a reprodução bate em 5172 de 5172 e-mails.
 2. TF-IDF com log (sublinear_tf): reduz o peso de palavras repetidas muitas vezes. Foi o detalhe que tirou a
-   Regressão Logística de 0,922 para 0,961 de MCC.
+   Regressão Logística de 0,923 para 0,961 de MCC.
 3. NBFeatures (NBSVM): presença/ausência ponderada pela razão de chances do Naive Bayes.
 """
 from __future__ import annotations

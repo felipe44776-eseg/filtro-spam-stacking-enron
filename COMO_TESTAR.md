@@ -1,5 +1,16 @@
 # Como testar (roteiro para a banca)
 
+## Teste rápido (5 minutos)
+
+| Quero... | Faça | Deve aparecer |
+|---|---|---|
+| ver tudo funcionando sem instalar nada | no README, clique em **Abrir no Colab** ao lado do `Projeto3_Classificacao_Spam.ipynb` e use **Ambiente de execução → Executar tudo**; quando o Colab reiniciar, **Executar tudo** de novo | o notebook roda até o fim; na seção 7, o algoritmo genético roda ao vivo; na seção 11, o filtro classifica três e-mails de exemplo |
+| testar no meu computador | `pip install -r requirements.txt`, `pip install -e . --no-deps` e `pytest` (Python 3.11 ou 3.12; detalhes no [INSTALACAO.md](INSTALACAO.md)) | `42 passed, 3 skipped` (ou `45 passed`, se os filtros treinados já estiverem baixados) |
+| colar um e-mail e ver a decisão | `streamlit run demo/app.py` | as 9 etapas, do texto colado à decisão dos dois filtros |
+| entender os modelos antes de testar | leia [docs/MODELOS.md](docs/MODELOS.md) | cada modelo em uma frase, uma analogia e como decide |
+
+## Roteiro completo
+
 Sete passos, do mais rápido ao mais completo. Cada um diz o que fazer e o que deve aparecer. Antes, siga o [INSTALACAO.md](INSTALACAO.md). Quem não quiser instalar nada pode começar pelo passo 3, no Google Colab.
 
 ## 1. Os testes automáticos (cerca de 30 s)

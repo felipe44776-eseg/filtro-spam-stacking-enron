@@ -90,13 +90,18 @@ print(f"ARI (0 = acaso, 1 = coincide com spam × real): K-means {num(ns['kmeans_
 for t in ns["nmf_topicos"][:4]:
     print(f"tópico {t['topico']}: {pct(t['fracao_spam'])} de spam | {', '.join(t['palavras'][:6])}")
 fig_("02_anomalia")
+tp = max(ns["nmf_topicos"], key=lambda t: t["fracao_spam"]); spam_tp = tp["n_emails"] * tp["fracao_spam"]
+print(f"tópico com mais spam ({', '.join(tp['palavras'][:3])}): {tp['n_emails']} e-mails, {pct(tp['fracao_spam'])} de spam, "
+      f"{pct(spam_tp / b['n_spam'])} de todo o spam da base")
 an = ns["anomalia_so_email_real"]
 print(f"detecção de novidade (treina só com e-mails reais): erro de reconstrução, PR-AUC {num(an['reconstrucao_pr_auc'])} "
       f"(sortear daria {num(b['n_spam'] / b['n_emails'])})")
 
 # %% [markdown]
-# **K-means, agrupamento hierárquico e NMF não usam o rótulo:** os grupos que eles encontram são *assuntos*, não
-# "spam × real". A detecção de novidade é **semissupervisionada**: treina só com e-mails sabidamente reais, sem
+# **K-means, agrupamento hierárquico e NMF não usam o rótulo.** Os grupos do K-means e do hierárquico são *assuntos*,
+# não "spam × real". O NMF acha um tópico de linguagem de propaganda que reúne quase todo o spam, mas um em cada
+# três e-mails dele é real (saída abaixo): há pista sem rótulo, mas não um filtro bom. A detecção de novidade é
+# **semissupervisionada**: treina só com e-mails sabidamente reais, sem
 # nenhum spam rotulado. Os detectores clássicos (Isolation Forest, One-Class SVM) ficam abaixo do acaso; o erro de
 # reconstrução, que mede quanto do e-mail as direções dos e-mails reais não explicam, separa bem.
 
@@ -116,19 +121,42 @@ print(f"acurácia de quem nunca marca spam: {pct(R['metricas_didaticas']['dummy_
       f"custo λ = {R['meta']['custo_fp']}:{R['meta']['custo_fn']}")
 
 # %% [markdown]
-# ## 5. Torneio de 22 modelos
+# ## 5. Um torneio de modelos supervisionados, e o ranking
+# Sem rótulo, os grupos eram assuntos (seção 3): para separar spam, precisamos das respostas. Testamos então muitos
+# modelos supervisionados na **mesma prova** (os mesmos e-mails, 5 folds separados por grupo, a mesma régua, o MCC)
+# e ordenamos do melhor ao pior. Cada família de modelo raciocina de um jeito (`docs/MODELOS.md`).
 
 # %%
 fig_("03_torneio")
+rk = pd.DataFrame(R["torneio"]).sort_values("mcc", ascending=False).reset_index(drop=True)
+rk.index += 1
+print(rk[["modelo", "familia", "mcc", "pr_auc", "treino_s"]].round(4).to_string())
 a = R["achados"]
 print(f"O detalhe que virou o jogo, TF-IDF com log: Reg. Logística {num(a['lr_mcc_antes'])} → {num(a['lr_mcc_depois'])}; "
       f"kNN {num(a['knn_mcc_antes'])} → {num(a['knn_mcc_depois'])}")
 
 # %% [markdown]
+# **O que o ranking mostrou:** os lineares lideram, mas no topo os melhores modelos sozinhos ficam muito perto uns
+# dos outros, e o 1º lugar já era uma combinação simples, o "Stacking (meta LR)" com 4 membros (sem diferença
+# significativa para o LinearSVC). Daí a próxima pergunta: qual combinação funciona melhor, e por quê?
+#
 # ## 6. Ninguém vence sozinho: o Stacking 7
-# Um modelo de cada família; um meta-modelo aprende quanto confiar em cada um. As notas que alimentam o
-# meta-modelo são *out-of-fold* (nenhum modelo dá nota a um e-mail que usou para treinar). O motor guarda essas
-# notas em cache, e por isso dá para recalcular os 20 folds de confirmação aqui, em segundos:
+# Um modelo de cada família; um meta-modelo aprende quanto confiar em cada um. Os sete, em uma frase cada
+# (explicação completa, com analogias, em `docs/MODELOS.md`):
+#
+# | Modelo | Como decide |
+# |---|---|
+# | Regressão Logística | dá um peso a cada palavra, soma e transforma a soma numa probabilidade |
+# | SVM com kernel RBF | resume as palavras em "temas" (SVD) e traça uma fronteira curva por semelhança com e-mails de referência |
+# | kNN | procura os e-mails de treino mais parecidos (cosseno) e copia a maioria |
+# | Rede neural (MLP) | uma camada de neurônios aprende combinações de palavras |
+# | Naive Bayes | combina a frequência de cada palavra em cada classe, supondo as palavras independentes |
+# | Extra Trees | centenas de árvores de decisão com cortes sorteados votam juntas |
+# | LightGBM | árvores em sequência, cada uma corrigindo os erros das anteriores |
+#
+# O **meta-modelo** (uma Regressão Logística) recebe as sete notas e aprende quanto pesar cada uma. As notas que o
+# alimentam são *out-of-fold* (nenhum modelo dá nota a um e-mail que usou para treinar). O motor guarda essas notas
+# em cache, e por isso dá para recalcular os 20 folds de confirmação aqui, em segundos:
 
 # %%
 m = Motor(base, log=lambda *a: None)
@@ -149,18 +177,22 @@ for k in ["generalista_sem_chave", "especialista"]:
     print(f"custo: {F[k]['rotulo']} × LinearSVC = {sn(r['dif'], 1)} por mil ({pct(r['reducao_relativa'])} menos; IC95 "
           f"{sn(r['ic95_lo'], 1)} a {sn(r['ic95_hi'], 1)}; p de Holm {num(r['p_holm'])}; P(mais barato) {num(r['P_A_melhor'], 2)})")
 fig_("04_erros_em_comum"); fig_("04_pesos_meta")
-ec = R["stacking"]["erros_em_comum"]; M = np.array(ec["matriz"]); np.fill_diagonal(M, np.nan)
-juntos = pd.Series(np.nanmean(M, 1), index=ec["modelos"]).sort_values()
-print("quanto cada um erra junto com os outros (Jaccard médio dos erros; menor = mais diferente):",
-      ", ".join(f"{k} {num(v, 2)}" for k, v in juntos.items()))
-print("peso no meta-modelo:", ", ".join(f"{k} {num(v, 2)}" for k, v in sorted(R["stacking"]["pesos_meta"].items(), key=lambda x: -x[1])))
+ec = R["stacking"]["erros_em_comum"]
+juntos = pd.Series(ec["erra_junto"]).sort_values()
+resg = pd.Series({r["familia"]: r["acerta quando a maioria (≥4) erra"] for r in R["stacking"]["tabela_erros"]}).sort_values(ascending=False)
+print("quando outro membro erra, com que frequência cada um erra junto (menor = traz mais informação nova):",
+      ", ".join(f"{k} {pct(v)}" for k, v in juntos.items()))
+print("e-mails que cada um salva quando a maioria (4 ou mais) erra:", ", ".join(f"{k} {v}" for k, v in resg.items()))
+print("peso no meta-modelo (média dos 20 folds):", ", ".join(f"{k} {num(v, 2)}" for k, v in sorted(R["stacking"]["pesos_meta"].items(), key=lambda x: -x[1])))
+print("peso no Especialista entregue:", ", ".join(f"{k} {num(v, 2)}" for k, v in sorted(F["especialista"]["pesos_meta"].items(), key=lambda x: -x[1])))
 eq13 = next(c for c in R["stacking"]["comparacoes_15_folds"] if c["B"] == "Stacking 13 (todos)")
 print(f"Stacking 7 × Stacking 13: P(equivalentes) = {num(eq13['P_equivalentes'])}")
 
 # %% [markdown]
-# O kNN e o Naive Bayes são os que menos erram junto com os outros, e o meta-modelo dá ao kNN o maior peso (os
-# pesos dividem crédito entre membros correlacionados, então não são uma medida pura de confiança). Treze modelos
-# empatam com sete. Contra o melhor modelo único, o stacking ganha no MCC e custa menos em média; a saída acima diz
+# As árvores e o kNN são os que menos erram junto com os outros e os que mais salvam e-mails quando a maioria erra;
+# o kNN, fraco sozinho, recebe o maior peso médio. O Naive Bayes erra muito e erra junto: peso quase zero. No
+# Especialista, o meta-modelo chega a desligar a Reg. Logística e o Naive Bayes (os pesos dividem crédito entre
+# membros correlacionados, então não são uma medida pura de confiança). Treze modelos empatam com sete. Contra o melhor modelo único, o stacking ganha no MCC e custa menos em média; a saída acima diz
 # quais dessas diferenças são estatisticamente significativas com estes e-mails.
 
 # %% [markdown]

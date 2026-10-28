@@ -44,6 +44,9 @@ DECKS = {"banca": "banca.html", "equipe": "equipe.html"}
 LIMIAR_PADRAO = 0.5
 # Nível de significância usado nas frases "passa de 0,05" (convenção; o JSON não traz: sugestão meta.alfa).
 ALFA = 0.05
+# Contagens esperadas do pytest, copiadas de COMO_TESTAR.md ("Teste rápido"): não estão no JSON.
+# Se o COMO_TESTAR.md mudar, atualize aqui (sugestão: um campo testes.* no JSON).
+TESTES = {"clone": "42 passed, 3 skipped", "com_filtros": "45 passed", "fonte": "COMO_TESTAR.md"}
 
 
 # --------------------------------------------------------------------------------------------- extração
@@ -84,7 +87,7 @@ def extrair(R: dict) -> dict:
     GA_, PAD_, LSO_ = "Stacking 7 do GA (Especialista)", "Stacking 7 padrão", "LinearSVC otimizado"
     D = {
         "meta": {k: R["meta"][k] for k in ("custo_fp", "custo_fn", "seed_teste")},
-        "limiar_padrao": LIMIAR_PADRAO, "alfa": ALFA,
+        "limiar_padrao": LIMIAR_PADRAO, "alfa": ALFA, "testes": TESTES,
         "base": {k: v for k, v in b.items() if k not in ("origem", "contagem")},
         "dummy_acuracia": R["metricas_didaticas"]["dummy_acuracia"],
         "palavras": R["palavras"],
@@ -112,14 +115,19 @@ def extrair(R: dict) -> dict:
             "representacoes": [{"rep": k, "lr": v["Reg. Logística"], "knn": v["kNN cosseno"]}
                                for k, v in R["achados"]["tfidf_log"].items()],
         },
-        "rodada2": {"comparacoes": R["rodada2"]["comparacoes"]},
+        "rodada2": {"comparacoes": R["rodada2"]["comparacoes"], "mcc_15": R["rodada2"]["mcc_15_folds"],
+                    "chave_mcc": next(k for k in R["rodada2"] if re.fullmatch(r"mcc_\d+_folds", k))},
         "stacking": {
             "variantes": st["variantes"],
             "variantes_d": {v["nome"]: v for v in st["variantes"]},
             "erros_modelos": st["erros_em_comum"]["modelos"], "erros_matriz": st["erros_em_comum"]["matriz"],
+            # P(linha erra | coluna erra), matriz assimétrica; e a média sobre os outros seis, por membro
+            "p_erra": st["erros_em_comum"]["p_erra_se_outro_erra"], "erra_junto": st["erros_em_comum"]["erra_junto"],
             "tabela_erros": [{"membro": t["familia"], "erros": t["erros"], "so_ele": t["só ele erra"],
-                              "resgata": t["acerta quando a maioria (≥4) erra"]} for t in st["tabela_erros"]],
-            "pesos": sorted(({"membro": k, "peso": v} for k, v in st["pesos_meta"].items()),
+                              "resgata": t["acerta quando a maioria (≥4) erra"], "junto": t["P(erra | outro erra)"],
+                              "jaccard": t["Jaccard médio"]} for t in st["tabela_erros"]],
+            # pesos do meta-modelo: média e desvio padrão entre os 20 folds
+            "pesos": sorted(({"membro": k, "peso": v, "dp": st["pesos_meta_dp"][k]} for k, v in st["pesos_meta"].items()),
                             key=lambda d: -d["peso"]),
             "confirmacao": st["confirmacao_20_folds"],
             "s7_x_lsvc": st["comparacao"][0],
@@ -179,7 +187,72 @@ def extrair(R: dict) -> dict:
         "exemplos": R["exemplos_demo"],
     }
     D["der"] = derivados(D)
+    D["der"]["mod"] = modelos_um_a_um(R, D)
     return D
+
+
+# Os 8 modelos explicados em docs/MODELOS.md: chave curta → (nome no torneio, nome no stacking e nas configurações).
+MODELOS = {
+    "lr": ("Reg. Logística TF-IDF", "Reg. Logística"),
+    "lsvc": ("LinearSVC TF-IDF", None),
+    "svm": ("SVM RBF SVD300", "SVM RBF"),
+    "knn": ("kNN TF-IDF cosseno", "kNN cosseno"),
+    "mlp": ("MLP (rede neural)", "MLP"),
+    "nb": ("Naive Bayes Complement", "Naive Bayes"),
+    "et": ("Extra Trees", "Extra Trees"),
+    "lgbm": ("LightGBM", "LightGBM"),
+}
+
+
+def _cfg(txt: str) -> dict:
+    """'k=5, w=uniform' → {'k': '5', 'w': 'uniform'} (os valores continuam texto, vindos do JSON)."""
+    return dict(p.split("=", 1) for p in txt.split(", ") if "=" in p)
+
+
+def modelos_um_a_um(R: dict, D: dict) -> dict:
+    """MCC sozinho no torneio, peso no meta-modelo (média dos 20 folds ± dp e filtros entregues), quanto erra
+    junto com os outros (P(erra | outro erra)) e configurações. O papel no conselho vira frase a partir das
+    posições (nada digitado). O Jaccard não entra: ele favorece quem erra muito."""
+    tor = {t["modelo"]: t for t in R["torneio"]}
+    pesos, dps = R["stacking"]["pesos_meta"], R["stacking"]["pesos_meta_dp"]
+    junto = R["stacking"]["erros_em_comum"]["erra_junto"]
+    resg = {t["familia"]: t["acerta quando a maioria (≥4) erra"] for t in R["stacking"]["tabela_erros"]}
+    ord_peso = sorted(pesos, key=lambda m: -pesos[m])
+    ord_junto = sorted(junto, key=lambda m: junto[m])
+    ord_resg = sorted(resg, key=lambda m: -resg[m])
+    fin = R["finais"]
+
+    def papel(m):
+        rp, rj = ord_peso.index(m) + 1, ord_junto.index(m) + 1
+        # sem "no conselho" no fim: a ficha já tem o rótulo "No conselho"; "intermediário" evita confusão com "peso médio"
+        p = ("o maior peso médio" if rp == 1 else "peso alto" if rp <= 3 else
+             "peso intermediário" if rp <= 5 else "quase nenhum peso" if pesos[m] < 0.1 else "peso baixo")
+        j = ("o que menos erra junto com os outros" if rj == 1 else "erra pouco junto com os outros" if rj <= 3 else
+             "às vezes erra junto com os outros" if rj <= 5 else "o que mais erra junto com os outros" if rj == len(ord_junto)
+             else "erra muito junto com os outros")
+        return p, j
+
+    out = {}
+    for k, (nt, ns) in MODELOS.items():
+        t = tor[nt]
+        d = {"nome_torneio": nt, "mcc": t["mcc"], "treino_s": t["treino_s"]}
+        if ns:
+            pp, pj = papel(ns)
+            pe = fin["especialista"]["pesos_meta"][ns]
+            d.update(membro=ns, peso=pesos[ns], peso_dp=dps[ns], peso_entregue=fin["generalista_sem_chave"]["pesos_meta"][ns],
+                     peso_esp=pe, esp_txt="no Especialista, praticamente desligado" if abs(pe) < 0.1 else "",
+                     junto=junto[ns], resgata=resg[ns], ordem_peso=ord_peso.index(ns) + 1,
+                     ordem_junto=ord_junto.index(ns) + 1, ordem_resgate=ord_resg.index(ns) + 1,
+                     papel_peso=pp, papel_junto=pj,
+                     cfg_padrao=fin["generalista_sem_chave"]["config"][ns], cfg_esp=fin["especialista"]["config"][ns],
+                     cfg_padrao_d=_cfg(fin["generalista_sem_chave"]["config"][ns]), cfg_esp_d=_cfg(fin["especialista"]["config"][ns]))
+        else:
+            d.update(cfg_padrao=fin["linha_de_base"]["config"]["LinearSVC"], cfg_padrao_d=_cfg(fin["linha_de_base"]["config"]["LinearSVC"]))
+        out[k] = d
+    # o melhor modelo único do torneio (a linha de base) e a ordem dos MCC
+    unicos = [t for t in R["torneio"] if t["familia"] not in ("combinação", "referência")]
+    out["melhor_unico"] = unicos[0]["modelo"]
+    return out
 
 
 def derivados(D: dict) -> dict:
@@ -213,6 +286,16 @@ def derivados(D: dict) -> dict:
     tcr_sa = sorted(((fin[f]["spamassassin"]["tcr"], f) for f in FIN5), reverse=True)
     nf_ext = fin["nao_filtrar"]["externo"]["por_base"]
     mb = tb["membros_d"]
+    # quem erra junto com os outros: P(erra | outro erra), média sobre os outros seis (crescente)
+    junto = sorted(({"membro": m, "p": p} for m, p in st["erra_junto"].items()), key=lambda d: d["p"])
+    # o tópico do NMF com mais spam, usado como filtro: VP = n × fs; FP = n − VP; FN = n_spam − VP; VN = resto
+    tp_ = max(D["ns"]["nmf"], key=lambda x: x["fracao_spam"])
+    vp = tp_["n_emails"] * tp_["fracao_spam"]; fp_ = tp_["n_emails"] - vp; fn_ = b["n_spam"] - vp; vn = b["n_emails"] - vp - fp_ - fn_
+    nmf_mcc = (vp * vn - fp_ * fn_) / ((vp + fp_) * (vp + fn_) * (vn + fp_) * (vn + fn_)) ** 0.5
+    # no Especialista (filtro entregue), membros que o meta-modelo praticamente desligou (|peso| < 0,1)
+    pesp = fin["especialista"]["pesos_meta"]
+    desl = [m for m in st["erros_modelos"] if abs(pesp[m]) < 0.1]
+    c_lsvc = next(c for c in D["rodada2"]["comparacoes"] if c["B"] == "LinearSVC TF-IDF")
     frb = {k: 1 - v["custo_por_mil"] / 1000 for k, v in nf_ext.items()}   # custo de não filtrar = 1000 × fração de spam
     cus_b = lambda f, b: fin[f]["externo"]["por_base"][b]["custo_por_mil"]
     tab_caro = [b for b in nf_ext if cus_b("tabpfn", b) == max(cus_b(f, b) for f in FIN5)]
@@ -286,6 +369,25 @@ def derivados(D: dict) -> dict:
         "tab_mais_caro_custo": max([cus_b("tabpfn", b) for b in tab_caro] or [float("nan")]),
         "frac_real_ext": 1 - fin["nao_filtrar"]["externo"]["custo_por_mil"] / 1000,
         "n_boot_reducao": round(tb["decisao"]["p_reducao"] * tb["regra"]["n_boot"]),
+        "ga_geracoes": len(ga["historico"]), "ga_populacao": ga["historico"][0]["avaliacoes"],
+        "junto": junto, "junto_d": {d["membro"]: d["p"] for d in junto},
+        "junto_top3_txt": f'{junto[0]["membro"]}, {junto[1]["membro"]} e {junto[2]["membro"]}',
+        "junto_max": junto[-1],
+        "resgate_top3_txt": f'{resg[0]["membro"]}, {resg[1]["membro"]} e {resg[2]["membro"]}',
+        "nmf_top": {"palavras": ", ".join(tp_["palavras"][:3]), "frac_do_spam": vp / b["n_spam"],
+                    "frac_real": 1 - tp_["fracao_spam"], "mcc": nmf_mcc},
+        "esp_desligados_txt": " e ".join(desl) if desl else "nenhum",
+        "n_esp_desligados": len(desl),
+        "s4_x_lsvc": c_lsvc,
+        # nº de folds da rodada 2, tirado do nome do campo no JSON (rodada2.mcc_15_folds)
+        "rodada2_folds": int(re.search(r"mcc_(\d+)_folds", D["rodada2"]["chave_mcc"]).group(1)),
+        # o torneio: famílias (sem a referência) e o empate no topo (rodada 2, modelos sozinhos)
+        "n_familias_torneio": len({t["familia"] for t in tor if t["familia"] != "referência"}),
+        "n_modelos_unicos": len(unicos),
+        "topo_spread": max(v for k, v in D["rodada2"]["mcc_15"].items() if not k.startswith("Stacking"))
+                       - min(v for k, v in D["rodada2"]["mcc_15"].items() if not k.startswith("Stacking")),
+        "n_topo": sum(1 for k in D["rodada2"]["mcc_15"] if not k.startswith("Stacking")),
+        "lineares_no_topo5": sum(1 for t in unicos[:5] if t["familia"] == "linear"),
         # o TabPFN como 8º membro, nas duas versões do stacking e nas duas bases externas
         "s8esp_custo_ext": tab_e["Stacking 8 especialista (+TabPFN)"]["custo_por_mil"],
         "s7esp_custo_ext": tab_e["Stacking 7 especialista"]["custo_por_mil"],
@@ -357,6 +459,35 @@ def afirmacoes(D: dict) -> list[str]:
         ("Especialista: o menor custo nos 20 folds", fin["especialista"]["cv20"]["custo_por_mil"] == min(fin[f]["cv20"]["custo_por_mil"] for f in F5)),
         ("Stacking 8: empata no topo do PR-AUC desta caixa (diferença abaixo de um milésimo)",
          max(r["pr_auc"] for r in tp["interno"]) - fin["generalista"]["cv20"]["pr_auc"] < 1e-3),
+        # frases dos slides de modelos
+        ("LinearSVC: o melhor modelo único do torneio (a linha de base)", der["mod"]["melhor_unico"] == "LinearSVC TF-IDF"),
+        ("kNN: o maior peso médio no meta-modelo", der["mod"]["knn"]["ordem_peso"] == 1),
+        ("Naive Bayes: o que mais erra junto com os outros (P(erra | outro erra) máximo) e o de menor peso",
+         der["junto_max"]["membro"] == "Naive Bayes" and der["mod"]["nb"]["ordem_peso"] == 7),
+        ("Os três que menos erram junto são os mesmos três que mais salvam quando a maioria erra",
+         {d["membro"] for d in der["junto"][:3]} == {d["membro"] for d in der["resgate"][:3]}),
+        ("Especialista entregue: o meta-modelo praticamente desligou a Reg. Logística e o Naive Bayes",
+         der["esp_desligados_txt"] == "Reg. Logística e Naive Bayes"),
+        ("Stacking 7 padrão entregue: o MLP tem peso negativo", fin["generalista_sem_chave"]["pesos_meta"]["MLP"] < 0),
+        ("NMF: o tópico de propaganda reúne quase todo o spam (acima de nove décimos) e cerca de um terço dele é e-mail real",
+         der["nmf_top"]["frac_do_spam"] > 0.9 and 0.28 < der["nmf_top"]["frac_real"] < 0.4),
+        ("Torneio: o 1º lugar (Stacking de 4 membros) sem significância contra o LinearSVC (p de Holm acima de 0,05)",
+         der["s4_x_lsvc"]["p_holm"] > ALFA and D["torneio"][0]["modelo"] == "Stacking (meta LR)"),
+        ("TabPFN sozinho: o mais caro nesta caixa no limiar de custo",
+         fin["tabpfn"]["cv20"]["custo_por_mil"] == max(fin[f]["cv20"]["custo_por_mil"] for f in F5)),
+        ("“ect” aparece em todos os e-mails", D["dominio_d"]["ect"]["fracao_email_real"] == 1 and D["dominio_d"]["ect"]["fracao_spam"] == 1),
+        ("TabPFN sozinho empata com o LinearSVC otimizado no MCC (limiar 0,5): diferença abaixo de 0,002",
+         abs(der["tab_mcc"] - der["lsvc_mcc_int"]) < 0.002),
+        ("GA: o IC95 do ganho em divisões novas inclui o zero",
+         D["ga"]["ganho_novas_ic95"][0] < 0 < D["ga"]["ganho_novas_ic95"][1]),
+        ("Torneio: com TF-IDF com log, a Reg. Logística sobe", D["achados"]["lr_depois"] > D["achados"]["lr_antes"]),
+        ("Torneio: os lineares lideram (o melhor modelo sozinho é linear e a maioria dos cinco primeiros também)",
+         der["lineares_no_topo5"] * 2 > 5 and der["mod"]["melhor_unico"] == "LinearSVC TF-IDF"),
+        ("Torneio: o topo está empatado (os melhores sozinhos a menos de um centésimo de MCC entre si)", der["topo_spread"] < 0.01),
+        ("Combinações: Stacking 7 e Stacking 13 equivalentes (P equivalentes acima de nove décimos)",
+         D["stacking"]["s7_x_s13"]["P_equivalentes"] > 0.9),
+        ("Combinações: o Stacking 7 tem o maior MCC entre as combinações",
+         max((v for v in D["stacking"]["variantes"] if v["tipo"] == "combinação"), key=lambda v: v["mcc"])["nome"].startswith("Stacking 7")),
     ]
     return [f"afirmação do slide não vale mais no JSON: {frase}" for frase, ok in checks if not ok]
 
@@ -475,7 +606,10 @@ class _Texto(HTMLParser):
 # Nomes próprios e identificadores com dígitos (não são resultados).
 NOMES = [r"Enron\s?[1-6](?:\s?[-–]\s?[1-6])?", r"Stacking\s?\d+", r"\bS[478]\b", r"TabPFN-3\.5(?:-Plus|-Fast)?",
          r"\bD\d{1,2}\b", r"Projeto\s3", r"Data Science\s2", r"\bIC95\b", r"RA\s46643", r"RA\s44776", r"\b2D\b",
-         r"Metsis et al\., 2006", r"Androutsopoulos et al\., 2000", r"χ²"]
+         r"Metsis et al\., 2006", r"Androutsopoulos et al\., 2000", r"χ²",
+         # endereço do repositório, nome do notebook e versão do Python (nomes, não resultados)
+         r"github\.com/felipe44776-eseg/filtro-spam-stacking-enron", r"Projeto3_Classificacao_Spam\.ipynb",
+         r"Python 3\.11 ou 3\.12"]
 RE_NOMES = re.compile("|".join(NOMES))
 RE_PROIBIDA = re.compile(r"\bham\b", re.I)
 RE_GLOSSARIO = re.compile(r'<script type="application/json" id="glossario-dados">.*?</script>', re.S)

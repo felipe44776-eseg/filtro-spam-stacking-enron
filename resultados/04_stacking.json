@@ -334,50 +334,138 @@
      0.3683,
      1.0
     ]
-   ]
+   ],
+   "p_erra_se_outro_erra": [
+    [
+     1.0,
+     0.7579,
+     0.3064,
+     0.701,
+     0.235,
+     0.437,
+     0.3856
+    ],
+    [
+     0.7627,
+     1.0,
+     0.3141,
+     0.6179,
+     0.2189,
+     0.4868,
+     0.4055
+    ],
+    [
+     0.5032,
+     0.5126,
+     1.0,
+     0.4817,
+     0.2693,
+     0.3548,
+     0.296
+    ],
+    [
+     0.6677,
+     0.5849,
+     0.2794,
+     1.0,
+     0.2328,
+     0.4106,
+     0.3109
+    ],
+    [
+     0.693,
+     0.6415,
+     0.4836,
+     0.7209,
+     1.0,
+     0.434,
+     0.4851
+    ],
+    [
+     0.4715,
+     0.522,
+     0.2331,
+     0.4651,
+     0.1588,
+     1.0,
+     0.4975
+    ],
+    [
+     0.4905,
+     0.5126,
+     0.2293,
+     0.4153,
+     0.2092,
+     0.5865,
+     1.0
+    ]
+   ],
+   "erra_junto": {
+    "Reg. Logística": 0.4705,
+    "SVM RBF": 0.4676,
+    "kNN cosseno": 0.4029,
+    "MLP": 0.4144,
+    "Naive Bayes": 0.5764,
+    "Extra Trees": 0.3913,
+    "LightGBM": 0.4072
+   }
   },
   "tabela_erros": [
    {
     "familia": "Reg. Logística",
     "erros": 316,
     "só ele erra": 11,
-    "acerta quando a maioria (≥4) erra": 31
+    "acerta quando a maioria (≥4) erra": 31,
+    "P(erra | outro erra)": 0.47,
+    "Jaccard médio": 0.358
    },
    {
     "familia": "SVM RBF",
     "erros": 318,
     "só ele erra": 17,
-    "acerta quando a maioria (≥4) erra": 31
+    "acerta quando a maioria (≥4) erra": 31,
+    "P(erra | outro erra)": 0.468,
+    "Jaccard médio": 0.352
    },
    {
     "familia": "kNN cosseno",
     "erros": 519,
     "só ele erra": 194,
-    "acerta quando a maioria (≥4) erra": 95
+    "acerta quando a maioria (≥4) erra": 95,
+    "P(erra | outro erra)": 0.403,
+    "Jaccard médio": 0.202
    },
    {
     "familia": "MLP",
     "erros": 301,
     "só ele erra": 17,
-    "acerta quando a maioria (≥4) erra": 61
+    "acerta quando a maioria (≥4) erra": 61,
+    "P(erra | outro erra)": 0.414,
+    "Jaccard médio": 0.312
    },
    {
     "familia": "Naive Bayes",
     "erros": 932,
     "só ele erra": 470,
-    "acerta quando a maioria (≥4) erra": 50
+    "acerta quando a maioria (≥4) erra": 50,
+    "P(erra | outro erra)": 0.576,
+    "Jaccard médio": 0.189
    },
    {
     "familia": "Extra Trees",
     "erros": 341,
     "só ele erra": 61,
-    "acerta quando a maioria (≥4) erra": 94
+    "acerta quando a maioria (≥4) erra": 94,
+    "P(erra | outro erra)": 0.391,
+    "Jaccard médio": 0.262
    },
    {
     "familia": "LightGBM",
     "erros": 402,
     "só ele erra": 98,
-    "acerta quando a maioria (≥4) erra": 97
+    "acerta quando a maioria (≥4) erra": 97,
+    "P(erra | outro erra)": 0.407,
+    "Jaccard médio": 0.245
    }
   ],
   "pesos_meta": {
@@ -388,6 +476,15 @@
    "SVM RBF": 1.0855595025886908,
    "Extra Trees": 1.357071494389071,
    "kNN cosseno": 1.6698333686957905
+  },
+  "pesos_meta_dp": {
+   "Naive Bayes": 0.13262666020564892,
+   "MLP": 0.3242458674903307,
+   "LightGBM": 0.1343242482945298,
+   "Reg. Logística": 0.43005992959683637,
+   "SVM RBF": 0.3174678936444813,
+   "Extra Trees": 0.2761634963184059,
+   "kNN cosseno": 0.2075146436299495
   },
   "confirmacao_20_folds": [
    {

@@ -109,6 +109,13 @@ _c = lambda metodo, l: next(x["custo_por_mil"] for x in LS if x["metodo"] == met
 dif_lam = [_c("Stacking 8 padrão (+TabPFN)", l) - _c("Stacking 7 padrão", l) for l in sorted({x["custo_fp"] for x in LS})]
 pr_top = max(FILT, key=lambda k: F[k]["cv20"]["pr_auc"])
 pr_empate = max(F[k]["cv20"]["pr_auc"] for k in FILT) - sorted(F[k]["cv20"]["pr_auc"] for k in FILT)[-2] < 0.001
+# o tópico do NMF com mais spam, usado como filtro (contas exatas a partir do tamanho e da fração de spam do tópico)
+TOP_NMF = max(NS["nmf_topicos"], key=lambda t: t["fracao_spam"])
+_vp = TOP_NMF["n_emails"] * TOP_NMF["fracao_spam"]; _fp = TOP_NMF["n_emails"] - _vp; _fn = B["n_spam"] - _vp; _vn = B["n_emails"] - _vp - _fp - _fn
+MCC_NMF = (_vp * _vn - _fp * _fn) / ((_vp + _fp) * (_vp + _fn) * (_vn + _fp) * (_vn + _fn)) ** 0.5
+NMF_FRAC_SPAM = _vp / B["n_spam"]
+CMP_R2 = {c["B"]: c for c in R["rodada2"]["comparacoes"]}
+st4_lsvc = CMP_R2["LinearSVC TF-IDF"]
 
 NOTEBOOKS = sorted((RAIZ / "notebooks").glob("[0-9][0-9]_*.ipynb"))
 def titulo(nb: Path) -> str:
@@ -133,7 +140,20 @@ São {B['n_emails']} e-mails ({B['n_email_real']} e-mails reais e {B['n_spam']} 
 | 🎞️ Apresentações | [banca]({PAGES}/apresentacao/banca/) (técnica) · [equipe]({PAGES}/apresentacao/equipe/) (didática, com glossário) |
 | ✉️ Demonstração | `streamlit run demo/app.py`: cole um e-mail e veja cada etapa até a decisão |
 | ✅ Para a banca | [INSTALACAO.md](INSTALACAO.md) · [COMO_TESTAR.md](COMO_TESTAR.md) |
+| 🧠 Os modelos, explicados | [docs/MODELOS.md](docs/MODELOS.md): cada modelo em uma frase, uma analogia e como ele decide; o stacking, o algoritmo genético e o TabPFN |
+| ⏱️ Testar em 5 minutos | [COMO_TESTAR.md](COMO_TESTAR.md#teste-rápido-5-minutos): pelo Colab, sem instalar nada, ou com 3 comandos no computador |
 | 🧭 Decisões e números | [docs/REGISTRO_DECISOES.md](docs/REGISTRO_DECISOES.md) · [docs/METODOLOGIA.md](docs/METODOLOGIA.md) · [docs/MODEL_CARD.md](docs/MODEL_CARD.md) · [docs/REFERENCIAS.md](docs/REFERENCIAS.md) |
+
+## A história em 8 capítulos
+
+1. **A pergunta e os dados.** Separar spam de e-mail real em {B['n_emails']} e-mails. Descobrimos que o CSV é o Enron1 e que as palavras foram contadas como pedaços de texto.
+2. **Primeiro, sem rótulo.** O K-means agrupa os e-mails por assunto (ARI {n(NS['kmeans_ari'], 2)}). O NMF acha um tópico de propaganda com {pct(NMF_FRAC_SPAM, 1)} do spam, mas um em cada três e-mails dele é real (MCC {n(MCC_NMF, 2)} como filtro). Conclusão: há pista sem rótulo, mas, para um filtro bom, precisamos das respostas, ou seja, de aprendizado supervisionado.
+3. **Um torneio de {len(R['torneio'])} modelos supervisionados, com um ranking.** Mesma prova para todos, incluindo uma referência que nunca marca spam. Os lineares lideraram (o melhor modelo único foi o {sorted((r for r in R['torneio'] if r['familia'] not in ('combinação', 'referência')), key=lambda r: -r['mcc'])[0]['modelo']}, com MCC {n(sorted((r for r in R['torneio'] if r['familia'] not in ('combinação', 'referência')), key=lambda r: -r['mcc'])[0]['mcc'])}). O detalhe que mudou o ranking foi o TF-IDF com log. Os melhores ficaram muito perto uns dos outros, e o 1º lugar já era uma combinação simples de 4 modelos. Ranking completo: [docs/MODELOS.md](docs/MODELOS.md).
+4. **Combinar um de cada família: o stacking.** Os modelos erram em e-mails diferentes, e um meta-modelo aprende a pesar as 7 notas. No limiar 0,5, o Stacking 7 superou o melhor modelo único no MCC (p de Holm {n(mcc_s7['p_holm'])}); no custo, ficou mais barato em média.
+5. **Afinar: o algoritmo genético.** Avaliou {G['avaliacoes']} de {milhar(G['combinacoes'])} combinações de ajustes. O ganho da busca não se confirmou em divisões novas.
+6. **Um convidado: o TabPFN.** Um modelo de fundação, sem nenhum ajuste, empatou com o melhor modelo único afinado e, como 8º membro, deixou o stacking bem mais barato fora da caixa.
+7. **A prova final em três lugares:** esta caixa, outras 5 caixas da Enron e o SpamAssassin, sempre contra a referência "não filtrar". O stacking aprende a caixa e a coleção de spam.
+8. **Lições e como testar:** a seguir, e no [COMO_TESTAR.md](COMO_TESTAR.md).
 
 ## Os filtros
 
@@ -294,6 +314,194 @@ VP = spam na lixeira, VN = e-mail real na caixa, FP = e-mail real na lixeira, FN
 - O TabPFN é usado em pesquisa acadêmica, sem fins comerciais.
 """
 
+# ---------------------------------------------------------------------------------------------------------
+# docs/MODELOS.md: cada modelo explicado em linguagem simples (texto fixo; números do JSON)
+# ---------------------------------------------------------------------------------------------------------
+TOR = {r["modelo"]: r for r in R["torneio"]}
+PESO = R["stacking"]["pesos_meta"]
+EC = R["stacking"]["erros_em_comum"]
+JUNTO = EC["erra_junto"]                                   # P(erra | outro membro erra), média sobre os outros 6
+ORD_JUNTO = sorted(JUNTO, key=JUNTO.get)
+PESO_DP = R["stacking"]["pesos_meta_dp"]
+RESGATE = {r["familia"]: r["acerta quando a maioria (≥4) erra"] for r in R["stacking"]["tabela_erros"]}
+ORD_RESGATE = sorted(RESGATE, key=RESGATE.get, reverse=True)
+PESO_E, PESO_P = F["especialista"]["pesos_meta"], F["generalista_sem_chave"]["pesos_meta"]
+DESLIGADOS = [f for f, w in PESO_E.items() if abs(w) < 0.1]
+TOP_NMF = max(NS["nmf_topicos"], key=lambda t: t["fracao_spam"])
+_vp = TOP_NMF["n_emails"] * TOP_NMF["fracao_spam"]; _fp = TOP_NMF["n_emails"] - _vp; _fn = B["n_spam"] - _vp; _vn = B["n_emails"] - _vp - _fp - _fn
+MCC_NMF = (_vp * _vn - _fp * _fn) / ((_vp + _fp) * (_vp + _fn) * (_vn + _fp) * (_vn + _fn)) ** 0.5
+NMF_FRAC_SPAM = _vp / B["n_spam"]
+CMP_R2 = {c["B"]: c for c in R["rodada2"]["comparacoes"]}
+st4_lsvc = CMP_R2["LinearSVC TF-IDF"]
+CFG_E, CFG_P = F["especialista"]["config"], F["generalista_sem_chave"]["config"]
+
+FICHAS = [
+    ("Regressão Logística", "Reg. Logística", "Reg. Logística TF-IDF",
+     "Dá um peso a cada palavra, soma os pesos das palavras do e-mail e transforma a soma numa probabilidade de spam.",
+     "Uma balança: as palavras típicas de spam pesam num prato, as típicas de e-mail real no outro.",
+     ["Cada palavra recebe um peso positivo (puxa para spam) ou negativo (puxa para e-mail real), aprendido no treino.",
+      "A soma passa por uma curva em S (a função logística), que a converte numa nota entre 0 e 1.",
+      "O parâmetro C controla quanto os pesos podem crescer (C maior = menos freio); `cw=balanced` compensa o spam ser minoria."],
+     "TF-IDF com log", "rápida e fácil de explicar: dá para ler quais palavras pesam.",
+     "só traça fronteiras retas: não percebe combinações de palavras."),
+    ("LinearSVC (a linha de base)", None, "LinearSVC TF-IDF",
+     "Também traça uma fronteira reta entre spam e e-mail real, mas escolhe a que deixa a maior folga entre os dois lados.",
+     "A rua mais larga possível entre dois bairros: quanto mais larga, menos chance de errar o lado.",
+     ["Procura o hiperplano (a \"reta\" em 3000 dimensões) com a maior margem até os e-mails mais próximos de cada classe.",
+      "A nota é a distância à fronteira, não uma probabilidade.",
+      "Foi o melhor modelo único do torneio e virou a **linha de base**: o filtro simples que o stacking precisa superar."],
+     "TF-IDF com log", "rápido e muito forte em texto.", "fronteira reta, como a Regressão Logística."),
+    ("SVM com kernel RBF", "SVM RBF", "SVM RBF SVD300",
+     "Resume as 3000 colunas em algumas centenas de \"temas\" e traça uma fronteira curva, comparando cada e-mail com e-mails de referência.",
+     "Um mapa de bairros com qualquer formato: o e-mail é classificado pelo bairro onde cai.",
+     ["Primeiro, o SVD (decomposição em valores singulares) comprime as 3000 colunas em 300 ou 500 direções que resumem os assuntos.",
+      "Depois, o kernel RBF mede a semelhança do e-mail com os vetores de suporte, os e-mails de treino mais próximos da fronteira.",
+      "Isso permite fronteiras curvas (a curvatura vem do kernel); o C troca folga por acertos no treino: C maior = fronteira mais colada ao treino."],
+     "TF-IDF com log + SVD", "capta padrões que uma reta não capta.", "mais lento; a nota é uma distância, não uma probabilidade."),
+    ("kNN (vizinhos mais próximos)", "kNN cosseno", "kNN TF-IDF cosseno",
+     "Procura no treino os e-mails mais parecidos com o novo e copia a decisão da maioria deles.",
+     "Perguntar aos vizinhos: se os 5 e-mails mais parecidos eram spam, este provavelmente também é.",
+     ["A semelhança é o cosseno entre os vetores TF-IDF: dois e-mails com as mesmas palavras, nas mesmas proporções, apontam para o mesmo lado.",
+      "k é o número de vizinhos consultados (5 no padrão, 3 no Especialista).",
+      "Não aprende pesos: guarda o treino inteiro e compara."],
+     "TF-IDF com log", "reconhece e-mails quase iguais a algum do treino (avisos automáticos, spam em série).",
+     "decora a caixa: fora dela, e-mails reais de outro assunto não têm vizinhos parecidos e são confundidos com spam."),
+    ("Rede neural (MLP)", "MLP", "MLP (rede neural)",
+     "Uma rede neural pequena: uma camada de neurônios aprende combinações de palavras, e uma camada final junta tudo numa nota.",
+     "Uma equipe de detetives, cada um atento a um padrão diferente, e um chefe que soma as pistas.",
+     ["Uma camada oculta com 128 neurônios (64 no Especialista); cada neurônio é uma soma ponderada das palavras seguida de um corte não linear.",
+      "O treino ajusta os pesos aos poucos e para quando o desempenho numa parte separada do treino deixa de melhorar (*early stopping*)."],
+     "TF-IDF com log", "capta combinações de palavras.", "é uma caixa-preta e varia com a semente."),
+    ("Naive Bayes (Complement)", "Naive Bayes", "Naive Bayes Complement",
+     "Conta, no treino, com que frequência cada palavra aparece em cada classe e combina essas chances para dar a nota.",
+     "Um detetive que olha cada pista isoladamente e multiplica as chances, sem pensar em como as pistas se relacionam.",
+     ["\"Ingênuo\" porque supõe que as palavras são independentes dentro de cada classe, o que é falso, mas funciona razoavelmente.",
+      "Com duas classes, a versão Complement equivale ao Naive Bayes multinomial sem a fração de spam da base como ponto de partida: o spam, que é minoria, não começa em desvantagem.",
+      "O α suaviza as contagens, para uma palavra rara não zerar a conta."],
+     "contagens", "o mais rápido de todos.",
+     "fraco sozinho, erra muito e erra junto com os outros: no stacking, recebe peso quase zero."),
+    ("Extra Trees (árvores extremamente aleatórias)", "Extra Trees", "Extra Trees",
+     "Centenas de árvores de decisão, cada uma com perguntas sorteadas, votam juntas.",
+     "Um júri de centenas de pessoas: cada uma olhou pistas diferentes, e a maioria decide.",
+     ["Cada árvore faz perguntas do tipo \"a palavra X aparece mais de N vezes?\" até chegar a uma folha (spam ou e-mail real).",
+      "Nas Extra Trees, cada árvore vê todos os e-mails, mas os pontos de corte e as palavras candidatas são sorteados: as árvores ficam diferentes entre si, e a média delas erra menos que cada uma.",
+      "São 400 árvores no padrão e 800 no Especialista."],
+     "contagens", "não precisa de TF-IDF e capta regras do tipo \"se... e se...\".", "decora detalhes da caixa do treino."),
+    ("LightGBM (boosting de árvores)", "LightGBM", "LightGBM",
+     "Também usa árvores, mas em sequência: cada árvore nova corrige um pouco o erro que ainda sobra.",
+     "Um aluno que revisa a prova várias vezes e, a cada revisão, corrige um pouco cada resposta, mais onde errou mais.",
+     ["São 400 árvores pequenas; cada uma é treinada para reduzir o erro que restou em todos os e-mails, com mais força onde o erro é maior (*gradient boosting*).",
+      "A taxa de aprendizado (0,05) controla o tamanho de cada correção; o número de folhas, o tamanho de cada árvore."],
+     "contagens", "muito forte em tabelas.", "aqui ficou atrás dos lineares: o texto favorece modelos lineares depois do TF-IDF com log."),
+]
+
+
+def ficha(nome, fam, tor, frase, analogia, como, entrada, forte, fraco):
+    t = TOR.get(tor, {})
+    linhas = [f"### {nome}", "", f"**Em uma frase.** {frase}", "", f"**Analogia.** {analogia}", "", "**Como decide:**"]
+    linhas += [f"- {c}" for c in como]
+    linhas += ["", f"- **Entrada:** {entrada}."]
+    if fam:
+        linhas.append(f"- **Configuração:** padrão `{CFG_P[fam]}`; Especialista `{CFG_E[fam]}`.")
+    if t:
+        linhas.append(f"- **Sozinho, no torneio (5 folds):** MCC {n(t['mcc'])}, treino em {n(t['treino_s'], 1)} s.")
+    if fam:
+        pos = ORD_JUNTO.index(fam) + 1
+        linhas.append(f"- **No stacking:** quando outro membro erra, ele erra junto em {pct(JUNTO[fam], 0)} das vezes ({pos}º menor entre os 7; "
+                      f"quanto menor, mais informação nova ele traz) e salva {RESGATE[fam]} e-mails que a maioria errou. Peso no meta-modelo: "
+                      f"{n(PESO[fam], 2)} ± {n(PESO_DP[fam], 2)} na média dos 20 folds; {n(PESO_P[fam], 2)} no Stacking 7 padrão entregue e "
+                      f"{n(PESO_E[fam], 2)} no Especialista.")
+    linhas += [f"- **Ponto forte:** {forte}", f"- **Ponto fraco:** {fraco}", ""]
+    return "\n".join(linhas)
+
+
+st7 = next(v for v in R["stacking"]["variantes"] if v["nome"].startswith("Stacking 7"))
+st13 = next(v for v in R["stacking"]["variantes"] if v["nome"] == "Stacking 13 (todos)")
+MODELOS_MD = f"""# Os modelos, explicados
+
+*Gerado por `scripts/gerar_documentos.py`: o texto explica cada modelo; os números vêm de `resultados/metricas_finais.json`.*
+
+## Antes dos modelos: o que eles recebem
+
+- **A base.** Cada e-mail é uma linha com {B['n_palavras']} contagens: quantas vezes cada palavra do vocabulário aparece no texto, contada como pedaço de texto (\
+- **TF-IDF com log.** Para os modelos lineares, o SVM, o kNN e a rede neural, as contagens viram pesos. O log achata as repetições (contar "free" 10 vezes não é 10 vezes mais evidência), e o IDF dá menos peso às palavras que aparecem em quase todo e-mail. Esse detalhe valeu mais que trocar de modelo: a Regressão Logística foi de MCC {n(A['lr_mcc_antes'])} para {n(A['lr_mcc_depois'])}.
+- **A nota e o limiar.** Todo modelo devolve uma nota de spam. O **limiar de custo** decide a partir de que nota o e-mail vai para a lixeira: ele é escolhido no treino para minimizar 9 × (e-mails reais na lixeira) + 1 × (spams que passaram).
+
+## O torneio: o ranking dos {len(R['torneio'])} modelos supervisionados
+
+Todos fizeram a mesma prova: os mesmos {B['n_emails']} e-mails, a mesma validação cruzada (5 folds, com cópias idênticas sempre do mesmo lado) e a mesma régua (MCC, de −1 a 1; 0 = acaso). O "Dummy" é a referência: nunca marca spam.
+
+| # | Modelo | Família | MCC | PR-AUC | Treino (s) |
+|---|---|---|---|---|---|
+{chr(10).join(f"| {i} | {r['modelo']} | {r['familia']} | {n(r['mcc'])} | {n(r['pr_auc'])} | {n(r['treino_s'], 1)} |" for i, r in enumerate(sorted(R['torneio'], key=lambda r: -r['mcc']), 1))}
+
+**O que o ranking mostrou:**
+- os modelos lineares lideram, depois do TF-IDF com log;
+- no topo, os melhores modelos sozinhos ficam muito perto uns dos outros: nenhum domina com folga;
+- o 1º lugar já era uma combinação simples, o "Stacking (meta LR)", com 4 membros (Reg. Logística, Naive Bayes, Random Forest e LightGBM). Na rodada de 15 folds, ele ficou à frente do LinearSVC, mas sem significância (p de Holm {n(st4_lsvc["p_holm"])}).
+
+Daí a ideia seguinte: testar qual combinação funciona melhor e entender por quê. A resposta veio no stacking, abaixo: modelos de famílias diferentes erram em e-mails diferentes.
+
+## Os 7 modelos do stacking (um por família) e a linha de base
+
+{chr(10).join(ficha(*f) for f in FICHAS)}
+## O stacking: como os 7 viram um filtro só
+
+**Em uma frase.** Os 7 modelos dão uma nota a cada e-mail, e um oitavo modelo, o **meta-modelo** (uma Regressão Logística), aprende quanto confiar em cada nota.
+
+**Analogia.** Um conselho de 7 especialistas e um presidente que aprendeu, pelo histórico, quanto ouvir cada um.
+
+**Como funciona:**
+1. Cada modelo é treinado várias vezes, cada vez sem uma parte do treino, e dá nota justamente à parte que não viu. São as notas *out-of-fold*: ninguém dá nota a um e-mail que usou para aprender.
+2. O meta-modelo aprende com essas notas honestas qual combinação acerta mais. Os pesos dele (média dos 20 folds, Stacking 7 padrão): {", ".join(f"{k} {n(v, 2)}" for k, v in sorted(PESO.items(), key=lambda x: -x[1]))}. Os filtros entregues, treinados nos {B["n_emails"]} e-mails, têm pesos próprios: no Especialista, o meta-modelo praticamente desligou {lista(DESLIGADOS) if DESLIGADOS else "nenhum membro"} (peso perto de zero).
+3. Para um e-mail novo, os 7 dão nota, o meta-modelo combina e o limiar de custo decide.
+
+**Por que funciona.** Os modelos erram em e-mails diferentes. Os que menos erram junto com os outros ({lista(ORD_JUNTO[:3])}) são também os que mais salvam e-mails quando a maioria erra ({lista(ORD_RESGATE[:3])}); o meta-modelo dá os maiores pesos médios a {lista([f for f in sorted(PESO, key=PESO.get, reverse=True)[:3] if f in ORD_JUNTO[:3]])}. O {ORD_JUNTO[-1]} é o contrário: erra muito e erra junto (em {pct(JUNTO[ORD_JUNTO[-1]], 0)} das vezes em que outro erra), por isso recebe peso quase zero. Na validação cruzada do experimento 02 (15 folds), o Stacking 7 chega a MCC {n(st7['mcc'])}; com 13 modelos, {n(st13['mcc'])}: mais modelos parecidos não ajudam.
+
+**Por que estes representantes?** Um de cada família de raciocínio (linear, kernel, vizinhos, rede neural, probabilístico, comitê de árvores aleatórias e *boosting*), não necessariamente o melhor de cada família no ranking: o melhor linear sozinho foi o LinearSVC. O projeto não registrou um critério formal para cada escolha. O que os dados mostram é que ela não muda o resultado: o Stacking 13, que inclui também o LinearSVC, o Ridge, o SGD, o NBSVM, o XGBoost e o Random Forest, empata com o Stacking 7.
+
+**Os nomes do projeto:**
+- **Stacking 7 padrão:** os 7 com ajustes padrão. Roda sem chave; é o da demo.
+- **Especialista:** os 7 com os ajustes achados pelo algoritmo genético. Tem o menor custo nesta caixa nos 20 folds.
+- **Stacking 8:** o Stacking 7 mais o TabPFN como 8º membro. Fora da caixa, fica bem mais barato que o Stacking 7.
+
+## O algoritmo genético: como os ajustes foram escolhidos
+
+**Em uma frase.** Uma busca inspirada na evolução: combinações de ajustes competem, as melhores se cruzam e sofrem pequenas mutações, por {len(G['historico'])} gerações.
+
+**Analogia.** Criar cavalos de corrida: cruzar os mais rápidos e, de vez em quando, deixar surgir uma variação.
+
+**Como funciona:**
+- Cada indivíduo é uma combinação de 8 genes: o ajuste de cada um dos 7 modelos e o C do meta-modelo. São {milhar(G['combinacoes'])} combinações possíveis.
+- População de 40, torneio de 3, cruzamento uniforme, mutação de 15% por gene e os 2 melhores passam direto. Ao todo, {G['avaliacoes']} combinações foram avaliadas.
+- **Truque que torna a busca viável:** cada ajuste de cada modelo é treinado uma vez por divisão e a nota fica guardada (o *cache* do motor); avaliar um indivíduo é só treinar o meta-modelo.
+- **Resultado:** na busca, o MCC subiu {sn(G['ganho_busca'])}; em divisões novas, {sn(G['ganho_sementes_novas'])}, com intervalo de confiança que inclui o zero. A lição é a "maldição do vencedor": escolher o melhor entre centenas de candidatos nas mesmas divisões infla o resultado.
+
+## O TabPFN: o modelo de fundação
+
+**Em uma frase.** Uma rede neural do tipo *transformer*, da Prior Labs, pré-treinada em tabelas sintéticas geradas por computador, que classifica uma tabela nova sem ser treinada nela.
+
+**Analogia.** Um aluno que nunca estudou esta matéria, mas já resolveu milhões de provas parecidas e reconhece o padrão na hora.
+
+**Como funciona:**
+- Recebe, de uma vez, a tabela de treino (os e-mails e os rótulos) e os e-mails a classificar, e devolve as notas sem ajustar os próprios pesos: é o aprendizado em contexto (*in-context learning*). Por dentro, faz a média de alguns estimadores sobre versões embaralhadas da tabela.
+- Ele tem hiperparâmetros, mas nós não ajustamos nenhum: usamos o padrão e as contagens cruas, sem TF-IDF.
+- Versões: TabPFN-3.5-Plus, pela API na nuvem (exige chave), e TabPFN-3.5-Fast, no computador (cerca de 3 h em CPU para 5 divisões). As notas das duas têm correlação de {n(TP['local_x_nuvem']['correlacao_notas'])}.
+
+**O que ele fez de melhor:**
+- Sozinho, nesta caixa, empata com o melhor modelo único afinado: MCC {n(tab_in['TabPFN-3.5-Plus']['mcc'])} contra {n(tab_in['LinearSVC otimizado']['mcc'])}.
+- Fora da caixa, é o mais conservador: o que menos manda e-mail real para a lixeira em todas as bases externas.
+- Como 8º membro, deixa o stacking bem mais barato fora da caixa (o Stacking 8).
+
+## Os modelos sem rótulo (não supervisionado e semissupervisionado)
+
+- **SVD em 2 dimensões:** comprime as {B['n_palavras']} colunas num mapa, para ver se spam e e-mail real se separam sozinhos.
+- **K-means e agrupamento hierárquico:** formam grupos sem saber o rótulo. O ARI compara os grupos com spam × e-mail real (0 = acaso; {n(NS['kmeans_ari'], 2)} no K-means): os grupos que eles acham são assuntos.
+- **NMF (tópicos):** acha assuntos na caixa. Um tópico de linguagem de propaganda ("{', '.join(TOP_NMF['palavras'][:3])}") reúne {pct(NMF_FRAC_SPAM, 1)} de todo o spam, mas {pct(1 - TOP_NMF['fracao_spam'], 0)} dos e-mails dele são reais: usado como filtro, daria MCC {n(MCC_NMF, 2)}. Sem rótulo há uma pista forte, mas é preciso o rótulo para chegar ao nível dos supervisionados.
+- **Detecção de novidade (semissupervisionada):** treina só com e-mails sabidamente reais e marca como spam o que "não se parece" com eles. A medida que funciona é o erro de reconstrução (PR-AUC {n(NS['anomalia_so_email_real']['reconstrucao_pr_auc'], 2)}).
+"""
+
 (RAIZ / "README.md").write_text(README, encoding="utf-8")
 (RAIZ / "docs" / "MODEL_CARD.md").write_text(MODEL_CARD, encoding="utf-8")
-print("gerados: README.md, docs/MODEL_CARD.md")
+(RAIZ / "docs" / "MODELOS.md").write_text(MODELOS_MD, encoding="utf-8")
+print("gerados: README.md, docs/MODEL_CARD.md, docs/MODELOS.md")

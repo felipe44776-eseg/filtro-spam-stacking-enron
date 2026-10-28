@@ -119,6 +119,19 @@ st.caption("O log achata as repetições (contar 'free' 10 vezes não é 10 veze
 st.dataframe(pd.DataFrame({"palavra": vocab[top], "contagem": v[top], "TF-IDF": t[top].round(3)}), hide_index=True, width="stretch")
 
 # 6-8. os dois filtros
+COMO_DECIDE = {
+    "Reg. Logística": "dá um peso a cada palavra, soma e transforma a soma numa probabilidade",
+    "SVM RBF": "resume as palavras em \"temas\" (SVD) e traça uma fronteira curva; a nota é a distância à fronteira",
+    "kNN cosseno": "procura os e-mails de treino mais parecidos e copia a maioria",
+    "MLP": "rede neural: uma camada de neurônios aprende combinações de palavras",
+    "Naive Bayes": "combina a frequência de cada palavra em spam e em e-mail real, supondo as palavras independentes",
+    "Extra Trees": "centenas de árvores de decisão com cortes sorteados votam juntas",
+    "LightGBM": "árvores em sequência, cada uma corrigindo os erros das anteriores",
+}
+with st.expander("O que é cada um dos 7 modelos? (explicação completa em docs/MODELOS.md)"):
+    st.markdown("\n".join(f"- **{k}:** {v}" for k, v in COMO_DECIDE.items()) +
+                "\n\nO **meta-modelo** recebe as 7 notas e aprende, no treino, quanto pesar cada uma. O **limiar de custo** "
+                "decide a partir de que probabilidade o e-mail vai para a lixeira.")
 for nome, f in F.items():
     e = f.explicar(texto)
     st.header(f"6–8. {nome}")

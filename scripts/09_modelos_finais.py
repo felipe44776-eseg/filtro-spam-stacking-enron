@@ -84,6 +84,12 @@ if not (PASTA / "linha_de_base.joblib").exists():
 limiar_tab = float(metricas.limiar_custo(np.load(TABN / "externo.npz")["ztr"], base.y))
 print(f"generalista (Stacking 8): limiar {generalista['limiar']:.3f} | pesos do meta-modelo: "
       + ", ".join(f"{n} {w:+.2f}" for n, w in zip(modelos.FAMILIAS + ["TabPFN"], meta8[-1].coef_.ravel())))
+# pesos do meta-modelo dos filtros entregues (treinados nos 5172 e-mails), sobre as notas padronizadas
+PESOS = {"especialista": dict(zip(modelos.FAMILIAS, map(float, FILTROS["especialista"].meta_modelo[-1].coef_.ravel()))),
+         "generalista_sem_chave": dict(zip(modelos.FAMILIAS, map(float, FILTROS["stacking7_padrao"].meta_modelo[-1].coef_.ravel()))),
+         "generalista": dict(zip(modelos.FAMILIAS + ["TabPFN"], map(float, meta8[-1].coef_.ravel())))}
+for k, w in PESOS.items():
+    print(f"pesos do meta-modelo ({k}):", ", ".join(f"{f} {v:+.2f}" for f, v in w.items()))
 
 # %% [markdown]
 # ## 2. As quatro avaliações de cada filtro
@@ -251,8 +257,8 @@ S = {k: saidas.ler(k) for k in ["01_dados", "02_nao_supervisionado", "03_torneio
 LIMIAR = {"especialista": FILTROS["especialista"].limiar, "generalista": generalista["limiar"], "tabpfn": limiar_tab,
           "generalista_sem_chave": FILTROS["stacking7_padrao"].limiar, "linha_de_base": limiar_lsvc, "nao_filtrar": None}
 def finais(n, cfg_desc):
-    return dict(config=cfg_desc, rotulo=ROTULO[n], limiar_custo=LIMIAR[n], cv20=cv20[n], teste_trancado=tt[n], externo=ext[n],
-                spamassassin=sa[MAPA_SA[n]])
+    return dict(config=cfg_desc, rotulo=ROTULO[n], limiar_custo=LIMIAR[n], pesos_meta=PESOS.get(n), cv20=cv20[n], teste_trancado=tt[n],
+                externo=ext[n], spamassassin=sa[MAPA_SA[n]])
 METRICAS = {
     "versao_contrato": 2,
     "meta": dict(gerado_em=dt.datetime.now().isoformat(timespec="seconds"), versao_pacote=spamfilter.__version__,

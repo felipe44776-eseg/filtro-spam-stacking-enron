@@ -12,7 +12,20 @@ São 5172 e-mails (3672 e-mails reais e 1500 spams), cada um descrito pela conta
 | 🎞️ Apresentações | [banca](https://felipe44776-eseg.github.io/filtro-spam-stacking-enron/apresentacao/banca/) (técnica) · [equipe](https://felipe44776-eseg.github.io/filtro-spam-stacking-enron/apresentacao/equipe/) (didática, com glossário) |
 | ✉️ Demonstração | `streamlit run demo/app.py`: cole um e-mail e veja cada etapa até a decisão |
 | ✅ Para a banca | [INSTALACAO.md](INSTALACAO.md) · [COMO_TESTAR.md](COMO_TESTAR.md) |
+| 🧠 Os modelos, explicados | [docs/MODELOS.md](docs/MODELOS.md): cada modelo em uma frase, uma analogia e como ele decide; o stacking, o algoritmo genético e o TabPFN |
+| ⏱️ Testar em 5 minutos | [COMO_TESTAR.md](COMO_TESTAR.md#teste-rápido-5-minutos): pelo Colab, sem instalar nada, ou com 3 comandos no computador |
 | 🧭 Decisões e números | [docs/REGISTRO_DECISOES.md](docs/REGISTRO_DECISOES.md) · [docs/METODOLOGIA.md](docs/METODOLOGIA.md) · [docs/MODEL_CARD.md](docs/MODEL_CARD.md) · [docs/REFERENCIAS.md](docs/REFERENCIAS.md) |
+
+## A história em 8 capítulos
+
+1. **A pergunta e os dados.** Separar spam de e-mail real em 5172 e-mails. Descobrimos que o CSV é o Enron1 e que as palavras foram contadas como pedaços de texto.
+2. **Primeiro, sem rótulo.** O K-means agrupa os e-mails por assunto (ARI -0,07). O NMF acha um tópico de propaganda com 96,5% do spam, mas um em cada três e-mails dele é real (MCC 0,69 como filtro). Conclusão: há pista sem rótulo, mas, para um filtro bom, precisamos das respostas, ou seja, de aprendizado supervisionado.
+3. **Um torneio de 22 modelos supervisionados, com um ranking.** Mesma prova para todos, incluindo uma referência que nunca marca spam. Os lineares lideraram (o melhor modelo único foi o LinearSVC TF-IDF, com MCC 0,963). O detalhe que mudou o ranking foi o TF-IDF com log. Os melhores ficaram muito perto uns dos outros, e o 1º lugar já era uma combinação simples de 4 modelos. Ranking completo: [docs/MODELOS.md](docs/MODELOS.md).
+4. **Combinar um de cada família: o stacking.** Os modelos erram em e-mails diferentes, e um meta-modelo aprende a pesar as 7 notas. No limiar 0,5, o Stacking 7 superou o melhor modelo único no MCC (p de Holm 0,042); no custo, ficou mais barato em média.
+5. **Afinar: o algoritmo genético.** Avaliou 857 de 7.077.888 combinações de ajustes. O ganho da busca não se confirmou em divisões novas.
+6. **Um convidado: o TabPFN.** Um modelo de fundação, sem nenhum ajuste, empatou com o melhor modelo único afinado e, como 8º membro, deixou o stacking bem mais barato fora da caixa.
+7. **A prova final em três lugares:** esta caixa, outras 5 caixas da Enron e o SpamAssassin, sempre contra a referência "não filtrar". O stacking aprende a caixa e a coleção de spam.
+8. **Lições e como testar:** a seguir, e no [COMO_TESTAR.md](COMO_TESTAR.md).
 
 ## Os filtros
 

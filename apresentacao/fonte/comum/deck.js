@@ -251,12 +251,26 @@ const Deck = (() => {
   function iniciar() {
     slides = [...document.querySelectorAll(".slide")];
     const rodape = document.body.dataset.rodape || "";
+    // capítulos da história: body[data-capitulos="nome|nome|…"] e slide[data-capitulo="k"] (k a partir de 1)
+    const caps = (document.body.dataset.capitulos || "").split("|").filter(Boolean);
     slides.forEach(sl => {
       const q = el("div", { class: "quadro" });
       sl.before(q);
       q.appendChild(sl);
       quadros.push(q);
-      if (!sl.classList.contains("sem-rodape")) {
+      const k = parseInt(sl.dataset.capitulo, 10);
+      if (caps.length && k >= 1 && k <= caps.length) {
+        const txt = `Capítulo ${k} de ${caps.length} · ${caps[k - 1]}`;
+        sl.querySelectorAll(".cap-num").forEach(c => { c.textContent = `Capítulo ${k} de ${caps.length}`; });
+        if (!sl.classList.contains("sem-rodape")) {
+          const r = el("footer", { class: "rod" }, sl);
+          const p = el("span", { class: "cap-prog" }, r);
+          const segs = el("span", { class: "segs", "aria-hidden": "true" }, p);
+          caps.forEach((nome, i) => { const s = el("i", { class: i + 1 < k ? "feito" : i + 1 === k ? "atual" : "", title: nome }, segs); void s; });
+          el("b", {}, p).textContent = txt;
+          el("span", { class: "pag" }, r);
+        }
+      } else if (!sl.classList.contains("sem-rodape")) {
         const r = el("footer", { class: "rod" }, sl);
         el("span", {}, r).textContent = rodape;
         el("span", { class: "pag" }, r);
