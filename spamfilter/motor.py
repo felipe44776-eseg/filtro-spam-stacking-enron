@@ -75,7 +75,7 @@ class Motor:
         return chaves
 
     def adicionar_teste_trancado(self) -> str:
-        """Treino nos 80%, teste nos 1035 e-mails trancados. ATENÇÃO: a base trancada já foi usada 2 vezes."""
+        """Treino nos 80%, teste nos 1035 e-mails trancados. ATENÇÃO: a base trancada já foi usada 4 vezes, todas para relatar (docs/REGISTRO_DECISOES.md, seção 4)."""
         self.splits["teste"] = dict(base="all", tr=self.dev, tes={"teste": self.teste}, si=SEED)
         return "teste"
 

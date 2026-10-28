@@ -8,6 +8,8 @@ from spamfilter import dados
 from spamfilter.motor import Motor
 
 # Números de referência: docs/REGISTRO_DECISOES.md e os CSVs de cada experimento.
+# TOL_CACHE: números recalculados a partir do cache (determinísticos). TOL_MCC: só onde há retreino ou sorteio.
+TOL_CACHE = 1e-5
 TOL_MCC = 0.001
 
 

@@ -16,7 +16,7 @@ def test_demo_classifica_os_exemplos():
     spam = next(o for o in opcoes if o.startswith("spam"))
     app.selectbox[0].select(spam).run()
     assert not app.exception
-    assert any("SPAM" in e.value for e in app.error)            # o spam de exemplo vai para a lixeira
+    assert sum("SPAM" in e.value for e in app.error) == 2      # o spam de exemplo vai para a lixeira nos dois filtros
     real = next(o for o in opcoes if o.startswith("e-mail real —"))
     app.selectbox[0].select(real).run()
-    assert not app.exception and any("E-MAIL REAL" in s.value for s in app.success)
+    assert not app.exception and sum("E-MAIL REAL" in s.value for s in app.success) == 2

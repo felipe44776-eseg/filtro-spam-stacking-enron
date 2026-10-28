@@ -19,7 +19,7 @@
       </div>
       <div class="capa-pes">
         <span class="rot">Professor</span><span>Marino Catarino</span>
-        <span class="rot">Autores</span><span>Phelipe Torres Pamponet da França (RA 46643)<br>Felipe Marins</span>
+        <span class="rot">Autores</span><span>Phelipe Torres Pamponet da França (RA 46643)<br>Felipe Marins (RA 44776)</span>
       </div>
     </div>
     <div class="capa-g">
@@ -42,7 +42,7 @@
       <div class="col">
         <div class="cartao" style="padding:22px 24px">
           <span class="rotulo-caixa">Em uma frase</span>
-          <p style="font-size:24px;line-height:1.4;color:#0b0b0b">Treinamos filtros que acertam quase tudo na caixa de e-mail em que aprenderam, e descobrimos que eles pioram muito na caixa de outras pessoas: <strong>o filtro aprende a caixa, não o spam.</strong></p>
+          <p style="font-size:24px;line-height:1.4;color:#0b0b0b">Treinamos filtros que acertam quase tudo na caixa de e-mail em que aprenderam, e descobrimos que eles pioram muito na caixa de outras pessoas: <strong>o filtro aprende a caixa e a coleção de spam que veio com ela.</strong></p>
         </div>
         <div class="fizemos"><b>Como cada passo está organizado.</b> Um gráfico com o resultado, uma caixa “o que fizemos” e uma analogia do dia a dia. Os números vêm todos do arquivo de resultados do projeto, nenhum foi digitado à mão.</div>
         <div class="analogia"><b>Siglas.</b> Toda sigla é explicada na primeira vez em que aparece. As sublinhadas com pontinhos, como <abbr data-g="MCC">MCC</abbr> (coeficiente de correlação de Matthews), abrem o glossário com um clique.</div>
@@ -79,7 +79,8 @@
           <div class="cartao"><div class="numero">{{base.n_emails|int}}</div><div class="numero-rot">e-mails na base, já com a resposta certa (o rótulo)</div></div>
           <div class="cartao"><div class="numero">{{der.frac_spam|pct}}</div><div class="numero-rot">deles são spam; o resto ({{der.frac_real|pct}}) é e-mail real</div></div>
         </div>
-        <div class="fizemos"><b>O que fizemos.</b> Demos um preço a cada erro: perder um e-mail real custa <b>λ = {{meta.custo_fp|n}}</b> (a letra grega lambda), e deixar passar um spam custa {{meta.custo_fn|n}}. Todo filtro foi ajustado para gastar o mínimo possível.</div>
+        <div class="fizemos"><b>O que fizemos.</b> Demos um preço a cada erro: perder um e-mail real custa <b>λ = {{meta.custo_fp|n}}</b> (a letra grega lambda), e deixar passar um spam custa {{meta.custo_fn|n}}. Esse peso vem de um estudo clássico de filtros de spam (Androutsopoulos et al., 2000). Todo filtro foi ajustado para gastar o mínimo possível.</div>
+        <div class="cartao suave"><p><b>E se não houvesse filtro?</b> Nenhum e-mail real se perderia e todo spam passaria. Esse é o “porteiro que deixa todo mundo entrar”, e todo filtro precisa sair mais barato que ele.</p></div>
       </div>
       <div class="col">
         <div class="tit-g">Os quatro resultados possíveis (<abbr data-g="VP/VN/FP/FN">VP, VN, FP e FN</abbr>)</div>
@@ -93,7 +94,7 @@
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Fixar o vocabulário: “e-mail real na lixeira” e “spam que passou”. Eles aparecem em todos os gráficos.</li><li>O peso {{meta.custo_fp|n}} é uma escolha nossa; no fim mostramos o que muda com outros pesos.</li></ul></aside>
+  <aside class="notas"><ul><li>Fixar o vocabulário: “e-mail real na lixeira” e “spam que passou”. Eles aparecem em todos os gráficos.</li><li>O peso {{meta.custo_fp|n}} é uma escolha, tirada da literatura; no fim mostramos o que muda com outros pesos.</li><li>“Não filtrar” volta no fim: é a referência que decide se um filtro vale a pena.</li></ul></aside>
 </section>
 
 <!-- ============================================================ LINHA DO TEMPO -->
@@ -125,53 +126,53 @@
         <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Se e-mails repetidos indicam spam.</p></div>
         <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Encontramos {{base.duplicatas_excedentes|int}} cópias e um jeito de separá-las sem vazar respostas.</p></div>
         <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>A hipótese: {{base.fracao_duplicatas_email_real|pct}} das cópias são e-mails reais; “cópia = spam” acerta só {{base.acuracia_regra_copia_spam|pct}}.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>Cópias sempre do mesmo lado e {{protocolo.teste_n|int}} e-mails trancados para o teste final. <button type="button" class="bt" data-ir="e-copias" style="margin-top:8px">ir ao passo →</button></p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>Cópias sempre do mesmo lado e {{protocolo.teste_n|int}} e-mails trancados, usados só para relatar. <button type="button" class="bt" data-ir="e-copias" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="sem-rotulo">
-        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Separar spam sem olhar as respostas: projeção, grupos, tópicos e anomalias.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Os tópicos separam bem os assuntos; “não parece meus e-mails reais” chega a <abbr data-g="PR-AUC">PR-AUC</abbr> (área sob a curva de precisão e revocação) de {{ns.so_real.reconstrucao_pr_auc|d3}}.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>Os grupos do <abbr data-g="K-means">K-means</abbr> (agrupamento automático) não são spam × e-mail real: <abbr data-g="ARI">ARI</abbr> (índice de Rand ajustado; zero é o acaso) de {{ns.kmeans_ari|mcc}}. Dois detectores de anomalia ficaram abaixo do acaso.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Separar spam sem olhar as respostas: projeção, grupos e tópicos; e, usando só os e-mails reais, anomalias.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Os tópicos separam bem os assuntos; treinando só com e-mails reais, “não parece meus e-mails” chega a <abbr data-g="PR-AUC">PR-AUC</abbr> de {{ns.so_real.reconstrucao_pr_auc|d3}}.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>Os grupos do <abbr data-g="K-means">K-means</abbr> não são spam × e-mail real: <abbr data-g="ARI">ARI</abbr> de {{ns.kmeans_ari|mcc}}, abaixo do acaso. Dois detectores de anomalia também ficaram abaixo do acaso.</p></div>
         <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>Usar as respostas (aprendizado supervisionado). Sem rótulo, só para entender a base. <button type="button" class="bt" data-ir="e-sem-rotulo" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="medir">
-        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Acurácia, MCC, PR-AUC e custo dos erros.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Três medidas que se completam: decisão (MCC), ordem (PR-AUC) e preço (custo).</p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Acurácia, MCC, PR-AUC, custo dos erros e a comparação com não filtrar.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Medidas que se completam: decisão (MCC), ordem (PR-AUC), preço (custo) e “vale a pena?” (<abbr data-g="TCR">TCR</abbr>).</p></div>
         <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>A acurácia: um filtro que não faz nada acerta {{dummy_acuracia|pct}}.</p></div>
         <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>λ = {{meta.custo_fp|n}} e limiar escolhido só com dados de treino. <button type="button" class="bt" data-ir="e-medir" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="torneio">
         <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>{{der.n_torneio|n}} modelos de famílias diferentes, todos no mesmo protocolo.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>O <abbr data-g="TF-IDF">TF-IDF</abbr> com log (peso que amortece repetições): regressão logística {{der.ganho_lr|s3}} e <abbr data-g="kNN">kNN</abbr> (k vizinhos mais próximos) {{der.ganho_knn|s3}} de MCC.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>O <abbr data-g="TF-IDF">TF-IDF</abbr> com log (peso que amortece repetições): regressão logística {{der.ganho_lr|s3}} e <abbr data-g="kNN">kNN</abbr> {{der.ganho_knn|s3}} de MCC.</p></div>
         <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>O boosting parecia o melhor, mas era efeito da contagem crua. A votação simples ({{achados.votacao|mcc}}) perdeu para a regressão logística sozinha.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>TF-IDF com log para todos os modelos de texto. <button type="button" class="bt" data-ir="e-torneio" style="margin-top:8px">ir ao passo →</button></p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>TF-IDF com log para os modelos lineares, o SVM, o kNN e a rede neural; o Naive Bayes e as árvores ficam com as contagens. <button type="button" class="bt" data-ir="e-torneio" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="stacking">
-        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Combinações de modelos (<abbr data-g="stacking">stacking</abbr>, um “conselho” de modelos): Stacking 4, Stacking 7, Stacking 13, votação e Caruana.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>O Stacking 7, um modelo por família (MCC {{der.s7_mcc|mcc}}). O kNN ganha o maior peso.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Combinações de modelos (<abbr data-g="stacking">stacking</abbr>, um “conselho”): Stacking 4, Stacking 7, Stacking 13, votação e <abbr data-g="Caruana">Caruana</abbr>.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>O Stacking 7, um modelo por família. O {{der.jaccard_medio.0.membro|txt}} e o {{der.jaccard_medio.1.membro|txt}} são os que menos erram junto; o kNN ganha o maior peso.</p></div>
         <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>Mais modelos: o Stacking 13 empata ({{der.s13_mcc|mcc}}) e leva {{der.s13_tempo_extra|pct}} mais tempo.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>O Stacking 7 é o modelo do projeto. <button type="button" class="bt" data-ir="e-stacking" style="margin-top:8px">ir ao passo →</button></p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>O Stacking 7 é a base dos filtros do projeto. <button type="button" class="bt" data-ir="e-stacking" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="genetico">
-        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Um algoritmo genético (<abbr data-g="GA">GA</abbr>) em {{ga.combinacoes|int}} combinações de ajustes.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Ele chega ao topo mais rápido que o sorteio, e a versão afinada é a mais barata nesta caixa.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>{{ga.fracao_otimismo|pct}} do ganho era sorte de quem venceu a busca; em dados novos, sobrou {{ga.ganho_novas|s4}}.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>O afinado vira o Especialista desta caixa; para caixas novas, configuração padrão. <button type="button" class="bt" data-ir="e-genetico" style="margin-top:8px">ir ao passo →</button></p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Um algoritmo genético (<abbr data-g="GA">GA</abbr>): ele avaliou {{ga.avaliacoes|int}} das {{ga.combinacoes|int}} combinações de ajustes.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Nesta execução, ele chegou ao topo antes do sorteio, e a versão afinada é a de menor custo nos {{protocolo.folds|n}} folds.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>O ganho não se confirmou: na busca, {{ga.ganho_busca|s4}}; em dados novos, {{ga.ganho_novas|s4}}, com um intervalo que cruza o zero.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>O afinado vira o Especialista desta caixa; no teste trancado, ele empatou com o padrão. <button type="button" class="bt" data-ir="e-genetico" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="tabpfn">
-        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>O <abbr data-g="TabPFN">TabPFN</abbr>, um modelo pré-treinado em tabelas sintéticas (Prior Labs), sozinho e como oitavo membro.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Nas caixas novas, ele baixa o custo do stacking em {{der.s8_reducao_ext|pct}}.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>Nesta caixa ele não acrescenta nada: Stacking 8 {{der.s8_mcc_int|mcc}} contra {{der.s7_mcc_int|mcc}} do Stacking 7.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>O <abbr data-g="TabPFN">TabPFN</abbr>, um <abbr data-g="modelo de fundação">modelo de fundação</abbr> pré-treinado em tabelas sintéticas, sozinho e como oitavo membro.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Sozinho, é o mais cuidadoso com e-mails reais nas caixas de outras pessoas; no conselho, baixa o custo lá em {{der.s8_reducao_ext|pct}} (padrão) e {{der.s8esp_reducao_ext|pct}} (afinado).</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>Nesta caixa ele não acrescenta nada ao stacking: Stacking 8 {{der.s8_mcc_int|mcc}} contra {{der.s7_mcc_int|mcc}} do Stacking 7.</p></div>
         <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>Não usar o achado direto: escrever uma regra e testá-la numa terceira base. <button type="button" class="bt" data-ir="e-tabpfn" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="final">
-        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>A regra escrita antes, no SpamAssassin, uma base que nunca tínhamos usado.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>O Stacking 8 passou nas duas condições: custo {{terceira.decisao.diferenca_custo|custo}} por mil e MCC {{terceira.decisao.diferenca_mcc_custo|s3}}.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>Todos os filtros caíram muito fora da caixa de origem: MCC entre {{der.sa_mcc_min|mcc}} e {{der.sa_mcc_max|mcc}}.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>O Stacking 8 vira o Generalista; a demonstração usa o Stacking 7, que roda sem internet. <button type="button" class="bt" data-ir="e-final" style="margin-top:8px">ir ao passo →</button></p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>A regra escrita antes, no SpamAssassin. Essa base decidiu a regra (D10) e, na revisão (D11), também o que destacar.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>O Stacking 8 passou nas duas condições e custou menos que o Stacking 7 em todos os pesos de erro testados: de {{der.sa_s8_s7_dif_min|int}} a {{der.sa_s8_s7_dif_max|int}} a menos por mil.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>No SpamAssassin, com λ = {{meta.custo_fp|n}}, nenhum filtro treinado aqui saiu mais barato que não filtrar.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>O ganho é do TabPFN como oitavo membro: ele barateia o conselho fora da caixa. Não é um filtro para qualquer caixa. A demonstração usa o Stacking 7, que roda sem internet. <button type="button" class="bt" data-ir="e-final" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
       <div class="lt-painel" data-painel="contra">
         <div class="cartao"><span class="rotulo-caixa">O que testamos</span><p>Tentamos derrubar as conclusões: gabarito embaralhado, sem as palavras da empresa, menos dados, outros pesos.</p></div>
-        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>Não há vazamento (MCC {{der.perm_media|s3}} com o gabarito embaralhado). Treinado no próprio SpamAssassin, chega a {{terceira.controle.mcc|mcc}}.</p></div>
+        <div class="cartao"><span class="rotulo-caixa">Deu certo</span><p>O MCC não vem do acaso: com o gabarito embaralhado, cai para {{der.perm_media|s3}}. Treinada no próprio SpamAssassin, uma regressão logística ordena quase perfeito.</p></div>
         <div class="cartao"><span class="rotulo-caixa">Deu errado</span><p>A transferência entre caixas: o vocabulário de uma pessoa não é o de outra.</p></div>
         <div class="cartao"><span class="rotulo-caixa">O que decidimos</span><p>Recomendação para uso real: retreinar com e-mails da caixa de destino. <button type="button" class="bt" data-ir="e-contra" style="margin-top:8px">ir ao passo →</button></p></div>
       </div>
@@ -224,10 +225,11 @@
         <div class="cartao">
           <h3>Cópias sempre do mesmo lado</h3>
           <p>Na <abbr data-g="CV">validação cruzada</abbr> (CV), os dados são divididos em partes; o filtro treina em todas menos uma e é testado na que ficou de fora, girando. Todas as cópias de um texto ficam sempre na mesma parte.</p>
+          <p class="pequeno" style="margin-top:6px">As <abbr data-g="quase-cópia">quase-cópias</abbr> (quase iguais, mas não idênticas) escapam: nos {{protocolo.folds|n}} folds, estão em {{contra.quase_copias.folds_fracao|pct}} dos e-mails de teste. No subconjunto sem elas, o MCC é {{contra.quase_copias.mcc_sem_quase_copias|d4}} ({{contra.quase_copias.mcc|d4}} no total): muda só na terceira casa.</p>
         </div>
         <div class="cartao">
           <h3>O envelope lacrado</h3>
-          <p>{{protocolo.teste_n|int}} e-mails ({{der.frac_teste|pct}}) foram separados no início e só abertos depois de cada escolha feita, {{protocolo.teste_usos|n}} vezes no projeto inteiro.</p>
+          <p>{{protocolo.teste_n|int}} e-mails ({{der.frac_teste|pct}}) foram separados no início e abertos {{protocolo.teste_usos|n}} vezes no projeto inteiro, sempre para relatar um resultado. Numa decisão (D8), o fato de um candidato já ter passado por ele serviu de desempate.</p>
           <div data-graf="divisao" style="margin-top:10px"></div>
         </div>
       </div>
@@ -250,13 +252,13 @@
       </div>
       <div class="col">
         <div class="analogia"><b>Analogia: arrumar uma estante sem saber o gênero dos livros.</b> Você junta por assunto (culinária, viagem), não por “bom” e “ruim”. O computador fez o mesmo.</div>
-        <div class="fizemos"><b>O que fizemos.</b> Desenhamos a base em duas dimensões com o <abbr data-g="SVD/LSA">SVD</abbr> (decomposição em valores singulares, que resume as colunas em poucas direções). O K-means formou grupos, e o <abbr data-g="ARI">ARI</abbr> (índice que compara grupos com as respostas; zero é o acaso) deu {{ns.kmeans_ari|mcc}}. Com o <abbr data-g="NMF">NMF</abbr> (fatoração que separa tópicos), os assuntos apareceram:</div>
-        <div class="g" data-graf="nmf" style="height:190px"></div>
-        <p class="pequeno">Melhor pista sem respostas: “este e-mail não se parece com os meus e-mails reais” (PR-AUC {{ns.so_real.reconstrucao_pr_auc|d3}}).</p>
+        <div class="fizemos"><b>O que fizemos.</b> Desenhamos a base em duas dimensões com o <abbr data-g="SVD/LSA">SVD</abbr> (que resume as colunas em poucas direções). O K-means formou grupos, e o <abbr data-g="ARI">ARI</abbr> (índice que compara grupos com as respostas; zero é o acaso) deu {{ns.kmeans_ari|mcc}}, até abaixo do acaso. Com o <abbr data-g="NMF">NMF</abbr> (fatoração que separa tópicos), os assuntos apareceram:</div>
+        <div class="g" data-graf="nmf" style="height:180px"></div>
+        <p class="pequeno">Com uma parte das respostas, treinando só com e-mails reais conhecidos (<abbr data-g="semissupervisionado">semissupervisionado</abbr>), a melhor pista é “este e-mail não se parece com os meus e-mails reais” (PR-AUC {{ns.so_real.reconstrucao_pr_auc|d3}}).</p>
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Explorar sem rótulo serviu para entender a base, não para filtrar.</li><li>O tópico com mais spam é o de “our, you, your”: linguagem de propaganda.</li></ul></aside>
+  <aside class="notas"><ul><li>Explorar sem rótulo serviu para entender a base, não para filtrar. K-means, agrupamento hierárquico e NMF não usam resposta nenhuma.</li><li>A detecção de anomalia já usa um pouco de resposta: sabe quais e-mails são reais.</li><li>O tópico com mais spam é o de “our, you, your”: linguagem de propaganda.</li></ul></aside>
 </section>
 
 <!-- ============================================================ PASSO: COMO MEDIR -->
@@ -274,12 +276,12 @@
       <div class="col">
         <div class="cartao"><h3><abbr data-g="MCC">MCC</abbr> (coeficiente de correlação de Matthews): a decisão</h3><p>Usa os quatro resultados (VP, VN, FP, FN) de uma vez. Zero é o chute e um é o acerto perfeito. O filtro que não faz nada tira {{der.dummy_mcc|mcc}}.</p></div>
         <div class="cartao"><h3><abbr data-g="PR-AUC">PR-AUC</abbr> (área sob a curva de precisão e revocação): a ordem</h3><p>Se a gente ordenar os e-mails do mais suspeito ao menos suspeito, o spam fica no topo? Não depende de limiar. O chute vale {{der.frac_spam|d3}}.</p></div>
-        <div class="cartao"><h3>Custo por mil e-mails: o preço</h3><p>λ × (e-mails reais na lixeira) + (spams que passaram), a cada mil e-mails. Com λ = {{meta.custo_fp|n}}.</p></div>
+        <div class="cartao"><h3>Custo por mil e-mails: o preço</h3><p>Mil × (λ × e-mails reais na lixeira + spams que passaram) ÷ número de e-mails, com λ = {{meta.custo_fp|n}}. Para saber se vale a pena filtrar: o <abbr data-g="TCR">TCR</abbr>, custo de não filtrar ÷ custo do filtro; acima de um, compensa.</p></div>
         <div class="fizemos"><b>O que fizemos.</b> Cada filtro tem um <abbr data-g="limiar">limiar</abbr>: a partir de que probabilidade de spam o e-mail vai para a lixeira. Escolhemos o limiar que dá o menor custo <b>usando só os dados de treino</b>.</div>
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Três medidas, três perguntas: o filtro decide bem? ordena bem? custa pouco?</li></ul></aside>
+  <aside class="notas"><ul><li>Três medidas, três perguntas: o filtro decide bem? ordena bem? custa pouco? E uma quarta: custa menos que não filtrar?</li></ul></aside>
 </section>
 
 <!-- ============================================================ PASSO: DO TEXTO AOS NÚMEROS -->
@@ -311,14 +313,14 @@
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>As barras aparecem família por família.</li><li>Reg. Logística {{achados.lr_antes|mcc}} → {{achados.lr_depois|mcc}}; kNN {{achados.knn_antes|mcc}} → {{achados.knn_depois|mcc}}.</li></ul></aside>
+  <aside class="notas"><ul><li>As barras aparecem família por família.</li><li>Reg. Logística {{achados.lr_antes|mcc}} → {{achados.lr_depois|mcc}}; kNN {{achados.knn_antes|mcc}} → {{achados.knn_depois|mcc}}.</li><li>O Naive Bayes e as árvores continuam com as contagens.</li></ul></aside>
 </section>
 
 <!-- ============================================================ PASSO: STACKING -->
 <section class="slide" data-id="e-stacking">
   <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
   <header class="cab"><div class="sobre">Etapa · o conselho de especialistas</div>
-    <h2>Sete modelos que pensam diferente, e um chefe que aprende em quem confiar</h2></header>
+    <h2>Sete modelos que pensam diferente, e um chefe que aprende quanto pesar cada um</h2></header>
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 1.1fr 1fr">
       <div class="col">
@@ -329,29 +331,29 @@
             <tr><td><span class="m" style="background:#eb6834"></span>kernel</td><td><abbr data-g="SVM">SVM</abbr> com <abbr data-g="RBF">RBF</abbr></td><td>traça uma fronteira curva com a maior folga</td></tr>
             <tr><td><span class="m" style="background:#1baf7a"></span>vizinhos</td><td><abbr data-g="kNN">kNN</abbr>, k vizinhos mais próximos</td><td>copia a resposta dos e-mails mais parecidos</td></tr>
             <tr><td class="nb"><span class="m" style="background:#eda100"></span>rede neural</td><td><abbr data-g="MLP">MLP</abbr>, perceptron de camadas</td><td>combina palavras de forma não linear</td></tr>
-            <tr><td class="nb"><span class="m" style="background:#e87ba4"></span>probabilística</td><td><abbr data-g="NB">NB</abbr>, Naive Bayes</td><td>multiplica probabilidades de cada palavra</td></tr>
+            <tr><td class="nb"><span class="m" style="background:#e87ba4"></span>probabilística</td><td><abbr data-g="NB">NB</abbr>, Naive Bayes</td><td>multiplica as probabilidades das palavras, como se fossem independentes dentro de cada classe</td></tr>
             <tr><td><span class="m" style="background:#008300"></span>bagging</td><td><abbr data-g="ET">ET</abbr>, Extra Trees</td><td>média de muitas árvores sorteadas</td></tr>
             <tr><td><span class="m" style="background:#6250d6"></span>boosting</td><td><abbr data-g="LightGBM">LightGBM</abbr></td><td>cada árvore corrige a anterior</td></tr>
           </tbody>
         </table>
-        <div class="fizemos"><b>O que fizemos.</b> Cada membro dá uma nota a cada e-mail que <b>não viu no treino</b> (nota <abbr data-g="OOF">OOF</abbr>, “fora da dobra”). O <abbr data-g="meta-modelo">meta-modelo</abbr> aprende quanto confiar em cada um. Isso é o <abbr data-g="stacking">stacking</abbr> (empilhamento).</div>
+        <div class="fizemos"><b>O que fizemos.</b> Cada membro dá uma nota a cada e-mail que <b>não viu no treino</b> (nota <abbr data-g="OOF">OOF</abbr>, “fora da dobra”). O <abbr data-g="meta-modelo">meta-modelo</abbr> aprende quanto pesar cada um. Isso é o <abbr data-g="stacking">stacking</abbr> (empilhamento).</div>
       </div>
       <div class="col">
-        <div class="tit-g">Quanto o chefe confia em cada membro (peso)</div>
-        <div class="g" data-graf="pesos" style="height:220px"></div>
-        <div class="analogia"><b>Analogia: o conselho.</b> O colega que pensa diferente vale mais que mais um que pensa igual. O kNN, fraco sozinho (MCC {{der.knn_mcc_sozinho|mcc}}), acerta {{der.knn_resgata|int}} vezes quando a maioria erra, e ganha o maior peso.</div>
-        <p class="pequeno">Mais gente no conselho não ajudou: o Stacking 13 empatou com o Stacking 7 ({{der.s13_mcc|mcc}} × {{der.s7_mcc|mcc}}).</p>
+        <div class="tit-g">Quanto o chefe pesa cada membro</div>
+        <div class="g" data-graf="pesos" style="height:200px"></div>
+        <div class="analogia"><b>Analogia: o conselho.</b> Colegas que erram em coisas diferentes se completam. O {{der.jaccard_medio.0.membro|txt}} e o {{der.jaccard_medio.1.membro|txt}} são os que menos erram junto com os outros (<abbr data-g="Jaccard">Jaccard</abbr>). O kNN, fraco sozinho (MCC {{der.knn_mcc_sozinho|mcc}}), ganha o maior peso.</div>
+        <p class="pequeno">Quando a maioria erra, quem salva são vários: {{der.resgate.0.membro|txt}}, {{der.resgate.1.membro|txt}} e {{der.resgate.2.membro|txt}} acertam de {{der.resgate_min_top3|int}} a {{der.resgate_max_top3|int}} vezes. Mais gente no conselho não ajudou: o Stacking 13 empatou com o Stacking 7 ({{der.s13_mcc|mcc}} × {{der.s7_mcc|mcc}}).</p>
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Diversidade, não quantidade. O Naive Bayes ficou com peso quase zero ({{der.nb_peso|d2}}).</li></ul></aside>
+  <aside class="notas"><ul><li>Modelos que erram diferente se completam; mais modelos não ajudaram. O Naive Bayes, que também erra diferente, ficou com peso quase zero ({{der.nb_peso|d2}}): o peso não é só “confiança”, porque as notas dos membros se parecem entre si.</li></ul></aside>
 </section>
 
 <!-- ============================================================ PASSO: ALGORITMO GENÉTICO -->
 <section class="slide" data-id="e-genetico">
   <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
   <header class="cab"><div class="sobre">Etapa · o algoritmo genético</div>
-    <h2>Afinar os ajustes rendeu pouco, e a maior parte do ganho era sorte</h2></header>
+    <h2>Afinar os ajustes rendeu pouco: o ganho da busca não se confirmou em dados novos</h2></header>
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 1.15fr 1fr">
       <div class="col">
@@ -360,35 +362,35 @@
         <div class="g-legenda"><span class="g-leg-item"><span class="g-leg-marca linha" style="background:#6250d6"></span>algoritmo genético</span><span class="g-leg-item"><span class="g-leg-marca linha" style="background:#eb6834"></span>sorteio, mesmo número de tentativas</span></div>
       </div>
       <div class="col">
-        <div class="fizemos"><b>O que fizemos.</b> Cada modelo tem botões de ajuste. Havia {{ga.combinacoes|int}} combinações; o <abbr data-g="GA">GA</abbr> (algoritmo genético) testou {{ga.avaliacoes|int}}. Ele cruza as melhores receitas e faz pequenas mutações, geração após geração.</div>
-        <div class="analogia"><b>Analogia: a maldição do vencedor.</b> O campeão de um torneio curto parece melhor do que é; na temporada seguinte, volta para perto da média. Na busca, o ganho foi {{ga.ganho_busca|s4}}; em dados novos, {{ga.ganho_novas|s4}}. Ou seja, {{ga.fracao_otimismo|pct}} era sorte.</div>
-        <div class="cartao"><h3>O piso</h3><p>Com estes dados, diferenças menores que {{der.piso20|d4}} de MCC não dá para distinguir do acaso, nem repetindo o teste muitas vezes.</p></div>
+        <div class="fizemos"><b>O que fizemos.</b> Cada modelo tem botões de ajuste. Havia {{ga.combinacoes|int}} combinações; o <abbr data-g="GA">GA</abbr> (algoritmo genético) avaliou {{ga.avaliacoes|int}}. Ele cruza as melhores receitas e faz pequenas mutações, geração após geração.</div>
+        <div class="analogia"><b>Analogia: a maldição do vencedor.</b> O campeão de um torneio curto parece melhor do que é; na temporada seguinte, volta para perto da média. Na busca, o ganho foi {{ga.ganho_busca|s4}}; em dados novos, {{ga.ganho_novas|s4}}, com <abbr data-g="IC95">IC95</abbr> de {{ga.ganho_novas_ic95.0|s4}} a {{ga.ganho_novas_ic95.1|s4}}: pode ser zero.</div>
+        <div class="cartao"><h3>O piso</h3><p>Com estes dados, o teste só percebe, com {{ga.piso_poder|pct0}} de chance (o <abbr data-g="poder">poder</abbr>), uma diferença entre o GA e o padrão de pelo menos {{der.piso20|d4}} de MCC. Repetir o teste muitas vezes quase não ajuda.</p></div>
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Mesmo assim, a versão afinada virou o Especialista: no limiar de custo, ela é a mais barata nesta caixa.</li></ul></aside>
+  <aside class="notas"><ul><li>Mesmo assim, a versão afinada virou o Especialista: é a de menor custo nos {{protocolo.folds|n}} folds. Mas esses folds reaproveitam os e-mails da escolha; na prova final (teste trancado), empatou com o padrão.</li></ul></aside>
 </section>
 
 <!-- ============================================================ PASSO: TABPFN -->
 <section class="slide" data-id="e-tabpfn">
   <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
   <header class="cab"><div class="sobre">Etapa · o modelo pré-treinado</div>
-    <h2>O TabPFN não ajudou nesta caixa, mas baixou o custo nas caixas de outras pessoas</h2></header>
+    <h2>O TabPFN não estudou nada desta caixa, empatou com o melhor modelo afinado e foi o mais cuidadoso com e-mails reais nas caixas de outras pessoas</h2></header>
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 1.1fr 1fr">
       <div class="col">
-        <div class="fin-tit">Caixas novas (Enron2–6): custo por mil e-mails<span>quanto menor, melhor</span></div>
+        <div class="fin-tit">Outras caixas (Enron2–6): custo por mil e-mails<span>quanto menor, melhor</span></div>
         <div class="g cresce" data-graf="tab-ext"></div>
       </div>
       <div class="col">
         <div class="analogia"><b>Analogia:</b> um aluno que estudou milhões de provas de mentira e chega na sua prova sem estudar a matéria. Ele não decorou o jeito da sua escola, então se sai razoavelmente em qualquer lugar.</div>
-        <div class="fizemos"><b>O que fizemos.</b> Testamos o <abbr data-g="TabPFN">TabPFN</abbr> (modelo da Prior Labs pré-treinado em tabelas sintéticas) sozinho e como oitavo membro. Nesta caixa ele empatou (MCC {{der.tab_mcc|mcc}}); no stacking, não acrescentou nada. Nas caixas novas, baixou o custo do Stacking 7 em {{der.s8_reducao_ext|pct}}.</div>
+        <div class="fizemos"><b>O que fizemos.</b> Testamos o <abbr data-g="TabPFN">TabPFN</abbr> sozinho e como oitavo membro. Nesta caixa, sozinho e sem ajuste, empatou com o melhor modelo único afinado (MCC {{der.tab_mcc|mcc}} contra {{der.lsvc_mcc_int|mcc}}, no limiar {{limiar_padrao|d1}}); no stacking, não acrescentou nada. Nas caixas novas, baixou o custo do Stacking 7 em {{der.s8_reducao_ext|pct}}.</div>
         <div class="cartao"><h3>Por que não trocamos na hora?</h3><p>Porque o achado veio de olhar a base externa. Usar a mesma base para descobrir e para provar é se enganar. Escrevemos uma regra e fomos para uma terceira base.</p></div>
         <p class="pequeno">As versões na nuvem e no computador local deram notas quase iguais: correlação {{tabpfn.local_x_nuvem.correlacao_notas|d3}}.</p>
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Nas caixas novas, o TabPFN é o que menos manda e-mail real para a lixeira ({{der.tab_lixeira_ext|pct}}).</li></ul></aside>
+  <aside class="notas"><ul><li>Nas caixas novas, o TabPFN é o que menos manda e-mail real para a lixeira, em todas elas ({{der.tab_lixeira_ext|pct}} na média). Por isso sai barato onde há muito e-mail real ({{der.bases_maioria_real_txt|txt}}) e caro onde há muito spam: no {{der.tab_mais_caro_txt|txt}}, é o mais caro ({{der.tab_mais_caro_custo|custo}}). Nesta caixa, no limiar de custo, ele deixa passar mais spam que os outros.</li></ul></aside>
 </section>
 
 <!-- ============================================================ PASSO: LIMIAR -->
@@ -407,70 +409,113 @@
 <section class="slide" data-id="e-final">
   <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
   <header class="cab"><div class="sobre">Etapa · a grande final</div>
-    <h2>Apostamos antes de ver o jogo, e a aposta se confirmou numa base nunca usada</h2></header>
+    <h2>Apostamos antes de ver o jogo: o Stacking 8 venceu o Stacking 7, mas nenhum filtro venceu “não filtrar” no SpamAssassin</h2></header>
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 330px 1fr">
       <div class="col">
         <div class="analogia"><b>Analogia: apostar antes do jogo.</b> Escrevemos a regra antes de rodar qualquer modelo na base nova (o SpamAssassin, com {{terceira.n|int}} mensagens). Assim, não dá para mudar a regra depois de ver o resultado.</div>
         <div class="cartao">
           <h3>A regra (D10)</h3>
-          <p>O Stacking 8 vira o Generalista se baixar o custo com chance de pelo menos {{terceira.regra.p_min|pct}} e não piorar o MCC em mais de {{terceira.regra.tol_mcc|d2}}.</p>
-          <p class="ok" style="margin-top:8px">custo {{terceira.decisao.diferenca_custo|custo}} por mil, <abbr data-g="IC95">IC95</abbr> de {{terceira.decisao.ic95_custo.0|custo}} a {{terceira.decisao.ic95_custo.1|custo}}</p>
+          <p>O Stacking 8 substitui o Stacking 7 padrão se baixar o custo com chance de pelo menos {{terceira.regra.p_min|pct0}} e não piorar o MCC em mais de {{terceira.regra.tol_mcc|d2}}.</p>
+          <p class="ok" style="margin-top:8px">com λ = {{meta.custo_fp|n}}: custo {{terceira.decisao.diferenca_custo|custo}} por mil, <abbr data-g="IC95">IC95</abbr> de {{terceira.decisao.ic95_custo.0|custo}} a {{terceira.decisao.ic95_custo.1|custo}}</p>
           <p class="ok">MCC {{terceira.decisao.diferenca_mcc_custo|s3}}</p>
+          <p class="pequeno" style="margin-top:6px">Com outros pesos de erro, sempre mais barato: de {{der.sa_s8_s7_dif_min|int}} a {{der.sa_s8_s7_dif_max|int}} a menos por mil.</p>
         </div>
+        <p class="pequeno">A linha tracejada é “não filtrar”. A aposta comparava os dois conselhos padrão; ela não diz que o Stacking 8 serve para qualquer caixa.</p>
       </div>
       <div class="g" data-graf="final" style="height:100%"></div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Cada painel tem a sua escala: compare as alturas dentro do painel, não entre painéis.</li><li>A regra passou, mas olhe a terceira base: todos os filtros custam muito mais lá.</li></ul></aside>
+  <aside class="notas"><ul><li>Cada painel tem a sua escala: compare as alturas dentro do painel, não entre painéis.</li><li>A regra passou, mas olhe a terceira base: todos os filtros custam mais que não filtrar lá. O botão TCR mostra isso de outro jeito: abaixo de um, não vale a pena filtrar.</li></ul></aside>
 </section>
 
 <!-- ============================================================ PASSO: CONTRA-ESTUDO -->
 <section class="slide" data-id="e-contra">
   <button type="button" class="bt link-lt no-print" data-ir="linha-do-tempo">↩ linha do tempo</button>
   <header class="cab"><div class="sobre">Etapa · o contra-estudo</div>
-    <h2>Tentamos derrubar as nossas conclusões: o filtro aprende a caixa, não o spam</h2></header>
+    <h2>Tentamos derrubar as nossas conclusões: o conselho aprende a caixa e a coleção de spam</h2></header>
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 1fr 1fr">
       <div class="col">
         <div class="tiles" style="grid-template-columns: 1fr 1fr">
-          <div class="cartao"><h3>Embaralhar o gabarito</h3><p>Com as respostas sorteadas, o MCC cai para {{der.perm_media|s3}}. Não há vazamento.</p></div>
-          <div class="cartao"><h3>Tirar as palavras da empresa</h3><p>Sem as {{contra.n_palavras_enron|n}} palavras da Enron, o MCC nesta caixa quase não muda: {{der.abl_caixa_todas|mcc}} → {{der.abl_caixa_sem|mcc}}.</p></div>
+          <div class="cartao"><h3>Embaralhar o gabarito</h3><p>Com as respostas sorteadas {{der.n_perm|int}} vezes, o MCC cai para {{der.perm_media|s3}}: o resultado não vem do acaso. Contra a “cola”, o que protege é manter as cópias juntas.</p></div>
+          <div class="cartao"><h3>Tirar as palavras da empresa</h3><p>Sem as {{contra.n_palavras_enron|n}} palavras da caixa, o MCC aqui quase não muda: {{der.abl_caixa_todas|mcc}} → {{der.abl_caixa_sem|mcc}}.</p></div>
           <div class="cartao"><h3>Estudar mais ajuda?</h3><p>Sim: o Stacking 7 vai de {{der.curva_s7_min|mcc}} (com {{der.curva_n_min|int}} e-mails) a {{der.curva_s7_max|mcc}} (com {{der.curva_n_max|int}}) e ainda sobe.</p></div>
-          <div class="cartao"><h3>Prova em outra escola</h3><p>No SpamAssassin, os filtros treinados aqui ficam entre {{der.sa_mcc_min|mcc}} e {{der.sa_mcc_max|mcc}}. Treinado lá dentro, o mesmo método chega a {{terceira.controle.mcc|mcc}}.</p></div>
+          <div class="cartao"><h3>Prova em outra escola</h3><p>No SpamAssassin, os filtros treinados aqui ordenam mal. Treinada lá dentro, uma regressão logística chega a PR-AUC {{terceira.controle.pr_auc|d3}}: o vocabulário funciona lá.</p></div>
         </div>
-        <div class="fizemos"><b>O que concluímos.</b> O método funciona; o que não viaja é o vocabulário de cada pessoa. Para usar de verdade, é preciso retreinar com e-mails da caixa de destino.</div>
+        <div class="fizemos"><b>O que concluímos.</b> O método funciona; o que não viaja é o vocabulário de cada pessoa e o jeito do spam que veio com ele: no SpamAssassin, todo filtro deixa passar mais spam do que aqui. Com λ = {{meta.custo_fp|n}}, não filtrar sai mais barato que qualquer filtro treinado aqui. Para usar de verdade, é preciso retreinar com e-mails da caixa de destino.</div>
       </div>
       <div class="col">
-        <div class="tit-g">SpamAssassin: MCC de quem treinou aqui × de quem treinou lá</div>
+        <div class="tit-g">SpamAssassin: PR-AUC de quem treinou aqui × de quem treinou lá</div>
         <div class="g cresce" data-graf="terceira"></div>
       </div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Esta é a conclusão central do projeto. O controle prova que a conversão dos e-mails está certa.</li></ul></aside>
+  <aside class="notas"><ul><li>Esta é a conclusão central do projeto. O controle mostra que o vocabulário funciona no SpamAssassin; a conversão dos e-mails brutos foi conferida à parte, no spam.</li><li>Um detalhe: o spam do SpamAssassin é parente do spam de duas caixas da Enron (Enron2 e Enron5), por isso as bases externas não são independentes no spam.</li></ul></aside>
+</section>
+
+<!-- ============================================================ AS TECNOLOGIAS EM DESTAQUE -->
+<section class="slide" data-id="e-destaques">
+  <header class="cab"><div class="sobre">As tecnologias em destaque</div>
+    <h2>O conselho afinado, o conselho com convidado e o aluno das provas de mentira: o que cada um faz de melhor</h2></header>
+  <div class="corpo">
+    <div class="col" style="height:100%">
+      <div class="tiles" style="grid-template-columns: repeat(3, 1fr); flex:1; min-height:0">
+        <div class="cartao" style="display:flex;flex-direction:column;gap:8px">
+          <h3><span class="m" style="background:#2a78d6"></span>{{finais.especialista.rotulo|txt}}</h3>
+          <p class="pequeno">O conselho de sete modelos com os ajustes achados pelo algoritmo genético.</p>
+          <span class="rotulo-caixa">faz de melhor</span>
+          <div><div class="numero medio">{{finais.especialista.cv20.custo_por_mil|custo}}</div><div class="numero-rot">custo por mil nesta caixa, nos {{protocolo.folds|n}} folds: o menor de todos (o Stacking 7 padrão: {{finais.generalista_sem_chave.cv20.custo_por_mil|custo}})</div></div>
+          <span class="rotulo-caixa" style="margin-top:auto">cuidado</span>
+          <p class="pequeno">Na prova final (teste trancado), empatou com a versão padrão. Fora da caixa, custa mais.</p>
+        </div>
+        <div class="cartao" style="display:flex;flex-direction:column;gap:8px">
+          <h3><span class="m" style="background:#6250d6"></span>{{finais.generalista.rotulo|txt}}</h3>
+          <p class="pequeno">O conselho padrão com um convidado: o TabPFN como oitavo membro.</p>
+          <span class="rotulo-caixa">faz de melhor</span>
+          <div><div class="numero medio">{{der.s7_custo_ext|custo}} → {{der.s8_custo_ext|custo}}</div><div class="numero-rot">custo por mil nas outras caixas da Enron quando o convidado entra. Barateia também o conselho afinado ({{der.s7esp_custo_ext|custo}} → {{der.s8esp_custo_ext|custo}}) e os dois no SpamAssassin, com todos os pesos de erro testados.</div></div>
+          <span class="rotulo-caixa" style="margin-top:auto">cuidado</span>
+          <p class="pequeno">Não é “o melhor conselho fora da caixa”: o afinado com convidado custa menos. No SpamAssassin, perde para não filtrar. Avaliado, não entregue pronto.</p>
+        </div>
+        <div class="cartao" style="display:flex;flex-direction:column;gap:8px">
+          <h3><span class="m" style="background:#1baf7a"></span>{{finais.tabpfn.rotulo|txt}}</h3>
+          <p class="pequeno">O aluno que estudou milhões de provas de mentira (<abbr data-g="modelo de fundação">modelo de fundação</abbr>), sem nenhum ajuste.</p>
+          <span class="rotulo-caixa">faz de melhor</span>
+          <div><div class="numero medio">{{finais.tabpfn.externo.real_lixeira_custo|pct}}</div><div class="numero-rot">dos e-mails reais das outras caixas na lixeira: o mais cuidadoso, em todas as caixas de fora. Por isso sai barato onde há muito e-mail real. Aqui, empata com o melhor modelo afinado.</div></div>
+          <span class="rotulo-caixa" style="margin-top:auto">cuidado</span>
+          <p class="pequeno">Com muito spam ({{der.tab_mais_caro_txt|txt}}), é o mais caro. No SpamAssassin é barato porque quase não filtra: deixa passar {{finais.tabpfn.spamassassin.spam_passou_custo|pct}} do spam.</p>
+        </div>
+      </div>
+      <div class="analogia"><b>O conselho contra o melhor aluno sozinho.</b> No MCC, ganha por pouco no limiar {{limiar_padrao|d1}} (<abbr data-g="p de Holm">p de Holm</abbr> {{ga.s7_x_lsvc_otim.p_holm|p}} em {{ga.n_comparacoes|n}} comparações; com mais, passaria de {{alfa|d2}}) e empata no limiar de custo. No custo, gasta de {{der.custo_red_min|pct0}} a {{der.custo_red_max|pct0}} menos que o LinearSVC, em média, mas pode ser acaso (p de Holm ≥ {{der.custo_holm_min|d2}}).</div>
+    </div>
+  </div>
+  <aside class="notas"><ul><li>Cada tecnologia tem o seu ponto forte, e nenhuma resolve a caixa nova: para isso, retreinar.</li></ul></aside>
 </section>
 
 <!-- ============================================================ ENTREGA -->
 <section class="slide" data-id="e-entrega">
   <header class="cab"><div class="sobre">O que entregamos e o que aprendemos</div>
-    <h2>Quatro filtros, cada um com o seu uso, e cinco lições</h2></header>
+    <h2>Três filtros entregues, dois avaliados, a referência que todos precisam vencer e cinco lições</h2></header>
   <div class="corpo">
     <div class="grade" style="grid-template-columns: 1fr 1fr">
-      <div class="col">
-        <div class="cartao"><h3><span class="m" style="background:#2a78d6"></span>Especialista</h3><p>O Stacking 7 afinado pelo GA. O mais barato nesta caixa: custo {{finais.especialista.cv20.custo_por_mil|custo}} por mil.</p></div>
-        <div class="cartao"><h3><span class="m" style="background:#6250d6"></span>Generalista</h3><p>O Stacking 8 (com TabPFN), escolhido pela regra escrita antes. Precisa do TabPFN: na nuvem, com chave, ou no computador, mais lento.</p></div>
-        <div class="cartao"><h3><span class="m" style="background:#1baf7a"></span>Stacking 7 padrão</h3><p>Roda sem chave e sem internet. É o filtro da demonstração.</p></div>
-        <div class="cartao"><h3><span class="m" style="background:#898781"></span>LinearSVC</h3><p>A linha de base: simples, rápido e, fora da caixa, às vezes mais barato que o stacking.</p></div>
+      <div class="col" style="gap:8px">
+        <div class="cartao" style="padding:9px 14px"><h3><span class="m" style="background:#2a78d6"></span>{{finais.especialista.rotulo|txt}}</h3><p>O de menor custo nos {{protocolo.folds|n}} folds desta caixa ({{finais.especialista.cv20.custo_por_mil|custo}} por mil); no teste trancado, empatou com o padrão.</p></div>
+        <div class="cartao" style="padding:9px 14px"><h3><span class="m" style="background:#eb6834"></span>{{finais.generalista_sem_chave.rotulo|txt}}</h3><p>Roda sem chave e sem internet. É o filtro da demonstração.</p></div>
+        <div class="cartao" style="padding:9px 14px"><h3><span class="m" style="background:#6250d6"></span>{{finais.generalista.rotulo|txt}}</h3><p><b>Avaliado.</b> Com o TabPFN, o conselho fica mais barato fora da caixa.</p></div>
+        <div class="cartao" style="padding:9px 14px"><h3><span class="m" style="background:#1baf7a"></span>{{finais.tabpfn.rotulo|txt}}</h3><p><b>Avaliado.</b> Sem ajuste; o mais cuidadoso com e-mails reais fora da caixa.</p></div>
+        <div class="cartao" style="padding:9px 14px"><h3><span class="m" style="background:#898781"></span>{{finais.linha_de_base.rotulo|txt}}</h3><p>A linha de base, simples e rápida.</p></div>
+        <div class="cartao suave" style="padding:9px 14px"><h3>{{finais.nao_filtrar.rotulo|txt}}</h3><p>A referência: {{finais.nao_filtrar.cv20.custo_por_mil|custo}} por mil aqui e {{finais.nao_filtrar.spamassassin.custo_por_mil|custo}} no SpamAssassin, onde vence todos.</p></div>
+        <p class="pequeno">Os avaliados precisam da chave da Prior Labs e não têm inferência pronta para um e-mail novo.</p>
       </div>
       <div class="col">
         <ul class="lista">
           <li><strong>Conhecer os dados mudou tudo.</strong> A origem, a contagem por pedaços e as cópias mudaram o protocolo.</li>
           <li><strong>A preparação vale mais que o modelo.</strong> O TF-IDF com log levou modelos simples ao topo.</li>
-          <li><strong>Diversidade vence quantidade.</strong> Sete famílias diferentes valem mais que treze parecidas.</li>
-          <li><strong>Ajuste fino engana.</strong> {{ga.fracao_otimismo|pct}} do ganho era sorte do vencedor.</li>
-          <li><strong>O filtro aprende a caixa, não o spam.</strong> Para outra caixa, retreinar.</li>
+          <li><strong>Modelos que erram diferente se completam.</strong> E mais não é melhor: o Stacking 13 empatou com o Stacking 7.</li>
+          <li><strong>Ajuste fino engana.</strong> O ganho do algoritmo genético não se confirmou em dados novos.</li>
+          <li><strong>O conselho aprende a caixa e a coleção de spam.</strong> Na média das outras caixas da Enron, todo filtro compensa (TCR de {{der.tcr_ext_min|d2}} a {{der.tcr_ext_max|d2}}); no SpamAssassin, o spam que passa sobe em todos e não filtrar sai mais barato. Para outra caixa, retreinar.</li>
         </ul>
-        <div class="analogia" style="margin-top:8px"><b>Para levar:</b> antes de comemorar um número, pergunte de onde ele veio, se a prova era nova e se ele vale fora daqui.</div>
+        <div class="analogia" style="margin-top:8px"><b>Para levar:</b> antes de comemorar um número, pergunte de onde ele veio, se a prova era nova, se ele vale fora daqui e se ganha de não fazer nada.</div>
       </div>
     </div>
   </div>
@@ -482,12 +527,12 @@
   <header class="cab"><div class="sobre">Glossário · clique num termo (ou tecle G em qualquer slide)</div>
     <h2>Siglas e termos do projeto</h2></header>
   <div class="corpo">
-    <div class="grade" style="grid-template-columns: 1.35fr 1fr">
+    <div class="grade" style="grid-template-columns: 1.4fr 1fr">
       <div class="gl-indice"></div>
       <div class="gl-def cartao" style="align-self:start;padding:22px 24px"><div class="termo"></div><div class="nome"></div><div class="def"></div></div>
     </div>
   </div>
-  <aside class="notas"><ul><li>Os dois slides seguintes trazem o glossário inteiro, para impressão.</li></ul></aside>
+  <aside class="notas"><ul><li>Os slides seguintes trazem o glossário inteiro, para impressão.</li></ul></aside>
 </section>
 <section class="slide" data-id="glossario-a">
   <header class="cab"><div class="sobre">Glossário completo · primeira parte</div><h2>Termos <span class="gl-faixa"></span></h2></header>
@@ -497,16 +542,23 @@
   <header class="cab"><div class="sobre">Glossário completo · segunda parte</div><h2>Termos <span class="gl-faixa"></span></h2></header>
   <div class="corpo"><div class="gl-lista"></div></div>
 </section>
+<section class="slide" data-id="glossario-c">
+  <header class="cab"><div class="sobre">Glossário completo · terceira parte</div><h2>Termos <span class="gl-faixa"></span></h2></header>
+  <div class="corpo"><div class="gl-lista"></div></div>
+</section>
 
 <script type="application/json" id="glossario-dados">[
-{"t":"MCC","n":"coeficiente de correlação de Matthews","g":"Métricas","d":"Nota da decisão final que usa os quatro resultados (VP, VN, FP, FN). Vai de menos um a um; zero é o chute. Não se ilude quando uma classe é bem maior que a outra."},
+{"t":"MCC","n":"coeficiente de correlação de Matthews","g":"Métricas","d":"Nota da decisão final que usa os quatro resultados (VP, VN, FP, FN). Vai de menos um a um; zero é o chute. Não se ilude quando uma classe é bem maior que a outra. Depende do limiar: o de custo ou o padrão, {{limiar_padrao|d1}}."},
 {"t":"PR-AUC","n":"área sob a curva de precisão e revocação","g":"Métricas","d":"Mede se o spam fica no topo da lista de suspeitos, sem escolher limiar. O piso é a fração de spam da base."},
 {"t":"ROC-AUC","n":"área sob a curva ROC","g":"Métricas","d":"Chance de um spam sorteado receber nota maior que um e-mail real sorteado. Meio é o chute. Com classes desiguais, a PR-AUC é mais exigente."},
 {"t":"AUC","n":"área sob a curva","g":"Métricas","d":"Nome genérico da área sob uma curva de desempenho (ROC ou precisão e revocação). Resume o modelo em todos os limiares de uma vez."},
 {"t":"VP/VN/FP/FN","n":"verdadeiro positivo, verdadeiro negativo, falso positivo, falso negativo","g":"Métricas","d":"Os quatro resultados possíveis. Positivo é “o filtro disse spam”: FP é e-mail real na lixeira (o erro caro); FN é spam que passou."},
-{"t":"λ","n":"lambda, o custo do erro","g":"Métricas","d":"Quantos spams recebidos equivalem a um e-mail real perdido. Usamos λ = {{meta.custo_fp|n}}. Custo por mil = λ × reais na lixeira + spams que passaram."},
-{"t":"limiar","n":"ponto de corte","g":"Métricas","d":"A partir de que probabilidade de spam o e-mail vai para a lixeira. Escolhido para dar o menor custo, só com dados de treino."},
-{"t":"TF-IDF","n":"frequência do termo × inverso da frequência nos documentos","g":"Representação do texto","d":"Peso de cada palavra: sobe quando ela aparece muito no e-mail e desce quando aparece em quase todos. Com log, repetir não multiplica o peso."},
+{"t":"λ","n":"lambda, o custo do erro","g":"Métricas","d":"Quantos spams recebidos equivalem a um e-mail real perdido. Usamos λ = {{meta.custo_fp|n}}, um dos cenários de Androutsopoulos et al. (2000). Custo por mil = mil × (λ × e-mails reais na lixeira + spams que passaram) ÷ número de e-mails."},
+{"t":"TCR","n":"total cost ratio, razão de custo total","g":"Métricas","d":"Custo de não filtrar dividido pelo custo do filtro (Androutsopoulos et al., 2000). Acima de um, filtrar compensa; abaixo de um, deixar tudo passar sai mais barato. Quando junta várias caixas ou folds, é o custo médio de não filtrar dividido pelo custo médio do filtro."},
+{"t":"não filtrar","n":"a referência mais simples","g":"Métricas","d":"Nunca marcar spam: nenhum e-mail real se perde e todo spam passa. O custo por mil dela é mil vezes a fração de spam. Todo filtro precisa custar menos que ela para valer a pena."},
+{"t":"limiar","n":"ponto de corte","g":"Métricas","d":"A partir de que probabilidade de spam o e-mail vai para a lixeira. O limiar de custo é o que dá o menor custo, escolhido só com dados de treino; o limiar padrão é {{limiar_padrao|d1}}."},
+{"t":"precisão e revocação","n":"precision e recall","g":"Métricas","d":"Precisão: dos e-mails mandados para a lixeira, quantos eram spam. Revocação: dos spams, quantos foram para a lixeira. O F1 é a média harmônica das duas."},
+{"t":"TF-IDF","n":"frequência do termo × inverso da frequência nos documentos","g":"Representação do texto","d":"Peso de cada palavra: sobe quando ela aparece muito no e-mail e desce quando aparece em quase todos. Com log, repetir não multiplica o peso. Usado nos modelos lineares, no SVM, no kNN e na rede neural."},
 {"t":"SVD/LSA","n":"decomposição em valores singulares / análise semântica latente","g":"Representação do texto","d":"Resume milhares de colunas em poucas direções que juntam palavras que andam juntas. Usado para desenhar a base e como entrada do SVM."},
 {"t":"PCA","n":"análise de componentes principais","g":"Representação do texto","d":"Encontra as direções de maior variação dos dados. Em tabelas de palavras, quase todas zeradas, o SVD faz o mesmo papel sem centralizar os dados."},
 {"t":"χ²","n":"qui-quadrado","g":"Representação do texto","d":"Teste que mede se uma palavra aparece mais numa classe do que o acaso explicaria. Serve para escolher palavras."},
@@ -514,31 +566,44 @@
 {"t":"CSV","n":"valores separados por vírgula","g":"Arquivos e fontes","d":"Tabela em texto puro. A base é um CSV com uma linha por e-mail e uma coluna por pedaço de texto contado."},
 {"t":"JSON","n":"notação de objetos JavaScript","g":"Arquivos e fontes","d":"Formato de texto para dados estruturados. Todos os números destes slides saem de um único JSON de resultados."},
 {"t":"HTML","n":"linguagem de marcação de hipertexto","g":"Arquivos e fontes","d":"A linguagem das páginas web. Estes slides são um único arquivo HTML que abre sem internet."},
+{"t":"SpamAssassin","n":"corpus público de e-mails","g":"Arquivos e fontes","d":"Coleção pública de mensagens de listas de discussão e e-mails pessoais, com spam, da mesma época dos e-mails da Enron. Foi a terceira base: decidiu a regra D10 e, na revisão D11, serviu também para decidir o que destacar."},
 {"t":"SVM","n":"máquina de vetores de suporte","g":"Modelos","d":"Traça a fronteira que deixa a maior folga possível entre as classes. A nota é a distância até essa fronteira."},
+{"t":"LinearSVC","n":"SVM linear","g":"Modelos","d":"SVM sem kernel: uma fronteira reta, rápida em textos com milhares de colunas. É a linha de base do projeto, com TF-IDF com log e limiar de custo."},
 {"t":"RBF","n":"função de base radial","g":"Modelos","d":"Kernel que mede semelhança pela distância. Permite ao SVM traçar fronteiras curvas."},
 {"t":"kNN","n":"k vizinhos mais próximos","g":"Modelos","d":"Dá a um e-mail a resposta dos k e-mails de treino mais parecidos com ele. Simples, e erra em lugares diferentes dos outros modelos."},
 {"t":"MLP","n":"perceptron de múltiplas camadas","g":"Modelos","d":"Rede neural pequena: camadas de neurônios que combinam as palavras de forma não linear."},
-{"t":"NB","n":"Naive Bayes","g":"Modelos","d":"Modelo probabilístico que trata as palavras como independentes. Rápido; no stacking recebeu peso quase zero."},
-{"t":"NBSVM","n":"Naive Bayes com SVM","g":"Modelos","d":"Usa as razões de probabilidade do Naive Bayes como pesos de um classificador linear. Clássico em textos curtos."},
+{"t":"NB","n":"Naive Bayes","g":"Modelos","d":"Modelo probabilístico que supõe as palavras independentes entre si dentro de cada classe (spam ou e-mail real). Rápido; no stacking recebeu peso quase zero."},
+{"t":"NBSVM","n":"Naive Bayes com SVM","g":"Modelos","d":"Usa as razões de probabilidade do Naive Bayes para reescalar as entradas e treina um classificador linear sobre elas (Wang e Manning, 2012). Clássico em textos curtos."},
 {"t":"LR","n":"regressão logística","g":"Modelos","d":"Modelo linear: um peso por palavra, e a soma vira probabilidade. Também é o meta-modelo do stacking."},
 {"t":"RF","n":"Random Forest, floresta aleatória","g":"Modelos","d":"Muitas árvores de decisão treinadas em amostras diferentes; a resposta é a média delas (bagging)."},
 {"t":"ET","n":"Extra Trees, árvores extremamente aleatórias","g":"Modelos","d":"Floresta em que os cortes de cada árvore são sorteados. Mais variada e mais rápida que a Random Forest."},
 {"t":"LightGBM","n":"boosting de árvores (Microsoft)","g":"Modelos","d":"Cada árvore nova corrige os erros das anteriores. Rápido em tabelas grandes."},
 {"t":"XGBoost","n":"boosting de árvores","g":"Modelos","d":"Outra implementação de boosting de árvores, muito usada em competições de dados."},
-{"t":"TabPFN","n":"rede pré-treinada para tabelas (Prior Labs)","g":"Modelos","d":"Modelo de fundação pré-treinado em milhões de tabelas sintéticas. Classifica sem ajuste; aqui foi o oitavo membro do Generalista."},
-{"t":"stacking","n":"empilhamento","g":"Combinação e busca","d":"Combinação de modelos: cada membro dá uma nota e um meta-modelo aprende quanto confiar em cada um."},
-{"t":"meta-modelo","n":"o modelo de cima","g":"Combinação e busca","d":"Recebe as notas dos membros do stacking e decide. Aqui é uma regressão logística; os pesos dela mostram em quem ela confia."},
+{"t":"modelo de fundação","n":"modelo pré-treinado de uso geral","g":"Modelos","d":"Modelo treinado antes, em muitos dados, que se usa direto num problema novo, sem ajuste. O TabPFN é um modelo de fundação para tabelas."},
+{"t":"TabPFN","n":"rede pré-treinada para tabelas (Prior Labs)","g":"Modelos","d":"Modelo de fundação pré-treinado em milhões de tabelas sintéticas (Hollmann et al., 2025). Classifica sem ajuste. Aqui foi usado sozinho e como oitavo membro do Stacking 8."},
+{"t":"stacking","n":"empilhamento","g":"Combinação e busca","d":"Combinação de modelos: cada membro dá uma nota e um meta-modelo aprende quanto pesar cada um."},
+{"t":"Stacking 7 e Stacking 8","n":"os conselhos do projeto","g":"Combinação e busca","d":"O Stacking 7 combina um modelo de cada uma das sete famílias. O Especialista é o Stacking 7 com os ajustes do algoritmo genético. O Stacking 8 é o Stacking 7 padrão com o TabPFN como oitavo membro."},
+{"t":"meta-modelo","n":"o modelo de cima","g":"Combinação e busca","d":"Recebe as notas dos membros do stacking e decide. Aqui é uma regressão logística; os pesos dela mostram quanto cada nota conta, mas as notas se parecem entre si, então peso não é só confiança."},
+{"t":"Caruana","n":"seleção de ensembles (Caruana et al., 2004)","g":"Combinação e busca","d":"Monta a combinação escolhendo, passo a passo, o modelo que mais melhora o conjunto, podendo repetir modelos. Foi uma das combinações comparadas com o stacking."},
 {"t":"GA","n":"algoritmo genético","g":"Combinação e busca","d":"Busca inspirada na evolução: as melhores configurações se cruzam e sofrem pequenas mutações, geração após geração."},
+{"t":"Jaccard","n":"índice de Jaccard","g":"Combinação e busca","d":"Fração de erros em comum entre dois modelos: erros que os dois cometem, divididos pelos erros de qualquer um deles."},
 {"t":"CV","n":"validação cruzada","g":"Validação e estatística","d":"Divide os dados em partes (folds), treina em todas menos uma e testa na que ficou de fora, girando. A nota é a média."},
 {"t":"OOF","n":"out-of-fold, fora da dobra","g":"Validação e estatística","d":"Nota que um modelo dá a um e-mail que ele não viu no treino. O meta-modelo só aprende com notas OOF, para não premiar quem decorou."},
-{"t":"IC95","n":"intervalo de confiança de noventa e cinco por cento","g":"Validação e estatística","d":"Faixa de valores plausíveis para uma diferença, calculada aqui por reamostragem (bootstrap). Se não cruza o zero, a diferença é consistente."},
+{"t":"teste trancado","n":"o envelope lacrado","g":"Validação e estatística","d":"Os {{protocolo.teste_n|int}} e-mails separados no início, por grupo de cópias, e abertos {{protocolo.teste_usos|n}} vezes, sempre para relatar um resultado."},
+{"t":"quase-cópia","n":"e-mail quase idêntico a outro","g":"Validação e estatística","d":"E-mail com cosseno de pelo menos {{contra.quase_copias.limiar_cosseno|d2}} com algum e-mail do treino, sem ser idêntico. O agrupamento só junta cópias idênticas, então as quase-cópias podem cair dos dois lados e inflar um pouco a nota."},
+{"t":"bootstrap","n":"reamostragem com reposição","g":"Validação e estatística","d":"Sorteia de novo, com reposição, os e-mails (ou os grupos de cópias) para ver quanto um resultado varia. Dá o IC95 e o P(redução) da regra D10."},
+{"t":"IC95","n":"intervalo de confiança de noventa e cinco por cento","g":"Validação e estatística","d":"Faixa de valores plausíveis para uma diferença, calculada aqui por bootstrap ou pelo t corrigido. Se cruza o zero, a diferença pode não existir."},
+{"t":"t corrigido de Nadeau-Bengio","n":"teste t para validação cruzada","g":"Validação e estatística","d":"Teste t que aumenta a variância porque os treinos dos folds se sobrepõem (Nadeau e Bengio, 2003). Sem a correção, diferenças pequenas pareceriam significativas."},
+{"t":"teste bayesiano correlacionado","n":"comparação bayesiana nos mesmos folds","g":"Validação e estatística","d":"Compara dois modelos nos mesmos folds, levando em conta que eles se sobrepõem (Benavoli et al., 2017). Dá a chance de A ser melhor, de B ser melhor e de serem equivalentes (dentro da ROPE)."},
 {"t":"ROPE","n":"região de equivalência prática","g":"Validação e estatística","d":"Faixa de diferença pequena demais para importar. No teste bayesiano, “equivalentes” quer dizer diferença dentro dela (aqui, um centésimo de MCC)."},
 {"t":"p de Holm","n":"valor-p corrigido por Holm","g":"Validação e estatística","d":"Ajuste do valor-p quando várias comparações são feitas ao mesmo tempo, para não achar diferença por acaso."},
+{"t":"poder","n":"poder estatístico","g":"Validação e estatística","d":"Chance de um teste detectar uma diferença que existe de verdade. O piso do projeto é a menor diferença que os folds detectam com {{ga.piso_poder|pct0}} de poder."},
+{"t":"teste de permutação","n":"teste de sinal","g":"Validação e estatística","d":"Embaralha os rótulos e refaz a avaliação muitas vezes. Se o MCC verdadeiro fica muito acima dos embaralhados, ele não vem do acaso. Não prova que não houve vazamento."},
 {"t":"McNemar","n":"teste de McNemar","g":"Validação e estatística","d":"Compara dois filtros nos mesmos e-mails, contando onde só um deles acerta."},
-{"t":"ARI","n":"índice de Rand ajustado","g":"Sem rótulo","d":"Mede se os grupos encontrados sem as respostas coincidem com as classes reais. Zero é o acaso; um é coincidência total."},
+{"t":"ARI","n":"índice de Rand ajustado","g":"Sem rótulo","d":"Mede se os grupos encontrados sem as respostas coincidem com as classes reais. Zero é o acaso e um é coincidência total; fica negativo quando a coincidência é pior que o acaso (o K-means deu {{ns.kmeans_ari|mcc}})."},
 {"t":"NMF","n":"fatoração em matrizes não negativas","g":"Sem rótulo","d":"Separa a base em tópicos: cada tópico é um conjunto de palavras que aparecem juntas."},
 {"t":"K-means","n":"agrupamento por k médias","g":"Sem rótulo","d":"Divide os e-mails em k grupos, juntando cada um ao centro mais próximo. Não usa as respostas."},
-{"t":"Jaccard","n":"índice de Jaccard","g":"Combinação e busca","d":"Fração de erros em comum entre dois modelos: erros que os dois cometem, divididos pelos erros de qualquer um deles."},
+{"t":"semissupervisionado","n":"aprendizado com parte dos rótulos","g":"Sem rótulo","d":"Usa só uma parte das respostas: aqui, treinar só com e-mails reais conhecidos e marcar como suspeito o que foge deles (detecção de novidade). Não é “sem rótulo”."},
 {"t":"substring","n":"pedaço de texto","g":"Termos do projeto","d":"Trecho dentro de uma palavra maior. A base conta substrings: “ect” é contado dentro de “Subject”."},
 {"t":"e-mail real","n":"e-mail legítimo","g":"Termos do projeto","d":"O e-mail que não é spam. É o termo que usamos em todo o projeto."},
 {"t":"ham","n":"nome em inglês para e-mail real","g":"Termos do projeto","d":"Termo da literatura em inglês para o e-mail legítimo, em oposição a spam. Neste projeto escrevemos sempre “e-mail real”."}
@@ -551,7 +616,7 @@
 (() => {
   const { F, COR, FAMILIA } = G, D = DADOS;
   const q = (sl, k) => sl.querySelector(`[data-graf="${k}"]`);
-  const curto = m => m.replace(" (+TabPFN)", " +TabPFN").replace(" (Generalista atual)", "").replace(" sozinho", "");
+  const curto = m => m.replace(" (+TabPFN)", " +TabPFN");
   const faixa = (vals, folga) => { const a = Math.min(...vals), b = Math.max(...vals), f = (b - a) * folga; return [a - f, b + f]; };
 
   Deck.registrar("capa", (sl, o) => G.dispersao(q(sl, "capa"), D.ns.svd2d, { animar: o.animar, raio: 1.9, opacidade: 0.45, duracao: 3200, rotulo: "e-mails projetados em 2D" }));
@@ -613,7 +678,7 @@
     const ps = D.stacking.pesos, max = Math.max(...ps.map(p => p.peso));
     G.barras(q(sl, "pesos"), {
       itens: ps.map(p => ({ rotulo: p.membro, marca: G.corMembro(p.membro), valor: p.peso, cor: G.corMembro(p.membro), forte: p.membro === "kNN cosseno",
-        dica: `${G.mk(G.corMembro(p.membro))}<b>${G.esc(p.membro)}</b>: peso ${F.dec(p.peso, 3)}` })),
+        dica: `${G.mk(G.corMembro(p.membro))}<b>${G.esc(p.membro)}</b>: peso ${F.dec(p.peso, 3)}<br>Jaccard médio dos erros com os outros: ${F.dec(D.der.jaccard_d[p.membro], 3)}` })),
       dom: [0, max * 1.15], fmt: v => F.dec(v, 2), margemE: 132, espessura: 14, animar: o.animar, atraso: i => 200 + i * 90, rotulo: "pesos do meta-modelo",
     });
   });
@@ -635,7 +700,7 @@
     const tab = D.tabpfn.externo_d, ordem = D.tabpfn.interno.map(r => r.metodo);
     const vals = ordem.map(m => tab[m].custo_por_mil), best = Math.min(...vals);
     G.barras(q(sl, "tab-ext"), {
-      itens: ordem.map((m, i) => ({ rotulo: curto(m), valor: vals[i], cor: G.corMetodo(m), forte: vals[i] === best,
+      itens: ordem.map((m, i) => ({ rotulo: curto(G.nomeMetodo(m)), valor: vals[i], cor: G.corMetodo(m), forte: vals[i] === best,
         dica: `${G.mk(G.corMetodo(m))}<b>${G.esc(m)}</b><br>custo por mil ${F.custo(vals[i])} · e-mails reais na lixeira ${F.pct(tab[m].real_lixeira_custo)}` })),
       dom: [0, Math.max(...vals) * 1.2], fmt: F.custo, margemE: 230, espessura: 16, animar: o.animar, rotulo: "custo por mil nas caixas novas",
     });
@@ -645,13 +710,14 @@
   Deck.registrar("e-final", (sl, o) => G.finalTres(q(sl, "final"), D, { animar: o.animar }));
 
   Deck.registrar("e-contra", (sl, o) => {
-    const tb = D.terceira, ms = [...tb.metodos].sort((a, b) => b.mcc_custo - a.mcc_custo);
+    const tb = D.terceira, ms = tb.metodos.filter(r => G.chaveMetodo(r.metodo) !== G.REFERENCIA).sort((a, b) => b.pr_auc - a.pr_auc);
     G.barras(q(sl, "terceira"), {
-      itens: [...ms.map(r => ({ rotulo: curto(r.metodo), valor: r.mcc_custo, cor: G.corMetodo(r.metodo),
-        dica: `${G.mk(G.corMetodo(r.metodo))}<b>${G.esc(r.metodo)}</b><br>treinado no Enron1 · MCC ${F.mcc(r.mcc_custo)}` })),
-        { rotulo: "treinado no próprio SpamAssassin", valor: tb.controle.mcc, cor: COR.tinta, forte: true,
-          dica: `<b>controle</b>: treinado e testado dentro do SpamAssassin<br>MCC ${F.mcc(tb.controle.mcc)}` }],
-      dom: [0, 1], fmt: F.mcc, margemE: 228, espessura: 16, animar: o.animar, atraso: (i, it) => i * 90 + (it.forte ? 700 : 0), rotulo: "MCC na terceira base",
+      itens: [...ms.map(r => ({ rotulo: curto(G.nomeMetodo(r.metodo)), valor: r.pr_auc, cor: G.corMetodo(r.metodo),
+        dica: `${G.mk(G.corMetodo(r.metodo))}<b>${G.esc(r.metodo)}</b><br>treinado no Enron1 · PR-AUC ${F.dec(r.pr_auc, 3)}` })),
+        { rotulo: "treinada no próprio SpamAssassin", valor: tb.controle.pr_auc, cor: COR.tinta, forte: true,
+          dica: `<b>controle</b>: regressão logística treinada e testada dentro do SpamAssassin<br>PR-AUC ${F.dec(tb.controle.pr_auc, 3)}` }],
+      dom: [0, 1], fmt: v => F.dec(v, 3), margemE: 228, espessura: 16, animar: o.animar, atraso: (i, it) => i * 90 + (it.forte ? 700 : 0),
+      refs: [{ valor: D.der.sa_acaso_pr_auc, rotulo: "chute (fração de spam)" }], rotulo: "PR-AUC na terceira base",
     });
   });
 

@@ -26,8 +26,16 @@
   "mcc_busca_ga": 0.9795097515261622,
   "mcc_busca_aleatoria": 0.9783605344221573,
   "ganho_busca": 0.006297850174775688,
-  "ganho_sementes_novas": 0.0009655360309827055,
-  "fracao_otimismo": 0.846687996032377,
+  "ganho_sementes_novas": 0.0009655360309826888,
+  "ganho_sementes_novas_ic95": [
+   -0.00488079481097684,
+   0.006811866872942218
+  ],
+  "fracao_otimismo": 0.8466879960323797,
+  "fracao_otimismo_ic95": [
+   -0.08161780352052261,
+   1.774993795585282
+  ],
   "curva_ga": [
    0.97321,
    0.97465,
@@ -2051,32 +2059,69 @@
     "p_holm": 0.7333899958652088
    }
   ],
+  "comparacoes_custo": [
+   {
+    "A": "Stacking 7 do GA (Especialista)",
+    "B": "LinearSVC otimizado",
+    "dif": -13.416165758313909,
+    "t": -1.7407360497684594,
+    "p": 0.09790034457810788,
+    "P_A_melhor": 0.9038475200968527,
+    "P_equivalentes": 0.07294548449825056,
+    "P_B_melhor": 0.02320699540489679,
+    "p_holm": 0.29370103373432366
+   },
+   {
+    "A": "Stacking 7 padrão",
+    "B": "LinearSVC otimizado",
+    "dif": -8.520991418841163,
+    "t": -1.0576766703797447,
+    "p": 0.3034656209699395,
+    "P_A_melhor": 0.7493373628652196,
+    "P_equivalentes": 0.1662432854160394,
+    "P_B_melhor": 0.08441935171874104,
+    "p_holm": 0.606931241939879
+   },
+   {
+    "A": "Stacking 7 do GA (Especialista)",
+    "B": "Stacking 7 padrão",
+    "dif": -4.895174339472746,
+    "t": -0.9268400592566651,
+    "p": 0.3656340463796434,
+    "P_A_melhor": 0.6381929641892594,
+    "P_equivalentes": 0.2861672675518335,
+    "P_B_melhor": 0.07563976825890706,
+    "p_holm": 0.606931241939879
+   }
+  ],
   "piso": [
    {
     "folds": 5,
-    "menor_dif_detectavel": 0.01056334716978867
+    "menor_dif_detectavel": 0.012716242255034118
    },
    {
     "folds": 10,
-    "menor_dif_detectavel": 0.009316443126719696
+    "menor_dif_detectavel": 0.009489974942643668
    },
    {
     "folds": 20,
-    "menor_dif_detectavel": 0.008625660385463993
+    "menor_dif_detectavel": 0.00825117742976532
    },
    {
     "folds": 50,
-    "menor_dif_detectavel": 0.008183248732413
+    "menor_dif_detectavel": 0.007575215431484707
    },
    {
     "folds": 100,
-    "menor_dif_detectavel": 0.008030363673391822
+    "menor_dif_detectavel": 0.007357991258759385
    },
    {
     "folds": 1000,
-    "menor_dif_detectavel": 0.007890234695259948
+    "menor_dif_detectavel": 0.007165305539069186
    }
-  ]
+  ],
+  "piso_par": "Stacking 7 do GA − Stacking 7 padrão",
+  "piso_poder": 0.8
  },
  "fonte": "scripts/05_algoritmo_genetico.py"
 }

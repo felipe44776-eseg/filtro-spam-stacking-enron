@@ -6,17 +6,19 @@ import pytest
 from spamfilter import metricas, modelos
 from spamfilter.motor import Motor
 
-from conftest import TOL_MCC
+from conftest import TOL_CACHE
 
 CONF = [f"c{s}_{f}" for s in (201, 202, 203, 204) for f in range(5)]
 
-# experimentos/03_ga/ga_confirmacao.csv (média de 20 folds): (MCC no limiar 0,5, custo por mil no limiar de custo)
+# experimentos/03_ga/ga_confirmacao.csv (média de 20 folds): (MCC no limiar 0,5, custo por mil no limiar de custo).
+# O cálculo a partir do cache é determinístico: a tolerância (TOL_CACHE) fica muito abaixo da diferença entre o
+# Especialista e o padrão (0,00097), que é justamente o que o teste precisa enxergar.
 ESPERADO = {
-    "Stacking 7 padrão (Generalista)": (modelos.STACKING7_PADRAO, 0.9734, 41.51),
-    "Stacking 7 especialista": (modelos.STACKING7_ESPECIALISTA, 0.9744, 36.62),
+    "Stacking 7 padrão": (modelos.STACKING7_PADRAO, 0.973398, 41.513035),
+    "Stacking 7 especialista": (modelos.STACKING7_ESPECIALISTA, 0.974363, 36.617861),
 }
-ESPERADO_LSVC = {"LinearSVC padrão": (modelos.LINEARSVC_PADRAO, 0.9600, 52.03),
-                 "LinearSVC otimizado": (modelos.LINEARSVC_OTIMIZADO, 0.9627, 50.03)}
+ESPERADO_LSVC = {"LinearSVC padrão": (modelos.LINEARSVC_PADRAO, 0.960036, 52.029336),
+                 "LinearSVC otimizado": (modelos.LINEARSVC_OTIMIZADO, 0.962669, 50.034027)}
 
 
 def _media(motor, prever, cfg):
@@ -30,16 +32,16 @@ def _media(motor, prever, cfg):
 def test_stacking_20_folds(motor, nome):
     cfg, mcc, custo = ESPERADO[nome]
     m = _media(motor, motor.prever_stacking, cfg)
-    assert m.mcc == pytest.approx(mcc, abs=TOL_MCC)
-    assert m.custo_por_mil == pytest.approx(custo, abs=0.05)
+    assert m.mcc == pytest.approx(mcc, abs=TOL_CACHE)
+    assert m.custo_por_mil == pytest.approx(custo, abs=1e-4)
 
 
 @pytest.mark.parametrize("nome", list(ESPERADO_LSVC))
 def test_linearsvc_20_folds(motor, nome):
     k, mcc, custo = ESPERADO_LSVC[nome]
     m = _media(motor, motor.prever_linearsvc, k)
-    assert m.mcc == pytest.approx(mcc, abs=TOL_MCC)
-    assert m.custo_por_mil == pytest.approx(custo, abs=0.05)
+    assert m.mcc == pytest.approx(mcc, abs=TOL_CACHE)
+    assert m.custo_por_mil == pytest.approx(custo, abs=1e-4)
 
 
 def test_configuracoes_dos_filtros_finais():

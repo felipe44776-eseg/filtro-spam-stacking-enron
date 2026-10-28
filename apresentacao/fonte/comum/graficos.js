@@ -22,20 +22,44 @@ const G = (() => {
     "LightGBM": { fam: "boosting", sigla: "LGBM" },
   };
   const corMembro = m => FAMILIA[(MEMBRO[m] || {}).fam] || COR.muda;
-  // Mesmas cores das figuras do projeto (scripts/09_modelos_finais.py).
+  // Mesmas cores das figuras do projeto (scripts/09_modelos_finais.py: CATEGORICA[0], [1], [6], [2] e TINTA_MUDA).
+  // Chaves = chaves de DADOS.finais (as antigas: generalista = Stacking 8; generalista_sem_chave = Stacking 7 padrão).
+  // O nome exibido é o `rotulo` de cada entrada de DADOS.finais; `nome` aqui é só o reserva.
   const FILTRO = {
-    especialista: { nome: "Especialista", sub: "Stacking 7 do GA · esta caixa", cor: "#2a78d6" },
-    generalista: { nome: "Generalista", sub: "Stacking 8 (+TabPFN) · caixas novas", cor: "#6250d6" },
-    generalista_sem_chave: { nome: "Stacking 7 padrão", sub: "sem chave · usado na demo", cor: "#1baf7a" },
-    linha_de_base: { nome: "LinearSVC", sub: "linha de base", cor: COR.muda },
+    especialista: { nome: "Especialista (S7 do GA)", curto: "Especialista", sub: "Stacking 7 do GA · o menor custo nos folds (empate no teste trancado)", cor: "#2a78d6" },
+    generalista_sem_chave: { nome: "Stacking 7 padrão", curto: "Stacking 7 padrão", sub: "sem chave · usado na demo", cor: "#eb6834" },
+    generalista: { nome: "Stacking 8 (+TabPFN)", curto: "Stacking 8", sub: "Stacking 7 padrão + TabPFN · o TabPFN barateia o stacking fora da caixa", cor: "#6250d6" },
+    tabpfn: { nome: "TabPFN-3.5 sozinho", curto: "TabPFN sozinho", sub: "modelo de fundação, sem ajuste · o mais conservador fora da caixa", cor: "#1baf7a" },
+    linha_de_base: { nome: "LinearSVC", curto: "LinearSVC", sub: "linha de base", cor: COR.muda },
+    nao_filtrar: { nome: "não filtrar", curto: "não filtrar", sub: "referência: todo spam passa", cor: COR.tinta2 },
   };
-  const ORDEM_FILTROS = ["especialista", "generalista", "generalista_sem_chave", "linha_de_base"];
+  if (typeof DADOS !== "undefined" && DADOS.finais) {
+    for (const k in FILTRO) if (DADOS.finais[k] && DADOS.finais[k].rotulo) FILTRO[k].nome = DADOS.finais[k].rotulo;
+    if (DADOS.protocolo) FILTRO.especialista.sub = `Stacking 7 do GA · o menor custo nos ${DADOS.protocolo.folds} folds (empate no teste trancado)`;
+  }
+  // Ordem dos filtros nos gráficos e tabelas: azul, laranja, violeta e verde nunca lado a lado com o vizinho
+  // parecido (validado: dataviz/validate_palette.js). "não filtrar" é referência: linha tracejada, não barra.
+  const ORDEM_FILTROS = ["especialista", "generalista_sem_chave", "generalista", "tabpfn", "linha_de_base"];
+  const REFERENCIA = "nao_filtrar";
+  // Nome de método no JSON → chave do filtro final correspondente (ou null se não for um filtro final).
+  function chaveMetodo(m) {
+    if (/[Nn]ão filtrar/.test(m)) return "nao_filtrar";
+    if (/^Stacking 8 padrão/.test(m)) return "generalista";
+    if (/^Stacking 7 padrão$/.test(m)) return "generalista_sem_chave";
+    if (/^Stacking 7 (especialista|do GA)/.test(m)) return "especialista";
+    if (/^TabPFN-3\.5-Plus( sozinho)?$/.test(m)) return "tabpfn";
+    if (/^LinearSVC( padrão)?$/.test(m)) return "linha_de_base";
+    return null;
+  }
+  const nomeMetodo = (m, curto) => { const k = chaveMetodo(m); return k ? FILTRO[k][curto ? "curto" : "nome"] : m; };
+  const ordemMetodo = m => { const k = chaveMetodo(m); const i = k === "nao_filtrar" ? 99 : ORDEM_FILTROS.indexOf(k); return i < 0 ? 50 : i; };
   function corMetodo(nome) {
+    if (/[Nn]ão filtrar/.test(nome)) return FILTRO.nao_filtrar.cor;
     if (/Stacking 8 especialista/.test(nome)) return "#e87ba4";
     if (/Stacking 8/.test(nome)) return FILTRO.generalista.cor;
     if (/Stacking 7 (especialista|do GA)/.test(nome)) return FILTRO.especialista.cor;
     if (/Stacking 7/.test(nome)) return FILTRO.generalista_sem_chave.cor;
-    if (/TabPFN/.test(nome)) return "#eda100";
+    if (/TabPFN/.test(nome)) return FILTRO.tabpfn.cor;
     if (/LinearSVC/.test(nome)) return COR.muda;
     if (/Reg\. Log/.test(nome)) return FAMILIA.linear;
     return COR.eixo;
@@ -384,12 +408,17 @@ const G = (() => {
       s("line", { x1: x(tk), x2: x(tk), y1: 4, y2: H - B, class: "g-grade" }, sv);
       t(sv, x(tk), H - 6, F.dec(tk, 1), { class: "g-tick", "text-anchor": "middle" });
     });
+    // Muitos pontos (centenas de permutações): faixa vertical maior, pontos menores e animação total limitada.
+    const n = o.pontos.length, muitos = n > 60, faixas = muitos ? 11 : 5, passo = muitos ? 3.2 : 7;
+    const atrasoP = Math.min(30, 1400 / Math.max(1, n));
+    const grupo = s("g", { "fill-opacity": muitos ? 0.45 : 1 }, sv);
     o.pontos.forEach((v, i) => {
-      const c = s("circle", { cx: x(v), cy: yc + ((i % 5) - 2) * 7, r: 4, fill: COR.muda, stroke: COR.fundo, "stroke-width": 2, class: "g-pop" }, sv);
-      anim(c, [{ transform: "scale(0)" }, { transform: "scale(1)" }], { duration: 250, delay: i * 30 }, A);
+      const c = s("circle", { cx: x(v), cy: yc + ((i % faixas) - (faixas - 1) / 2) * passo, r: muitos ? 2.4 : 4, fill: COR.muda,
+        stroke: muitos ? null : COR.fundo, "stroke-width": muitos ? null : 2, class: "g-pop" }, grupo);
+      anim(c, [{ transform: "scale(0)" }, { transform: "scale(1)" }], { duration: 250, delay: i * atrasoP }, A);
     });
     const d = o.destaque, cd = s("circle", { cx: x(d.valor), cy: yc, r: 7, fill: COR.tinta, stroke: COR.fundo, "stroke-width": 2, class: "g-pop" }, sv);
-    anim(cd, [{ transform: "scale(0)" }, { transform: "scale(1)" }], { duration: 400, delay: o.pontos.length * 30 + 200 }, A);
+    anim(cd, [{ transform: "scale(0)" }, { transform: "scale(1)" }], { duration: 400, delay: n * atrasoP + 200 }, A);
     t(sv, x(d.valor), yc - 16, d.rotulo, { class: "g-rot forte", "text-anchor": "end" });
     t(sv, x(o.pontos.reduce((a, b) => Math.max(a, b))) + 12, yc - 22, o.rotuloPontos, { class: "g-rot" });
     return sv;
@@ -431,6 +460,33 @@ const G = (() => {
       dica(seg, `${mk(p.cor)}<b>${esc(p.rotulo)}</b>: ${F.int(p.valor)} (${F.pct(p.valor / total)})`);
     });
     legenda(cont, partes.map(p => ({ nome: `${p.rotulo}: ${F.int(p.valor)} (${F.pct(p.valor / total)})`, cor: p.cor }))).style.marginTop = "8px";
+  }
+
+  /* ---------------------------------------------------------------- tabela HTML com destaque por célula */
+  // cab: [{ rot, sub? }]; linhas: [[célula, ...], ...]; célula = texto ou { t, marca?, forte?, ruim?, apagado? }.
+  // A primeira coluna fica à esquerda; as demais, numéricas, à direita. "ruim" = fundo rosado (pior que a referência).
+  function tabela(cont, cab, linhas, o = {}) {
+    const tb = h("table", { class: "tabela" + (o.classe ? " " + o.classe : ""), style: o.estilo || null }, cont);
+    const th = h("tr", null, h("thead", null, tb));
+    const num = i => i > 0 && !o.texto;                    // o.texto: todas as colunas alinhadas à esquerda
+    cab.forEach((c, i) => {
+      const e = h("th", { class: num(i) ? "n nb" : "nb" }, th, c.rot);
+      if (c.sub) { h("br", null, e); h("span", { style: "font-weight:400" }, e, c.sub); }
+    });
+    const bd = h("tbody", null, tb);
+    linhas.forEach(l => {
+      const tr = h("tr", null, bd);
+      l.forEach((c, i) => {
+        const cel = typeof c === "object" && c !== null ? c : { t: c };
+        const td = h("td", { class: num(i) ? "n" : (o.quebra ? null : "nb") }, tr);
+        if (cel.marca) td.innerHTML = mk(cel.marca);
+        td.append(cel.t ?? "–");
+        if (cel.forte) { td.style.fontWeight = "700"; td.style.color = COR.tinta; }
+        if (cel.ruim) { td.style.background = "#fde3d6"; td.style.color = COR.tinta; td.style.fontWeight = td.style.fontWeight || "650"; }
+        if (cel.apagado) td.style.color = COR.muda;
+      });
+    });
+    return tb;
   }
 
   /* ---------------------------------------------------------------- o caminho de um e-mail pelo filtro */
@@ -630,9 +686,14 @@ const G = (() => {
 
   /* ---------------------------------------------------------------- grande final: três avaliações, escalas separadas */
   function finalTres(cont, D, o) {
+    // "não filtrar" entra como linha de referência tracejada (custo e TCR), nunca como barra colorida.
+    const NF = D.finais[REFERENCIA];
     const MET = {
-      custo: { rot: "custo por mil e-mails", campo: "custo_por_mil", fmt: F.custo, melhor: Math.min, nota: "menor é melhor" },
-      mcc: { rot: "MCC", campo: "mcc_custo", fmt: F.mcc, melhor: Math.max, nota: "maior é melhor" },
+      custo: { rot: "custo por mil e-mails", campo: "custo_por_mil", fmt: F.custo, melhor: Math.min, nota: "menor é melhor",
+               ref: k => ({ valor: NF[k].custo_por_mil, rotulo: "não filtrar " + F.custo(NF[k].custo_por_mil) }) },
+      tcr: { rot: "TCR", campo: "tcr", fmt: v => F.dec(v, 2), melhor: Math.max, nota: "custo de não filtrar ÷ custo do filtro; acima de um, filtrar compensa",
+             ref: k => ({ valor: NF[k].tcr, rotulo: "não filtrar " + F.dec(NF[k].tcr, 0) }) },
+      mcc: { rot: "MCC", campo: "mcc_custo", fmt: F.mcc, melhor: Math.max, nota: "maior é melhor; não filtrar tem MCC zero", ref: null },
     };
     let met = o.metrica || "custo";
     cont.textContent = "";
@@ -648,13 +709,14 @@ const G = (() => {
     const linha = h("div", { class: "fin-paineis" }, raiz);
     const avals = [
       ["cv20", "Esta caixa", `validação cruzada, ${F.int(D.protocolo.folds)} folds`],
-      ["externo", "Caixas novas", "Enron2–6, média das cinco"],
-      ["spamassassin", "Terceira base", "SpamAssassin, nunca usada antes"],
+      ["externo", "Outras caixas da Enron", "Enron2–6, média das cinco caixas"],
+      ["spamassassin", "SpamAssassin", "decidiu a regra D10 e, na D11, o destaque"],
     ];
     function desenhar(A) {
       bb.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === met)));
       const M = MET[met];
-      nota.textContent = `${M.rot} · ${M.nota} · cada painel tem a sua escala`;
+      nota.textContent = `${M.rot} · ${M.nota} · linha tracejada: não filtrar · cada painel tem a sua escala`;
+      if (!M.ref) nota.textContent = `${M.rot} · ${M.nota} · cada painel tem a sua escala`;
       linha.textContent = "";
       avals.forEach(([k, tit, sub], j) => {
         const p = h("div", { class: "fin-painel" }, linha);
@@ -662,13 +724,17 @@ const G = (() => {
         h("span", null, tt, sub);
         const g = h("div", { class: "fin-g" }, p);
         const vals = ORDEM_FILTROS.map(f => D.finais[f][k][M.campo]), best = M.melhor(...vals);
+        const ref = M.ref ? M.ref(k) : null, dmax = Math.max(...vals, ref ? ref.valor : 0) * 1.22;
+        if (ref) ref.esquerda = ref.valor / dmax > 0.5;     // rótulo da referência para dentro do painel
         barras(g, {
           itens: ORDEM_FILTROS.map((f, i) => ({
-            rotulo: FILTRO[f].nome, marca: null, valor: vals[i], cor: FILTRO[f].cor, forte: vals[i] === best,
+            rotulo: FILTRO[f].curto, marca: null, valor: vals[i], cor: FILTRO[f].cor, forte: vals[i] === best,
             dica: `${mk(FILTRO[f].cor)}<b>${esc(FILTRO[f].nome)}</b> · ${esc(tit)}<br>${M.rot}: ${M.fmt(vals[i])}<br>` +
-              `e-mails reais na lixeira: ${F.pct(D.finais[f][k].real_lixeira_custo)} · spam que passou: ${F.pct(D.finais[f][k].spam_passou_custo)}`,
+              `e-mails reais na lixeira: ${F.pct(D.finais[f][k].real_lixeira_custo)} · spam que passou: ${F.pct(D.finais[f][k].spam_passou_custo)}<br>` +
+              `TCR ${F.dec(D.finais[f][k].tcr, 2)} (${D.finais[f][k].tcr >= 1 ? "compensa filtrar" : "não filtrar sai mais barato"})`,
           })),
-          dom: [0, Math.max(...vals) * 1.22], fmt: M.fmt, margemE: j === 0 ? 132 : 4, margemD: 52, espessura: 20,
+          dom: [0, dmax], fmt: M.fmt, margemE: j === 0 ? 122 : 4, margemD: 52, espessura: 18,
+          refs: ref ? [ref] : null, margemT: ref ? 20 : 2,
           animar: A && !api.semMovimento, atraso: i => j * 380 + i * 70, rotulo: `${M.rot}: ${tit}`,
         });
       });
@@ -677,7 +743,8 @@ const G = (() => {
   }
 
   return Object.assign(api, {
-    COR, FAMILIA, ORDEM_FAMILIAS, MEMBRO, FILTRO, ORDEM_FILTROS, F, corMembro, corMetodo,
+    COR, FAMILIA, ORDEM_FAMILIAS, MEMBRO, FILTRO, ORDEM_FILTROS, REFERENCIA, F, corMembro, corMetodo,
+    chaveMetodo, nomeMetodo, ordemMetodo, tabela,
     h, s, t, svgEm, anim, contar, dica, mk, esc, legenda, legendaFamilias, ticksLin, ticksLog,
     barras, halteres, dispersao, mapaTriangular, curvas, tira, envelopes, empilhada, caminho, simulador, finalTres,
   });

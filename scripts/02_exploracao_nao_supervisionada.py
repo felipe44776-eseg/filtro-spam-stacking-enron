@@ -3,11 +3,14 @@
 #
 # **Pergunta:** sem dizer ao algoritmo o que é spam, os e-mails se separam sozinhos?
 #
-# Quatro olhares, todos sem usar o rótulo para aprender (o rótulo só entra para *avaliar*):
+# Três olhares sem rótulo (o rótulo só entra para *avaliar*) e um quarto que usa só metade dele:
 # 1. **SVD** (análise semântica latente): comprime as 3000 colunas em poucas direções e projeta em 2D.
 # 2. **Agrupamento** (K-means e hierárquico de Ward): os grupos encontrados coincidem com spam × e-mail real? (ARI)
 # 3. **Tópicos** (NMF): quais assuntos existem na caixa?
-# 4. **Detecção de anomalia**: treinar só com e-mails reais e tratar spam como "o que foge do normal".
+# 4. **Detecção de novidade** (semissupervisionada): treinar só com e-mails sabidamente reais e tratar spam como
+#    "o que foge do normal". Não usa nenhum spam rotulado, mas precisa saber quais e-mails são reais.
+#
+# O TF-IDF usado aqui é ajustado nos 5172 e-mails, sem rótulo (só conta em quantos e-mails cada palavra aparece).
 
 # %%
 import numpy as np
@@ -102,10 +105,11 @@ for _, r in TOP.iterrows():
     print(f"tópico {r.topico}: {r.n_emails:5d} e-mails | {r.fracao_spam:6.1%} spam | {', '.join(r.palavras)}")
 
 # %% [markdown]
-# ## 4. Spam como anomalia: treinar só com e-mails reais
-# Cenário realista quando não há spams rotulados. Validação cruzada por grupo (5 folds); o modelo vê só os e-mails
-# reais do treino; o limiar marca como spam o que for mais estranho que 95% dos e-mails reais do treino.
-# Comparação: a Regressão Logística supervisionada nas mesmas divisões.
+# ## 4. Spam como novidade: treinar só com e-mails reais (semissupervisionado)
+# Cenário realista quando não há spams rotulados, mas se sabe quais e-mails são legítimos (a própria caixa de
+# entrada). Validação cruzada por grupo (5 folds); o modelo vê só os e-mails reais do treino; o limiar marca como
+# spam o que for mais estranho que 95% dos e-mails reais do treino. Comparação: a Regressão Logística
+# supervisionada nas mesmas divisões.
 
 # %%
 def avaliar_anomalia(criar):
@@ -123,10 +127,13 @@ ocs_pr, ocs_mcc = avaliar_anomalia(lambda: OneClassSVM(nu=0.05, gamma="scale"))
 
 # %% [markdown]
 # Os dois detectores clássicos ficam **abaixo do acaso** (PR-AUC < 0,29, a fração de spam): o spam parece *menos*
-# estranho que os e-mails reais. Motivo: projetado nas direções aprendidas só com e-mails reais, o spam cai perto da
-# origem (ele usa outras palavras), e um ponto perto do centro não parece isolado. O que distingue o spam é estar
-# **fora** do espaço dos e-mails reais. A medida certa é então o **erro de reconstrução**: quanto do e-mail as
-# 100 direções dos e-mails reais não conseguem explicar (k = 100 fixado antes, a mesma dimensão do mapa).
+# estranho que os e-mails reais. Uma explicação provável: o spam usa palavras que as 100 direções dos e-mails reais
+# quase não representam, e a sua projeção sai curta e pouco específica. Depois do `Normalizer`, que põe todos os
+# pontos na mesma esfera, ela cai em regiões genéricas, onde muitos e-mails reais também estão, e não parece
+# isolada. O que distingue o spam é estar **fora** do espaço dos e-mails reais, e a projeção normalizada
+# descarta justamente essa parte. A medida que a preserva é o **erro de reconstrução**: quanto do e-mail as 100
+# direções dos e-mails reais não conseguem explicar. O erro de reconstrução foi testado depois de ver os dois
+# detectores falharem; o k = 100 foi fixado antes, a mesma dimensão do mapa.
 
 # %%
 def avaliar_reconstrucao(k=100):
@@ -167,8 +174,9 @@ graficos.mostrar(fig, "02_anomalia")
 # %% [markdown]
 # **Leitura.** A estrutura existe (há tópicos quase só de spam e outros quase só de e-mail real), mas o agrupamento
 # não a encontra sozinho como "spam × real": os grupos naturais são *assuntos*, e a caixa tem vários assuntos de
-# trabalho. Sem rótulo, a melhor pista é "este e-mail não se parece com os meus e-mails reais" (erro de
-# reconstrução), que já separa bem, mas o supervisionado fica muito à frente: o rótulo é o que vira filtro.
+# trabalho. Sem nenhum spam rotulado, a melhor pista é "este e-mail não se parece com os meus e-mails reais" (erro de
+# reconstrução, semissupervisionado), que já separa bem, mas o supervisionado fica muito à frente: o rótulo é o
+# que vira filtro.
 
 # %%
 pts = np.column_stack([x2, y2, y])[ordem]

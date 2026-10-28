@@ -294,7 +294,7 @@
      "custo_por_mil": 64.05902248392128
     }
    ],
-   "correlacao_notas": 0.993
+   "correlacao_notas": 0.9932863976614893
   }
  },
  "fonte": "scripts/06_corrida_e_tabpfn.py"

@@ -1,6 +1,6 @@
 # Registro de decisões: Projeto 3, classificação de spam
 
-Os números vêm dos notebooks desta pasta. Atualizado em 2026-10-27.
+Os números vêm dos notebooks (`notebooks/`, `experimentos/`) e dos arquivos de `resultados/`. Atualizado em 2026-10-28, depois da revisão crítica (D11).
 
 > **Etapa 1 concluída (2026-10-27): escolha da família de modelos.**
 > - O Stacking 7 (um modelo por família) supera o LinearSVC e as outras combinações dentro da mesma caixa de e-mail (D5).
@@ -9,7 +9,9 @@ Os números vêm dos notebooks desta pasta. Atualizado em 2026-10-27.
 >
 > **Etapa 2 concluída (2026-10-27): o melhor Stacking 7 para esta caixa (D8).**
 > - O Stacking 7 está num platô: nenhuma configuração se destaca no MCC.
-> - O núcleo encontrado pelo algoritmo genético é provavelmente cerca de 12% mais barato que o padrão quando se usa o limiar de custo (P ≈ 0,8), mas isso não está comprovado.
+> - O núcleo encontrado pelo algoritmo genético é provavelmente cerca de 12% mais barato que o padrão quando se usa o limiar de custo (P ≈ 0,64 a 0,82, conforme a margem de equivalência), mas isso não está comprovado: no teste trancado, os dois empatam.
+>
+> **Revisão crítica (2026-10-28): D11.** O rótulo "Generalista" foi aposentado, a referência "não filtrar" entrou em todas as comparações de custo e várias afirmações foram reformuladas.
 
 **Termos usados**
 - *E-mail real*: e-mail legítimo, que não é spam (no inglês técnico, "ham").
@@ -31,7 +33,7 @@ Os números vêm dos notebooks desta pasta. Atualizado em 2026-10-27.
 A hipótese "duplicata indica spam" foi **refutada**: há 7,1% de spam entre as linhas duplicadas, contra 33,2% entre as únicas. As cópias idênticas ficam sempre do mesmo lado na divisão entre treino e teste (`StratifiedGroupKFold` com o hash da linha); se caírem dos dois lados, a nota de teste fica inflada.
 
 ### D2. Representação: TF-IDF com escala logarítmica (`sublinear_tf=True`)
-A Regressão Logística subiu de MCC 0,922 para 0,961, e o kNN de cerca de 0,75 para 0,94. A mudança inverteu o ranking: os modelos lineares passaram à frente do boosting. A explicação provável é que a contagem por substring infla as frequências, e o log amortece esse efeito.
+A Regressão Logística subiu de MCC 0,923 para 0,961, e o kNN de cerca de 0,75 para 0,94. A mudança inverteu o ranking: os modelos lineares passaram à frente do boosting. A explicação provável é que a contagem por substring infla as frequências, e o log amortece esse efeito.
 
 ### D3. Métricas: MCC, PR-AUC e contagem de erros (não acurácia)
 - **A acurácia engana nesta base:** um modelo que diz "tudo é e-mail real" já acerta 71%.
@@ -69,7 +71,7 @@ Evidências (`02_stacking/` e `scripts/stacking_demo.py`):
 1. **Os erros pouco se sobrepõem.** Dos 5172 e-mails, 258 são errados por só um entre quatro modelos; são esses que a combinação recupera. A Regressão Logística e o Random Forest erram juntos em só 42 dos 84 erros da Regressão Logística.
 2. **O modelo mais útil na combinação não é o melhor sozinho.** O kNN tem MCC 0,931 isolado, mas recebe o maior peso no meta-modelo. Quando a penalidade L1 descarta os modelos inúteis, ele sobrevive em 100% dos folds.
 3. **Modelos parecidos se anulam.** No Stacking 13, a Regressão Logística recebe peso negativo, porque o LinearSVC, o Ridge e o SGD dizem a mesma coisa.
-4. **Quantidade não é diversidade.** O Stacking 13 (MCC 0,974) não supera o Stacking 7 (0,975) e custa 50% mais tempo de treino. A votação simples (0,969) e o método de Caruana (0,965) ficam atrás, porque não aprendem a pesar cada modelo.
+4. **Quantidade não é diversidade.** O Stacking 13 (MCC 0,974) não supera o Stacking 7 (0,975) e custa cerca de metade a mais de tempo de treino (a conta exata depende de quais modelos entram no tempo; ver `stacking.variantes` em `resultados/metricas_finais.json`). A votação simples (0,969) e o método de Caruana (0,965) ficam atrás, porque não aprendem a pesar cada modelo.
 
 Resultados do Stacking 7 contra o LinearSVC, o melhor modelo único:
 
@@ -89,7 +91,7 @@ Resultados do Stacking 7 contra o LinearSVC, o melhor modelo único:
 ### D6. Otimização genética: não compensa; o Stacking 7 continua com a configuração padrão (`03_ga/`)
 
 **Como foi feita a busca**
-- 62 configurações candidatas, de 6 a 8 por família, mais o C do meta-modelo: 7,1 milhões de combinações possíveis.
+- 52 configurações candidatas nas 7 famílias (de 6 a 8 por família) e 6 valores do C do meta-modelo: 8⁵ × 6³ = 7.077.888 combinações possíveis.
 - 10 divisões de busca. O algoritmo genético rodou com população de 40 por 30 gerações e fez 857 avaliações únicas.
 
 **Resultados**
@@ -99,10 +101,10 @@ Resultados do Stacking 7 contra o LinearSVC, o melhor modelo único:
 | MCC nas divisões da busca | 0,9732 | 0,9795 | 0,9784 |
 | MCC em 20 folds com sementes novas | 0,9734 | 0,9744 | |
 
-- **85% do ganho era otimismo de seleção.** Na busca o ganho foi de +0,006; em divisões novas caiu para +0,001. O teste bayesiano dá 99,7% de chance de os dois serem equivalentes (diferença menor que 0,01).
+- **O ganho não se confirmou.** Na busca o ganho foi de +0,006; em divisões novas caiu para +0,001, com IC95 corrigido de −0,005 a +0,007. O encolhimento (85% do ganho da busca) é o esperado de escolher o melhor entre 857 candidatos nas mesmas divisões, mas o intervalo vai de "todo o ganho era otimismo" a "todo o ganho era real": não dá para dizer quanto era otimismo. O teste bayesiano dá 99,7% de chance de os dois serem equivalentes (diferença menor que 0,01). *(Reformulado em D11; antes dizia "85% do ganho era otimismo de seleção".)*
 - **O modelo quase não depende dos hiperparâmetros.** Trocar a configuração de uma família muda o MCC em 0,006 no máximo; o kNN é o mais sensível.
 - **Na base externa, a configuração do algoritmo genético piora o custo:** 207,6 contra 177,5 por mil e-mails. As opções escolhidas regularizam menos (SVM com C=30, kNN com k=3, meta-modelo com C=10) e se ajustam mais à caixa farmer-d.
-- **Mais sementes não resolvem.** As divisões reaproveitam os mesmos 4137 e-mails, então a menor diferença detectável fica perto de 0,009 de MCC com 20 folds e de 0,008 com 1000 folds. O ganho do algoritmo genético (0,001) está 8 vezes abaixo disso.
+- **Mais sementes não resolvem.** As divisões reaproveitam os mesmos 4137 e-mails, então a menor diferença detectável (80% de poder, α = 5%, par GA − padrão) fica perto de 0,008 de MCC com 20 folds e de 0,007 com 1000 folds. O ganho do algoritmo genético (0,001) está 8 vezes abaixo disso. *(Recalculado em D11: antes usava o par GA − LinearSVC e 2 erros-padrão, o que corresponde a 50% de poder.)*
 
 ### D7. Stacking 7 × LinearSVC: o vencedor depende de onde e de como se mede
 
@@ -117,7 +119,7 @@ Resultados do Stacking 7 contra o LinearSVC, o melhor modelo único:
 | Custo Enron4 / Enron5 / Enron6 (cerca de 73% de spam) | **69 / 136 / 86** | 96 / 174 / 96 |
 
 Notas sobre a tabela:
-- MCC dos 20 folds: p de Holm = 0,055; teste bayesiano dá 57% de chance de o stacking ser melhor e 0% de o LinearSVC ser.
+- MCC dos 20 folds: p de Holm = 0,055 com as 4 comparações do experimento 03, e 0,042 com as 3 de `scripts/05_algoritmo_genetico.py`; teste bayesiano dá 57% de chance de o stacking ser melhor e 0% de o LinearSVC ser. No limiar de custo, a diferença de MCC deixa de ser significativa.
 - Teste trancado: McNemar com p = 0,09 no padrão e p = 0,001 na versão do algoritmo genético.
 - Custo por mil e-mails = 9 × (e-mails reais na lixeira) + 1 × (spams que passaram), sempre com o limiar de custo escolhido só no treino.
 
@@ -169,8 +171,8 @@ Eles diferem quase só na configuração do LightGBM, que não faz diferença.
 **Decisão: o melhor modelo para esta caixa é o Stacking 7 com a configuração do GA do exp. 03 (#5), usando o limiar de custo.** Motivos:
 - Ele estava definido antes da corrida.
 - Pertence ao núcleo.
-- Tem um dos menores custos (36,6; P = 0,82).
-- É o único afinado que já passou pelo teste trancado.
+- Tem um dos menores custos (36,6; P = 0,82 sem margem de equivalência, 0,64 com margem de 3 por mil).
+- É o único afinado que já passou pelo teste trancado. *(Nota de D11: este critério de desempate olha para a base trancada. O resultado nela foi empate, então ele não favoreceu o candidato, mas a base deixou de ser estritamente "só para relatar" nesta decisão.)*
 
 Limites da decisão:
 - A vantagem sobre o padrão é provável, mas não comprovada.
@@ -194,7 +196,7 @@ Limites da decisão:
 | Stacking 8 especialista (+TabPFN) | **0,9747** | 37,9 |
 
 - **Sozinho, ele empata com o melhor modelo único** (P(equivalentes) = 0,87 contra o LinearSVC) e fica abaixo do Stacking 7 (P(stacking melhor) = 0,97). Com o limiar de custo, é o mais caro, porque deixa passar 10% do spam.
-- **Como 8ª família, é redundante.** O MCC do Stacking 8 é equivalente ao do Stacking 7 (P(equivalentes) ≥ 0,999 nas duas versões).
+- **Como 8ª família, é redundante no MCC.** O MCC do Stacking 8 é equivalente ao do Stacking 7 (P(equivalentes) ≥ 0,999 nas duas versões). No custo, o Stacking 8 padrão economiza 3,3 por mil em relação ao Stacking 7 padrão (P(mais barato) ≈ 0,5 a 0,7, conforme a margem), evidência da mesma ordem da que D8 chamou de "provável".
   - O meta-modelo dá a ele um peso alto: 1,6 a 2,0, ao lado do kNN e do SVM.
   - Mas esse peso **substitui** o de outros membros (no especialista, a Regressão Logística fica com peso −0,86).
   - Seus erros se sobrepõem mais aos do Extra Trees (Jaccard 0,43), do SVM (0,39) e da Regressão Logística (0,36), e menos aos do kNN (0,19) e do Naive Bayes (0,17).
@@ -211,7 +213,7 @@ Limites da decisão:
 | Stacking 7 especialista | **0,894** | 0,983 | 207,6 | 4,0% | 4,4% |
 
 **Leitura**
-- Em caixas novas, o TabPFN é o que **melhor ordena** os e-mails (PR-AUC 0,987) e o mais conservador com e-mails reais. Isso é coerente com um modelo pré-treinado em tabelas sintéticas, que não decora o vocabulário da caixa farmer-d.
+- No Enron2-6, o TabPFN tem o maior PR-AUC (0,987) e é o mais conservador com e-mails reais. Isso é coerente com um modelo pré-treinado em tabelas sintéticas, que não decora o vocabulário da caixa farmer-d. No SpamAssassin (D10), porém, o PR-AUC dele fica entre os mais baixos: o que se mantém nas duas bases é ser o mais conservador e o mais barato.
 - No time, ele **baixa o custo externo do stacking**: 22% no padrão (177,5 → 138,5) e 37% no especialista (207,6 → 130,2). O MCC externo cai um pouco: 0,891 → 0,882 no padrão e 0,894 → 0,873 no especialista.
 - **Dentro desta caixa**, o resultado continua empatado (ver acima).
 
@@ -230,22 +232,22 @@ Limites da decisão:
 | Stacking 8 padrão + 3.5-Fast (local) | **0,9725** | 0,9969 | **42,8** |
 
 - **As duas versões dão praticamente as mesmas notas:** a correlação média nos e-mails de teste é **0,993**.
-- **Sozinha,** a versão local fica 0,005 abaixo no MCC. Isso está dentro do ruído de 5 divisões (a menor diferença detectável é cerca de 0,011).
+- **Sozinha,** a versão local fica 0,005 abaixo no MCC. Isso está dentro do ruído de 5 divisões (a menor diferença detectável era cerca de 0,011 pela definição antiga, de 2 erros-padrão; com 80% de poder, seria maior).
 - **No stacking, a versão não muda nada:** as diferenças são menores que 0,001 no MCC. A conclusão de D9 (redundante dentro desta caixa) vale para as duas.
 - **Para a banca:** o experimento do TabPFN pode ser reproduzido **sem conta, sem chave e sem internet**, só com a versão local. O preço é o tempo: cerca de 3 h em CPU para 5 divisões, contra cerca de 25 s por chamada na nuvem. Os resultados da nuvem continuam sendo a referência (20 folds e base externa).
 - **Para a demo:** classificar um único e-mail com o TabPFN local leva alguns segundos de CPU, o que é viável. Mesmo assim, a demo usa os filtros de D8, que não dependem do TabPFN.
 
 ### D10. Terceira base intocada: o Stacking 8 vira o Generalista? (pré-registro)
 
-**Registrado em 2026-10-28, antes de rodar qualquer modelo nesta base.**
+**Registrado em 2026-10-28, antes de rodar qualquer modelo nesta base.** Ordem dos eventos, pelos horários do registro da sessão de trabalho (UTC): download dos brutos às 06:38, sem olhar rótulos nem modelos; texto desta regra às 06:44:59; vetorização do SpamAssassin às 06:46; `scripts/08_terceira_base.py` às 06:47. É um registro interno, sem carimbo externo: no repositório, a regra e o resultado chegaram no mesmo commit.
 
 **Por que esta base.** Em D9, o Stacking 8 (com o TabPFN) baixou o custo nas caixas Enron2–6. Esse achado, porém, veio de olhar a base externa. Para decidir de forma limpa, é preciso uma base que nenhuma escolha usou.
 
 **Base.**
 - O que é: o *SpamAssassin public corpus*, conjunto 20030228 (easy_ham, easy_ham_2, hard_ham, spam e spam_2), com 6047 mensagens e cerca de 31% de spam.
 - Diferenças em relação ao Enron: outras pessoas, outra época (2002) e listas de discussão técnicas.
-- Conversão: os e-mails brutos passam ao formato da AUEB por `spamfilter.conversao`, que reproduz exatamente 90,5% dos e-mails brutos da caixa farmer-d. Depois são contados com o vocabulário do CSV.
-- Licença: o copyright do texto continua com os remetentes. Por isso o repositório público guarda só as contagens e o link.
+- Conversão: os e-mails brutos passam ao formato da AUEB por `spamfilter.conversao`, que reproduz exatamente 90,5% dos e-mails reais brutos da caixa farmer-d. Depois são contados com o vocabulário do CSV. (A validação no spam veio depois, em D11.)
+- Licença: o corpus foi publicado pelo projeto SpamAssassin para pesquisa; o copyright de cada mensagem é do remetente. Desde D11, o repositório traz também os arquivos originais (`dados/spamassassin/`).
 
 **Protocolo.**
 - Treino: os 5172 e-mails, sem nenhum ajuste.
@@ -280,6 +282,7 @@ Caso contrário, o Generalista fica como está. O Especialista não é decidido 
 | Stacking 8 padrão | 0,437 | 0,668 | 16,0% | 41,0% | 1119,9 |
 | Stacking 7 padrão (Generalista até aqui) | 0,415 | 0,684 | 30,7% | 24,8% | 1977,2 |
 | Stacking 7 especialista | 0,350 | 0,652 | 37,9% | 24,4% | 2416,5 |
+| *Não filtrar (referência, acrescentada em D11)* | 0 | 0,314 | 0% | 100% | **313,6** |
 
 **Aplicação da regra.**
 - Custo: o Stacking 8 padrão custa 857 a menos por mil (IC95 de −929 a −789; P(redução) = 1,00).
@@ -287,13 +290,45 @@ Caso contrário, o Generalista fica como está. O Especialista não é decidido 
 - McNemar: p < 10⁻²³.
 - **Decisão: o Stacking 8 padrão passa a ser o Generalista.** O Especialista não muda. A demo segue com o Stacking 7 (sem chave).
 
-**O que a base mostrou além da regra.** Estes pontos são observação, não decisão: não eram parte do pré-registro e não mudam os filtros.
-1. **Todos os filtros treinados no Enron1 vão mal numa caixa muito diferente.** O MCC fica entre 0,27 e 0,55.
-2. **A conversão está correta.** No controle, o mesmo pipeline treinado e testado **dentro** do SpamAssassin chega a MCC 0,968 e PR-AUC 0,998.
-3. **A queda acompanha a cobertura do vocabulário.** O vocabulário conhece 81,6% das palavras dos e-mails do Enron1, 77,2% no Enron3 e 65,4% no SpamAssassin.
-4. **O filtro aprende a caixa, não "o spam".** O stacking, sobretudo o kNN e as árvores, decora o que é normal *naquela* caixa. Numa caixa de listas técnicas, ele manda 31% dos e-mails reais para a lixeira.
-5. **Os filtros simples e conservadores custam menos fora da caixa de origem.** O TabPFN sozinho e o LinearSVC repetem o padrão do Enron2–6: TabPFN com 126,0 e LinearSVC com 135,8, contra 177,5 do Stacking 7 padrão. São duas bases externas independentes.
+**O que a base mostrou além da regra.** Estes pontos são observação, não decisão: não eram parte do pré-registro e não mudam os filtros. *(Reformulados em D11.)*
+1. **Todos os filtros treinados no Enron1 vão mal numa caixa muito diferente.** O MCC no limiar de custo fica entre 0,35 e 0,55 (no limiar 0,5, entre 0,27 e 0,49). Com λ = 9, **nenhum** deles custa menos que não filtrar (313,6 por mil); o mais perto é o TabPFN sozinho (503,5).
+2. **A representação funciona lá.** No controle, uma Reg. Logística treinada e testada **dentro** do SpamAssassin, com a mesma conversão e o mesmo vocabulário, chega a MCC 0,968 e PR-AUC 0,998. Isso mostra que o vocabulário tem sinal no SpamAssassin, não que a conversão reproduz a da AUEB; essa segunda pergunta foi respondida em D11.
+3. **A queda acompanha a cobertura do vocabulário** (hipótese, com três pontos): o vocabulário conhece 81,6% das palavras dos e-mails do Enron1, 77,2% no Enron3 e 65,4% no SpamAssassin.
+4. **O stacking aprende a caixa.** Nos e-mails reais do SpamAssassin, o kNN e o LightGBM, dois dos três membros de maior peso no meta-modelo, estão entre os que mais os marcam como spam (65% e 87% acima de 0,5; a nota do SVM é uma distância à fronteira e não se compara nesse corte), e o meta-modelo, aprendido na farmer-d, não transfere: o Stacking 7 padrão manda 31% dos e-mails reais para a lixeira; o LinearSVC, 6%; o TabPFN, 5%. No spam de outra coleção, todos deixam passar bastante.
+5. **O TabPFN sozinho é o filtro mais barato fora da caixa nas duas bases** (126,0 no Enron2-6 e 503,5 no SpamAssassin). As duas bases não são independentes no spam: o spam do SpamAssassin entrou na coleção de spam do Enron2 e do Enron5 (D11).
 6. **Recomendação para uso real:** retreinar com e-mails da caixa de destino.
+
+### D11. Revisão crítica: rótulos, a referência "não filtrar" e afirmações reformuladas (2026-10-28)
+
+**O que houve.** Um revisor externo, configurado como agente sem acesso às conclusões dos autores, auditou em três frentes (metodologia e estatística, código e reprodutibilidade, documentação e enunciado). O núcleo dentro da caixa foi confirmado: notas OOF aninhadas, TF-IDF, SVD e limiar dentro do fold, testes estatísticos corretos, filtros salvos reproduzindo o motor. As correções abaixo atacam o que não se sustentava.
+
+**Decisões.**
+1. **O rótulo "Generalista" foi aposentado.** A regra D10 compara dois stackings; ela decide qual stacking usar fora da caixa, não que esse stacking seja recomendado para qualquer caixa. Na comparação com **não filtrar** (custo = 1000 × fração de spam), o Stacking 8 perde no SpamAssassin (1119,9 contra 313,6) e no Enron2 (278,1 contra 256,3). O filtro passa a ser chamado pelo nome do método, **Stacking 8**, com o papel "o melhor stacking fora da caixa". As chaves do JSON continuam as antigas (`generalista` = Stacking 8; `generalista_sem_chave` = Stacking 7 padrão).
+2. **"Não filtrar" e o TCR entram em todas as tabelas de custo.** O TCR (*total cost ratio*, Androutsopoulos et al., 2000, a mesma fonte do λ = 9) é o custo de não filtrar dividido pelo custo do filtro.
+3. **O TabPFN sozinho passa a figurar entre os filtros finais**, porque é o mais conservador fora da caixa: o que menos manda e-mail real para a lixeira nas 5 caixas Enron e no SpamAssassin. Por isso é o mais barato onde predominam e-mails reais (Enron2, Enron3, SpamAssassin) e na média do Enron2-6; no Enron5, onde predomina spam, é o mais caro. Esta escolha olhou o Enron2-6 e o SpamAssassin: o SpamAssassin, além da D10, serviu aqui para decidir o que destacar. O Stacking 8 é descrito pelo que se sustenta: o TabPFN deixa os dois stackings (padrão e especialista) mais baratos nas duas bases externas; "o melhor stacking fora da caixa" não vale, porque o Stacking 8 especialista custa menos que o padrão.
+4. **4º uso da base de teste trancada, só para relatar.** O TabPFN sozinho foi avaliado nela com as mesmas notas do 3º uso: 4 e-mails reais na lixeira e 27 spams que passaram (custo 63). Nada foi escolhido com base nesse número.
+5. **Afirmações reformuladas** (README, notebooks, decks):
+   - "o protocolo não vaza" → **teste de sinal** com 999 permutações (p = 0,001, o menor possível). Ele mostra que o MCC não vem do acaso; a proteção contra vazamento é o agrupamento das cópias.
+   - **Quase-cópias**, medidas pela primeira vez: 18,8% do teste trancado tem um vizinho com cosseno ≥ 0,95 no desenvolvimento (23,1% dos e-mails reais, 8,3% dos spams); nos 20 folds, 13,9%. Sem elas, o MCC do Stacking 7 padrão vai de 0,9734 para 0,9703: o otimismo dentro da caixa é de cerca de 0,003.
+   - "85% do ganho era otimismo" → o ganho não se confirmou (IC95 de −0,005 a +0,007), ver D6.
+   - "o Especialista é o mais barato nesta caixa" → é o de menor custo nos 20 folds, que são re-partições dos e-mails usados na escolha; no teste trancado, empata com o padrão.
+   - "o SpamAssassin nunca foi usado para escolher" → foi usado uma vez, na D10. Não sobra base externa intocada.
+   - "a conversão está correta" → o controle mostra que a representação funciona; a conversão foi validada no spam à parte (item 6).
+   - A detecção de anomalia treinada só com e-mails reais é **semissupervisionada**, não "sem rótulo".
+6. **O conversor no spam.** A coleção bruta GP (13.719 spams, origem do spam do Enron1 e do Enron4) passou pelo conversor: ele reproduz exatamente 26,9% dos 1500 spams do CSV; nos demais, o cosseno mediano com a versão convertida é 0,987. O efeito na decisão é desprezível: em 3788 spams do Enron4 existentes nas duas versões, uma Reg. Logística treinada nos 5172 deixa passar 0,8% na versão da AUEB e 0,9% na convertida.
+7. **A fonte do spam de cada base** (arquivo `Summary.txt` de cada caixa): Enron1 e Enron4 = GP; Enron2 e Enron5 = SpamAssassin + HoneyPot; Enron3 e Enron6 = BG. O spam do SpamAssassin é parecido com o do Enron2/5 (cosseno mediano com o vizinho mais próximo 0,78, contra 0,48 com o spam do Enron3); os e-mails reais, não (0,49). As bases externas não são independentes no spam, e "o spam generaliza" (D7) vale em parte por isso.
+8. **Comparações de custo com intervalo** (20 folds, t corrigido e Holm com 6 comparações): o Especialista custa 30% menos que a linha de base (IC95 de −30,1 a −0,7 por mil; P(mais barato) = 0,95), mas, corrigido por Holm, p = 0,25. No MCC (limiar 0,5), o Stacking 7 supera o LinearSVC otimizado com p de Holm 0,042.
+9. **TCR agregado.** Na primeira versão desta revisão, o TCR dos 20 folds e do Enron2-6 saiu como média das razões por fold e por caixa. Corrigido para a razão dos custos médios (a mesma média do custo publicado): no Enron2-6, o Stacking 8 vai a 3,95 e o TabPFN a 4,34. Um teste (`tests/test_resultados.py`) trava a definição.
+10. **Correções de código sem efeito nos números publicados:** o `t_corrigido` com variância zero; o `limiar_custo` com notas empatadas (0 empates no corte em todos os dados); o conversor com texto colado fora do latin-1 (só a demo); tolerância dos testes de cache de 0,001 para 1e-5.
+
+**Limites que ficam declarados.**
+- A validação cruzada do meta-modelo que escolhe o limiar usa `StratifiedKFold` sem grupo (efeito provável desprezível, com 7 a 8 entradas), e o *early stopping* do MLP sorteia a validação por linha.
+- O vocabulário de 3000 palavras foi escolhido pelo autor do CSV sobre o Enron1 inteiro (seleção sem rótulo que incluiu o que hoje é teste).
+- O torneio (D4) e a escolha do TF-IDF com log (D2) usaram validação cruzada nos 5172 e-mails, antes de a base de teste trancada existir. As margens dessas escolhas foram grandes.
+- O Stacking 8 e o TabPFN foram avaliados com notas gravadas; não há inferência pronta para um e-mail novo (exige a API da Prior Labs).
+- Os "857 a menos por mil" da D10 dependem de λ: com λ = 1, 3 e 20, o Stacking 8 padrão também custa menos que o Stacking 7 padrão, mas a diferença fica entre 42 e 97 por mil.
+- As quase-cópias: o MCC "sem quase-cópias" é medido num subconjunto com outra mistura de classes; ele mostra a ordem de grandeza do efeito, não o desconta exatamente.
+- O piso de detecção passou a usar quantis t com J − 1 graus de liberdade (0,0083 com 20 folds).
 
 ## 3. Hipóteses descartadas
 - A duplicata indica spam (refutada em D1).
@@ -303,18 +338,20 @@ Caso contrário, o Generalista fica como está. O Especialista não é decidido 
 - A otimização genética melhoraria o Stacking 7 de forma real. O ganho em divisões novas foi de +0,001, e o modelo ficou pior na base externa (D6).
 - Ajustar o C do LinearSVC mudaria o resultado. A chance de equivalência ao padrão é de 98,7%.
 - O primeiro colocado da corrida seria o melhor modelo. Ele não se confirmou na verificação (D8).
-- O TabPFN-3.5 melhoraria o stacking como 8ª família. Ele é redundante: P(equivalentes) ≥ 0,999 (D9).
+- O TabPFN-3.5 melhoraria o MCC do stacking dentro desta caixa. Ele é redundante no MCC: P(equivalentes) ≥ 0,999 (D9). Fora da caixa, ao contrário, ele melhora o stacking (D10).
 
 ## 4. Base de teste trancada
 - **Composição:** 20% dos dados, estratificados por classe e separados por grupo; `SEED_TESTE=123`; 1035 e-mails (735 reais e 300 spams).
 - **Índices:** `indices_teste.npz`.
-- **Uso:** foi avaliada duas vezes: no experimento 02 (Stacking 4, Stacking 7, LinearSVC e Regressão Logística) e no experimento 03 (Stacking 7 padrão, Stacking 7 do algoritmo genético e LinearSVC padrão e otimizado). Cada nova avaliação nela deve ser registrada aqui, e nenhuma escolha pode ser feita olhando para ela.
+- **Uso:** foi avaliada quatro vezes, sempre para relatar. As duas primeiras: no experimento 02 (Stacking 4, Stacking 7, LinearSVC e Regressão Logística) e no experimento 03 (Stacking 7 padrão, Stacking 7 do algoritmo genético e LinearSVC padrão e otimizado). Cada nova avaliação nela deve ser registrada aqui, e nenhuma escolha pode ser feita olhando para ela.
 - **3º uso (2026-10-28, `scripts/09_modelos_finais.py`).** O Stacking 8 padrão foi avaliado nela **depois** da decisão D10, só para completar a tabela dos filtros finais. Nada foi escolhido com base nesse número. O TabPFN foi treinado nos 80% de desenvolvimento: 5 treinos internos para as notas *out-of-fold* e 1 final.
   - Resultado do Stacking 8 padrão, no limiar de custo: 2 e-mails reais na lixeira e 13 spams que passaram (custo 31).
   - Os números registrados antes se repetem:
     - Especialista: 1 e 10 (custo 19);
     - Stacking 7 padrão: 0 e 17 (custo 17);
     - LinearSVC padrão: 3 e 23 (custo 50).
+- **4º uso (2026-10-28, D11, `scripts/09_modelos_finais.py`).** O TabPFN sozinho, com as mesmas notas do 3º uso, só para relatar: 4 e-mails reais na lixeira e 27 spams que passaram (custo 63). A matriz de confusão, a precisão, a revocação e o F1 dos filtros finais saem das mesmas previsões, sem nova avaliação.
+- **Nota.** O critério de desempate da D8 ("é o único afinado que já passou pelo teste trancado") olha para esta base; o resultado foi empate.
 
 ## 5. Experimentos
 

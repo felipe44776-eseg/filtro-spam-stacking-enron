@@ -1,0 +1,14 @@
+# Google Colab (Python 3.12). As mesmas versões do requirements.txt, sem os pacotes do Jupyter (o Colab traz os
+# dele, e trocá-los derruba o kernel) e sem o que só serve no computador (streamlit, pytest, jupytext).
+# A primeira célula de cada notebook instala estes pacotes e reinicia o ambiente uma vez.
+numpy==2.4.6
+pandas==3.1.0
+scipy==1.17.1
+scikit-learn==1.9.1
+joblib==1.6.0
+lightgbm==4.7.0
+xgboost==3.2.0
+catboost==1.2.10
+matplotlib==3.11.2
+baycomp==1.0.3
+psutil==7.2.2

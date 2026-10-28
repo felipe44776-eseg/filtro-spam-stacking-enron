@@ -1,12 +1,13 @@
 # %% [markdown]
 # # 07. Contra-estudo: tentando derrubar as próprias conclusões
 #
-# Cinco perguntas que um avaliador cético faria:
-# 1. **O protocolo vaza?** Com os rótulos embaralhados, o MCC deveria ir a zero (teste de permutação).
-# 2. **O filtro depende do vocabulário da Enron?** Tirando as palavras da empresa, quanto cai? (ablação)
-# 3. **Quantos e-mails são precisos?** Curva de aprendizado, com o TabPFN, que promete brilhar com poucos dados.
-# 4. **A escolha depende do peso dado a cada erro?** Sensibilidade ao custo λ (1, 3, 9 e 20).
-# 5. **Onde o filtro erra?** Os e-mails reais que foram para a lixeira, com o texto original.
+# Seis perguntas que um avaliador cético faria:
+# 1. **O MCC vem de sinal ou de acaso?** Com os rótulos embaralhados, o MCC deveria ir a zero (teste de permutação).
+# 2. **Quase-cópias inflam o resultado?** O agrupamento só junta cópias idênticas; e as quase idênticas?
+# 3. **O filtro depende do vocabulário da Enron?** Tirando as palavras da empresa, quanto cai? (ablação)
+# 4. **Quantos e-mails são precisos?** Curva de aprendizado, com o TabPFN, que promete brilhar com poucos dados.
+# 5. **A escolha depende do peso dado a cada erro?** Sensibilidade ao custo λ (1, 3, 9 e 20).
+# 6. **Onde o filtro erra?** Os e-mails reais que foram para a lixeira, com o texto original.
 
 # %%
 import os
@@ -32,22 +33,64 @@ lr = lambda: make_pipeline(representacao.tfidf(), LogisticRegression(C=10, max_i
 DIV = dados.divisoes(y, g, SEED)
 
 # %% [markdown]
-# ## 1. Teste de permutação
+# ## 1. Teste de sinal (permutação)
+# Reg. Logística com TF-IDF log, nas 5 divisões da semente 42, com os rótulos verdadeiros e com 999 embaralhamentos.
+# Com N permutações, o menor p possível é 1/(N+1). **O que o teste mostra:** o MCC não vem do acaso. **O que ele
+# não mostra:** ausência de vazamento (cópias que cruzassem a divisão levariam o rótulo embaralhado junto). A
+# proteção contra vazamento é o agrupamento das cópias (conferido em `tests/test_dados.py`) e a seção 2.
 
 # %%
 def mcc_cv(yy, Xm=X):
     return float(np.mean([metricas.mcc_np(yy[te], lr().fit(Xm[tr], yy[tr]).predict(Xm[te])) for tr, te in DIV]))
 
+N_PERM = 999
 mcc_real = mcc_cv(y)
 rng = np.random.default_rng(SEED)
-perms = [rng.permutation(y) for _ in range(30)]
+perms = [rng.permutation(y) for _ in range(N_PERM)]
 mcc_perm = Parallel(n_jobs=4)(delayed(mcc_cv)(p) for p in perms)
 p_valor = (1 + sum(v >= mcc_real for v in mcc_perm)) / (1 + len(mcc_perm))
-print(f"MCC com os rótulos verdadeiros: {mcc_real:.3f} | com rótulos embaralhados (30 vezes): média {np.mean(mcc_perm):+.3f}, "
-      f"máximo {np.max(mcc_perm):+.3f} | p = {p_valor:.3f}")
+print(f"MCC com os rótulos verdadeiros: {mcc_real:.3f} | com rótulos embaralhados ({N_PERM} vezes): média {np.mean(mcc_perm):+.3f}, "
+      f"máximo {np.max(mcc_perm):+.3f} | p = {p_valor:.3f} (o menor possível com {N_PERM} permutações é {1 / (N_PERM + 1):.3f})")
 
 # %% [markdown]
-# ## 2. Ablação: sem o vocabulário da Enron
+# ## 2. Quase-cópias
+# O protocolo põe cópias **idênticas** do mesmo lado da divisão. Quase-cópias (o mesmo aviso automático com outra
+# data, o mesmo spam com outro link) podem cair dos dois lados. Medida: para cada e-mail de teste, o cosseno com o
+# e-mail de treino mais parecido (TF-IDF log). Depois, o MCC do Stacking 7 padrão com e sem os e-mails de teste
+# que têm um vizinho acima de 0,95 no treino, nos 20 folds de confirmação. Nenhum modelo é escolhido aqui.
+
+# %%
+from sklearn.preprocessing import normalize
+V = normalize(representacao.tfidf().fit_transform(X))
+def max_cos(a, b, lote=500):
+    return np.concatenate([(V[a[i:i + lote]] @ V[b].T).toarray().max(1) for i in range(0, len(a), lote)])
+
+mq = Motor(base, log=lambda *a: None)
+C20q = mq.adicionar_divisoes([201, 202, 203, 204])
+dev_t, teste_t = dados.indices_teste(base)
+s_tt = max_cos(teste_t, dev_t)
+qc = []
+for c in C20q:
+    tr = mq.dev[mq.splits[c]["tr"]]; tt = mq.dev[mq.splits[c]["tes"]["te"]]
+    sc = max_cos(tt, tr); yy = y[tt]
+    _, h, hc = mq.prever_stacking(modelos.STACKING7_PADRAO, c)
+    sem = sc < 0.95
+    qc.append(dict(fold=c, fracao_quase_copia=float(np.mean(~sem)), mcc=metricas.mcc_np(yy, h), mcc_sem_quase_copias=metricas.mcc_np(yy[sem], h[sem]),
+                   mcc_custo=metricas.mcc_np(yy, hc), mcc_custo_sem_quase_copias=metricas.mcc_np(yy[sem], hc[sem])))
+QC = pd.DataFrame(qc)
+QUASE = dict(limiar_cosseno=0.95, teste_trancado_fracao=float(np.mean(s_tt >= 0.95)),
+             teste_trancado_fracao_email_real=float(np.mean(s_tt[y[teste_t] == 0] >= 0.95)),
+             teste_trancado_fracao_spam=float(np.mean(s_tt[y[teste_t] == 1] >= 0.95)),
+             folds_fracao=float(QC.fracao_quase_copia.mean()), **{k: float(QC[k].mean()) for k in
+             ["mcc", "mcc_sem_quase_copias", "mcc_custo", "mcc_custo_sem_quase_copias"]})
+print(f"teste trancado: {QUASE['teste_trancado_fracao']:.1%} dos e-mails têm quase-cópia (cosseno ≥ 0,95) no desenvolvimento "
+      f"({QUASE['teste_trancado_fracao_email_real']:.1%} dos e-mails reais, {QUASE['teste_trancado_fracao_spam']:.1%} dos spams)")
+print(f"20 folds: {QUASE['folds_fracao']:.1%} dos e-mails de teste têm quase-cópia no treino | Stacking 7 padrão: MCC "
+      f"{QUASE['mcc']:.4f} → {QUASE['mcc_sem_quase_copias']:.4f} sem elas (limiar de custo: {QUASE['mcc_custo']:.4f} → "
+      f"{QUASE['mcc_custo_sem_quase_copias']:.4f})")
+
+# %% [markdown]
+# ## 3. Ablação: sem o vocabulário da Enron
 # Palavras da empresa e de pessoas (ex.: "enron", "hpl", "daren", "ect", "hou") e o artefato da coleta de spam
 # ("paliourg", de Paliouras, um dos pesquisadores que montaram a base).
 
@@ -75,7 +118,7 @@ print(f"colunas da Enron encontradas no vocabulário: {int(dom.sum())}")
 print(ABL.round(3).to_string())
 
 # %% [markdown]
-# ## 3. Curva de aprendizado (5 divisões da semente 201; o teste é sempre o mesmo)
+# ## 4. Curva de aprendizado (5 divisões da semente 201; o teste é sempre o mesmo)
 
 # %%
 m = Motor(base, cache=caminhos.RESULTADOS / "cache_motor", leitura_extra=[caminhos.CACHE_MOTOR], log=print)
@@ -133,14 +176,32 @@ ax.set_title("Com poucos e-mails, quem aprende mais rápido?")
 graficos.mostrar(fig, "07_curva_aprendizado")
 
 # %% [markdown]
-# ## 4. Sensibilidade ao custo: o vencedor muda com o peso do erro?
+# ## 5. Sensibilidade ao custo: o vencedor muda com o peso do erro?
 # λ = quantos spams recebidos equivalem a 1 e-mail real perdido. O limiar é re-escolhido para cada λ (só no treino).
+# Entram também o Stacking 8 e o TabPFN sozinho (notas da nuvem já gravadas) e a referência "não filtrar".
 
 # %%
 mc = Motor(base, log=lambda *a: None)
 C20 = mc.adicionar_divisoes([201, 202, 203, 204]); mc.adicionar_externo(Xext)
+TABN = caminhos.EXPERIMENTOS / "05_tabpfn" / "cache_tabpfn" / "nuvem"
+def tab(chave, t):
+    z = np.load(TABN / f"{chave}.npz"); return z["ztr"], z[f"zte_{t}"]
+def prever_lam(tipo, cfg, c, t, lam):
+    if tipo == "s":
+        return mc.prever_stacking(cfg, c, t, custo_fp=lam)
+    if tipo == "s8":
+        return mc.prever_stacking(cfg, c, t, extra=tab(c, t), custo_fp=lam)
+    if tipo == "l":
+        return mc.prever_linearsvc(cfg, c, t, custo_fp=lam)
+    if tipo == "tab":
+        ztr, zte = tab(c, t); lim = metricas.limiar_custo(ztr, mc.y_treino(c), lam, 1)
+        return zte, (zte > 0.5).astype(int), (zte > lim).astype(int)
+    n = len(yext[t]) if c == "externo" else len(mc.y_teste(c))           # não filtrar
+    return np.zeros(n), np.zeros(n, int), np.zeros(n, int)
 CAND = {"Stacking 7 padrão": ("s", modelos.STACKING7_PADRAO), "Stacking 7 especialista": ("s", modelos.STACKING7_ESPECIALISTA),
-        "LinearSVC padrão": ("l", modelos.LINEARSVC_PADRAO), "LinearSVC otimizado": ("l", modelos.LINEARSVC_OTIMIZADO)}
+        "Stacking 8 padrão (+TabPFN)": ("s8", modelos.STACKING7_PADRAO), "TabPFN-3.5-Plus sozinho": ("tab", None),
+        "LinearSVC padrão": ("l", modelos.LINEARSVC_PADRAO), "LinearSVC otimizado": ("l", modelos.LINEARSVC_OTIMIZADO),
+        "não filtrar": ("nada", None)}
 lin = []
 for lam in [1, 3, 9, 20]:
     for nome, (tipo, cfg) in CAND.items():
@@ -148,7 +209,7 @@ for lam in [1, 3, 9, 20]:
             for c in chaves:
                 for t in (te or ["te"]):
                     yv = yext[t] if onde == "Enron2-6" else mc.y_teste(c)
-                    r = mc.prever_stacking(cfg, c, t, custo_fp=lam) if tipo == "s" else mc.prever_linearsvc(cfg, c, t, custo_fp=lam)
+                    r = prever_lam(tipo, cfg, c, t, lam)
                     lin.append(dict(custo_fp=lam, onde=onde, metodo=nome, custo_por_mil=metricas.custo_por_mil(yv, r[2], lam, 1),
                                     real_lixeira=(r[2][yv == 0] == 1).mean(), spam_passou=(r[2][yv == 1] == 0).mean()))
 SENS = pd.DataFrame(lin).groupby(["onde", "custo_fp", "metodo"]).mean().reset_index()
@@ -157,7 +218,7 @@ print(SENS.pivot_table(index=["onde", "metodo"], columns="custo_fp", values="cus
 print("\nmais barato para cada λ:\n" + venc.round(1).to_string(index=False))
 
 # %% [markdown]
-# ## 5. Onde o filtro erra: e-mails reais que foram para a lixeira (Especialista, 20 folds)
+# ## 6. Onde o filtro erra: e-mails reais que foram para a lixeira (Especialista, 20 folds)
 
 # %%
 textos, _, _ = externo.ler_tar(1)
@@ -188,7 +249,9 @@ print("\nempurram para spam:", ", ".join(pes_spam.palavra)); print("empurram par
 # %%
 saidas.gravar("07_contra_estudo", {
     "contra_estudo": dict(
-        permutacao=dict(mcc_real=mcc_real, mcc_permutado=mcc_perm, p=p_valor),
+        permutacao=dict(mcc_real=mcc_real, mcc_permutado=mcc_perm, p=p_valor, n_permutacoes=N_PERM, modelo="Reg. Logística TF-IDF log (C=10)",
+                        mcc_permutado_media=float(np.mean(mcc_perm)), mcc_permutado_max=float(np.max(mcc_perm))),
+        quase_copias=QUASE,
         ablacao=ABL.reset_index().rename(columns={"index": "variante"}), palavras_enron=[w for w in DOMINIO if w in set(vocab)],
         curva_aprendizado=curva, sensibilidade_custo=SENS, vencedor_por_custo=venc,
         emails_reais_na_lixeira=EX.head(10), n_emails_reais_na_lixeira=len(EX),

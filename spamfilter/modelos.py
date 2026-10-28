@@ -1,5 +1,5 @@
 """Catálogo de modelos: o torneio de 22, os 13 de base do experimento 02, o espaço de busca do Stacking 7
-e os dois filtros finais (Especialista e Generalista).
+e os filtros finais (Especialista e Stacking 7 padrão; o Stacking 8 acrescenta o TabPFN).
 
 Todo modelo que usa sorteio recebe SEED = 42, para que os resultados se repitam.
 """
@@ -97,7 +97,7 @@ FID = {f: i for i, f in enumerate(TODOS)}     # índice da família no nome do a
 CARD = [len(ESPACO[f]) for f in FAMILIAS] + [len(META_C)]   # opções por gene (7 famílias + C do meta-modelo)
 
 # Os filtros finais (D8 do registro de decisões): um índice por família + o índice do C do meta-modelo.
-STACKING7_PADRAO = (0, 0, 0, 0, 0, 0, 0, 0)          # Generalista
+STACKING7_PADRAO = (0, 0, 0, 0, 0, 0, 0, 0)          # Stacking 7 padrão (base do Stacking 8)
 STACKING7_ESPECIALISTA = (1, 7, 1, 1, 5, 5, 4, 5)    # escolhido pelo algoritmo genético (#5 do experimento 03)
 LINEARSVC_PADRAO = 0                                 # C=1, balanced: a linha de base
 LINEARSVC_OTIMIZADO = 5                              # C=1, sem balanceamento: o melhor na busca

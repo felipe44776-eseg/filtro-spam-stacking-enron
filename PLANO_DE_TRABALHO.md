@@ -33,7 +33,7 @@ O LinearSVC é a linha de base simples. Em caixas novas ele custa menos ainda (1
 1. **Uma única fonte para o código.** O código fica no pacote `spamfilter/`. Os scripts usam o pacote, os notebooks são **gerados** dos scripts e nunca editados à mão, e a apresentação lê os resultados de arquivos.
 2. **Uma única fonte para os números.** Todo número que aparece no README, no notebook ou nos slides sai de `resultados/*.json` ou `resultados/*.csv`, gerados pelos scripts. Nenhum número é digitado à mão; se um número mudar, basta regenerar.
 3. **Congelar os números antes de escrever a história.** A narrativa e os slides só começam depois da Fase 4.
-4. **A base de teste trancada já foi usada 2 vezes.** Ela não serve mais para escolher nada: só é reportada com os números já registrados.
+4. **A base de teste trancada já foi usada 4 vezes, todas para relatar** (a última em D11). Ela não serve para escolher nada.
 5. **Regressão numérica.** Ao mover o código para o pacote, os números do REGISTRO precisam se repetir (tolerância de ±0,001). Assim, a refatoração não muda as conclusões.
 6. **Vocabulário.** Sempre "e-mail real", nunca "ham" (exceto uma vez, no glossário). Os CSVs usam `;` como separador e `,` como decimal.
 
@@ -41,7 +41,7 @@ O LinearSVC é a linha de base simples. Em caixas novas ele custa menos ainda (1
 
 | # | Decisão | Resposta |
 |---|---|---|
-| **P1** | GitHub | Repositório **público** na conta `felipe44776-eseg`. **Autores:** Phelipe Torres Pamponet da França (RA 46643) e Felipe Marins. Professor: Marino Catarino. Disciplina: Data Science 2, ESEG |
+| **P1** | GitHub | Repositório **público** na conta `felipe44776-eseg`. **Autores:** Phelipe Torres Pamponet da França (RA 46643) e Felipe Marins (RA 44776). Professor: Marino Catarino. Disciplina: Data Science 2, ESEG |
 | **P2** | Dados | **Vão todos para o repositório** (uso acadêmico): o CSV, o Enron1–6 vetorizado, os originais da AUEB e os caches. Onde não puder, entra o link. Exceção: `experimentos/referencias/*.txt` (texto integral de artigos, com direito autoral) vira bibliografia com links |
 | **P3** | Apresentações | **Duas**, ambas em slides HTML com estilos e animações em JavaScript: **(a) banca/professor**, técnica e impactante; **(b) equipe**, com linguagem simples, todas as siglas explicadas e o passo a passo do que fizemos. O GitHub ganha também um **passo a passo de como testar** (`COMO_TESTAR.md`) |
 | **P4** | Notebook do professor | Um notebook-história (≤ 10 min, código principal visível) e os notebooks técnicos 01 a 08 |
@@ -160,7 +160,8 @@ O usuário pediu tudo de uma vez: testes, documentação, apresentações e GitH
 **Fase 4 ✅:** scripts `scripts/01` a `09` no formato `# %%`, usando o pacote; saídas em `resultados/`.
 - **T4.2:** não supervisionado.
 - **T4.3 e T4.4:** interpretação e contra-estudo: permutação, ablação, curva de aprendizado com o TabPFN e sensibilidade a λ.
-- **D10:** 3ª base, o SpamAssassin, com regra pré-registrada. O Stacking 8 virou o Generalista.
+- **D10:** 3ª base, o SpamAssassin, com regra pré-registrada. O Stacking 8 virou o stacking para caixas novas.
+- **D11:** revisão crítica. O rótulo "Generalista" foi aposentado; "não filtrar" e o TCR entraram nas comparações; o TabPFN sozinho entrou entre os filtros finais.
 - **T4.6:** os filtros finais e o `metricas_finais.json`.
 - **Conversor bruto → AUEB** (`spamfilter.conversao`): 90,5% de reprodução exata.
 
@@ -204,8 +205,8 @@ O usuário pediu tudo de uma vez: testes, documentação, apresentações e GitH
 | 5 | Torneio de 22 modelos | O detalhe que virou o jogo: TF-IDF com log (Reg. Logística de 0,922 para 0,961) |
 | 6 | Ninguém vence sozinho | Modelos diferentes erram diferente. O kNN, fraco sozinho, é o reforço mais valioso do time |
 | 7 | Mais não é melhor | 13 modelos não superam 7 |
-| 8 | O algoritmo genético | 7 milhões de combinações; 85% do ganho era ilusão; a maldição do vencedor; o piso estatístico |
-| 9 | A grande final | Dois filtros: o Especialista para esta caixa e o Generalista para caixas novas |
+| 8 | O algoritmo genético | 7 milhões de combinações; o ganho não se confirmou em divisões novas; a maldição do vencedor; o piso estatístico |
+| 9 | A grande final | Especialista (esta caixa), Stacking 8 e TabPFN (fora da caixa), contra a referência "não filtrar" |
 | 10 | Contra-estudo e limites | Em caixas novas o e-mail real muda (cada pessoa tem seu vocabulário); o LinearSVC sai mais barato |
 | 11 | Conclusões | O que aprendemos e o que faríamos depois |
 

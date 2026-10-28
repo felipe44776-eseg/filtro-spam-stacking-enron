@@ -11,6 +11,7 @@
 # o torneio roda do zero (cerca de 11 min) e retoma de onde parou se cair.
 
 # %%
+import os
 import shutil
 import time
 
@@ -41,9 +42,10 @@ def avaliar(nome, semente):
 
 
 def rodar(arquivo, nomes, sementes, historico=None):
-    """Salva a cada modelo e retoma de onde parou. Começa do resultado histórico, se houver."""
+    """Salva a cada modelo e retoma de onde parou. Começa do resultado histórico, se houver
+    (com TORNEIO_DO_ZERO=1, ignora o histórico e treina tudo de novo)."""
     arquivo = caminhos.RESULTADOS / arquivo
-    if not arquivo.exists() and historico is not None and historico.exists():
+    if not arquivo.exists() and historico is not None and historico.exists() and not os.environ.get("TORNEIO_DO_ZERO"):
         h = pd.read_csv(historico, sep=";", decimal=",").rename(columns={"fp_ham": "real_lixeira", "fn_spam": "spam_passou"})
         caminhos.RESULTADOS.mkdir(exist_ok=True); h.to_csv(arquivo, sep=";", decimal=",", index=False)
     feitos = pd.read_csv(arquivo, sep=";", decimal=",") if arquivo.exists() else pd.DataFrame(columns=["modelo", "seed"])

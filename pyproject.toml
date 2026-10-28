@@ -7,9 +7,9 @@ name = "spamfilter"
 version = "0.1.0"
 description = "Filtro de spam com stacking de 7 famílias de modelos: Projeto 3, Data Science 2, ESEG"
 readme = "README.md"
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.11,<3.13"
 license = { text = "MIT" }
-authors = [{ name = "Phelipe Torres Pamponet da França" }, { name = "Felipe Marins" }]
+authors = [{ name = "Phelipe Torres Pamponet da França (RA 46643)" }, { name = "Felipe Marins (RA 44776)" }]
 # dependências travadas em requirements.txt (instalar com: pip install -r requirements.txt && pip install -e .)
 
 [tool.setuptools]

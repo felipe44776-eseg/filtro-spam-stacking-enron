@@ -70,7 +70,7 @@ VETORES_SPAMASSASSIN = caminhos.DADOS / "spamassassin_vetores.npz"
 
 
 def baixar_spamassassin(pasta: Path | None = None) -> Path:
-    """Baixa os 5 arquivos do corpus (cerca de 7 MB). O texto tem copyright dos remetentes: não vai para o repositório."""
+    """Baixa os 5 arquivos do corpus (cerca de 7 MB) se faltarem. O repositório já traz uma cópia em dados/spamassassin/."""
     import urllib.request
     pasta = Path(pasta or PASTA_SPAMASSASSIN); pasta.mkdir(parents=True, exist_ok=True)
     for a in ARQUIVOS_SPAMASSASSIN:

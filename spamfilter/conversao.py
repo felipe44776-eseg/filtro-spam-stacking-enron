@@ -39,7 +39,12 @@ def _texto_html(h: str) -> str:
     return html.unescape(_TAG.sub(" ", h))
 
 
-def _decodificar_parte(parte) -> str:
+def _decodificar_parte(parte, ja_texto: bool = False) -> str:
+    # Texto colado (str) já está decodificado: só base64 e quoted-printable precisam ser desfeitos. Sem isto, o
+    # e-mail cai no raw-unicode-escape e "’" vira "’".
+    if ja_texto and (parte.get("Content-Transfer-Encoding") or "").strip().lower() not in ("base64", "quoted-printable"):
+        p = parte.get_payload()
+        return p if isinstance(p, str) else ""
     dados = parte.get_payload(decode=True)
     if dados is None:
         p = parte.get_payload()
@@ -87,10 +92,11 @@ def extrair(bruto: str | bytes) -> tuple[str, str]:
         tipo = parte.get_content_type()
         if parte.get_content_disposition() == "attachment":
             continue
+        ja_texto = isinstance(bruto, str)
         if tipo == "text/plain":
-            textos.append(_decodificar_parte(parte))
+            textos.append(_decodificar_parte(parte, ja_texto))
         elif tipo == "text/html":
-            htmls.append(_texto_html(_decodificar_parte(parte)))
+            htmls.append(_texto_html(_decodificar_parte(parte, ja_texto)))
     corpo = "\n".join(textos) if textos else "\n".join(htmls)
     return _assunto(msg), corpo
 

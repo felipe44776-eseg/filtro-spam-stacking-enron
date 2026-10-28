@@ -19,8 +19,19 @@ from .metricas import mcc_np
 def t_corrigido(a, b, n_tr: float, n_te: float) -> tuple[float, float, float]:
     """(diferença média, t, p bilateral) entre as métricas por fold de A e B."""
     d = np.asarray(a, float) - np.asarray(b, float); J = len(d); v = d.var(ddof=1)
-    t = d.mean() / np.sqrt((1 / J + n_te / n_tr) * v) if v > 0 else np.inf
+    if v == 0:                                   # diferença idêntica em todos os folds
+        return float(d.mean()), (0.0 if d.mean() == 0 else float(np.sign(d.mean()) * np.inf)), (1.0 if d.mean() == 0 else 0.0)
+    t = d.mean() / np.sqrt((1 / J + n_te / n_tr) * v)
     return float(d.mean()), float(t), float(2 * stats.t.sf(abs(t), J - 1))
+
+
+def ic_corrigido(a, b, n_tr: float, n_te: float, nivel: float = 0.95) -> tuple[float, float, float]:
+    """(diferença média, limite inferior, limite superior): intervalo de confiança com a variância corrigida de
+    Nadeau e Bengio (a mesma do t_corrigido)."""
+    d = np.asarray(a, float) - np.asarray(b, float); J = len(d)
+    ep = np.sqrt((1 / J + n_te / n_tr) * d.var(ddof=1))
+    q = stats.t.ppf(0.5 + nivel / 2, J - 1)
+    return float(d.mean()), float(d.mean() - q * ep), float(d.mean() + q * ep)
 
 
 def holm(p) -> np.ndarray:
@@ -72,6 +83,11 @@ def bootstrap_grupo(y, previsoes: dict, grupos, n: int = 2000, seed: int = 42) -
     return pd.DataFrame(saida)
 
 
-def menor_diferenca_detectavel(dp_dif: float, folds: int, razao_teste_treino: float) -> float:
-    """≈ 2 erros-padrão corrigidos. Tem um piso: mais folds não ajudam, porque os folds reusam os mesmos e-mails."""
-    return float(2 * dp_dif * np.sqrt(1 / folds + razao_teste_treino))
+def menor_diferenca_detectavel(dp_dif: float, folds: int, razao_teste_treino: float, poder: float = 0.8,
+                               alfa: float = 0.05) -> float:
+    """Menor diferença que o t corrigido detecta com o poder pedido: (t_{1-α/2} + t_poder) erros-padrão corrigidos,
+    com J − 1 graus de liberdade (≈ 2,95 EP com 20 folds e 80% de poder; tende a 2,80 com muitos folds). Tem um
+    piso: mais folds não ajudam, porque os folds reusam os mesmos e-mails (o termo razao_teste_treino não diminui)."""
+    gl = max(folds - 1, 1)
+    q = stats.t.ppf(1 - alfa / 2, gl) + stats.t.ppf(poder, gl)
+    return float(q * dp_dif * np.sqrt(1 / folds + razao_teste_treino))

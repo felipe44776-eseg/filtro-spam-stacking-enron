@@ -11,8 +11,8 @@ O mesmo arco está no notebook-história (`scripts/historia.py` → `Projeto3_Cl
 | 5 | Torneio de 22 modelos | TF-IDF com log virou o jogo | `torneio`, `achados` | `03_torneio` | 03 |
 | 6 | Ninguém vence sozinho | Modelos que erram diferente se completam; o kNN é o reforço | `stacking.pesos_meta`, `stacking.erros_em_comum` | `04_erros_em_comum`, `04_pesos_meta` | 04 |
 | 7 | Mais não é melhor | 13 modelos empatam com 7 | `stacking.comparacoes_15_folds` | — | 04 |
-| 8 | O algoritmo genético | 85% do ganho era otimismo; há um piso estatístico | `genetico.*` | `05_ga_x_aleatoria` | 05 |
+| 8 | O algoritmo genético | o ganho do GA não se confirmou em divisões novas; há um piso estatístico | `genetico.*` | `05_ga_x_aleatoria` | 05 |
 | 9 | Corrida e TabPFN | Platô nesta caixa; o TabPFN é conservador fora dela | `corrida`, `tabpfn` | `06_custo_dentro_fora` | 06 |
-| 10 | A 3ª base e a regra escrita antes | O Stacking 8 vira o Generalista; o filtro aprende a caixa | `terceira_base.decisao`, `terceira_base.controle_dentro_da_base` | `08_terceira_base` | 08 |
+| 10 | A 3ª base e a regra escrita antes | O Stacking 8 vira o stacking para caixas novas; nenhum filtro vence "não filtrar" no SpamAssassin; o stacking aprende a caixa | `terceira_base.decisao`, `terceira_base.controle_dentro_da_base` | `08_terceira_base` | 08 |
 | 11 | Contra-estudo | Não vaza; não depende de poucas palavras; λ muda o vencedor fora da caixa | `contra_estudo.*` | `07_curva_aprendizado` | 07 |
 | 12 | A grande final e a demo | Quatro filtros, cada um para um uso | `finais`, `simulador_limiar`, `exemplos_demo` | `09_filtros_finais` | 09 |

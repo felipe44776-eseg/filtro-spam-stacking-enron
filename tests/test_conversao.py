@@ -22,6 +22,13 @@ def test_email_bruto_vira_assunto_mais_corpo():
     assert conversao.para_aueb(bruto) == "Subject: meter 7268 nov allocation\nlauri , see the file >\nthanks ."
 
 
+def test_texto_colado_com_cabecalho_mantem_caracteres_fora_do_latin1():
+    """Texto colado (str) já vem decodificado: o apóstrofo curvo não pode virar a sequência "\\u2019"."""
+    aueb = conversao.para_aueb("Subject: lunch\n\nI’d like to meet. Let’s go.")
+    assert aueb == "Subject: lunch\ni ’ d like to meet . let ’ s go ."
+    assert "\\" not in aueb
+
+
 def test_texto_colado_sem_cabecalho():
     assert conversao.para_aueb("Assunto: Oi\nTudo bem?").startswith("Subject: oi\ntudo bem ?")
     assert conversao.para_aueb("cheap meds!!").startswith("Subject: \ncheap meds ! !")
@@ -35,7 +42,7 @@ def test_cobertura_baixa_em_portugues(base):
 
 @pytest.mark.lento
 def test_reproduz_os_emails_brutos_da_farmer_d(base):
-    """90,5% dos 3669 e-mails brutos da farmer-d viram exatamente uma linha do CSV (dados/brutos_aueb_raw, fora do git)."""
+    """90,5% dos 3669 e-mails brutos da farmer-d viram exatamente uma linha do CSV (dados/brutos_aueb_raw)."""
     arq = caminhos.DADOS / "brutos_aueb_raw" / "farmer-d.tar.gz"
     if not arq.exists():
         pytest.skip("baixe http://www2.aueb.gr/users/ion/data/enron-spam/raw/ham/farmer-d.tar.gz em dados/brutos_aueb_raw/")

@@ -1,0 +1,11 @@
+{
+ "n_brutos_gp": 13719,
+ "spams_csv_reproduzidos": 0.26866666666666666,
+ "n_spams_csv": 1500,
+ "nao_reproduzidos_cos_mediana": 0.9866950511932373,
+ "nao_reproduzidos_cos_abaixo_09": 0.1431175934366454,
+ "enron4_spams": 4214,
+ "enron4_pares": 3788,
+ "enron4_spam_passou_aueb": 0.00791974656810982,
+ "enron4_spam_passou_conversor": 0.00897571277719113
+}

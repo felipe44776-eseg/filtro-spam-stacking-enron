@@ -1,6 +1,7 @@
-# Ambiente principal (Python 3.11). Versões exatas usadas no projeto.
+# Ambiente principal (Python 3.11 ou 3.12). Versões exatas usadas no projeto.
 #   pip install -r requirements.txt
 #   pip install -e . --no-deps        (instala o pacote spamfilter deste repositório)
+# Google Colab: requirements-colab.txt (a primeira célula de cada notebook instala sozinha).
 # Opcionais:
 #   requirements-tabpfn-local.txt     TabPFN em CPU (torch, cerca de 1 GB); só para refazer o experimento 05 localmente
 #   requirements-tabpfn-nuvem.txt     cliente da nuvem do TabPFN, num ambiente SEPARADO (exige outras versões de pandas)
@@ -20,5 +21,6 @@ nbclient==0.11.0
 ipykernel==7.4.0
 jupyter_client==8.10.0
 jupytext==1.19.6
+notebook==7.6.3
 pytest==9.2.0
 streamlit==1.66.1

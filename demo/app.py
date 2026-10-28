@@ -2,8 +2,9 @@
 
     streamlit run demo/app.py
 
-Usa os filtros salvos por scripts/09_modelos_finais.py (resultados/modelos/*.joblib). Roda sem internet e sem chave:
-o Generalista com TabPFN (Stacking 8) precisa da nuvem, então a demo mostra o Especialista e o Stacking 7 padrão.
+Usa os filtros salvos por scripts/09_modelos_finais.py (resultados/modelos/*.joblib); se faltarem, baixa da Release
+v1.0 do GitHub. Roda sem chave: o Stacking 8 e o TabPFN precisam da nuvem da Prior Labs, então a demo mostra o
+Especialista e o Stacking 7 padrão.
 """
 import json
 import sys
@@ -17,7 +18,7 @@ from scipy import sparse
 
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
-from spamfilter import conversao  # noqa: E402
+from spamfilter import conversao, publicados  # noqa: E402
 from spamfilter.filtro import FiltroStacking  # noqa: E402
 from spamfilter.modelos import FAMILIAS  # noqa: E402
 
@@ -28,32 +29,43 @@ st.set_page_config(page_title="Filtro de spam: passo a passo", page_icon="✉️
 
 
 @st.cache_resource
+def _carregar_filtros():
+    # se o download falhar, a exceção sobe e nada fica no cache: a próxima visita tenta de novo
+    return {"Especialista (esta caixa)": FiltroStacking.carregar(publicados.garantir("especialista")),
+            "Stacking 7 padrão (roda sem chave)": FiltroStacking.carregar(publicados.garantir("stacking7_padrao"))}
+
+
 def filtros():
-    pasta = RAIZ / "resultados" / "modelos"
-    faltam = [n for n in ("especialista", "stacking7_padrao") if not (pasta / f"{n}.joblib").exists()]
-    if faltam:
+    try:
+        return _carregar_filtros()
+    except Exception:
         return None
-    return {"Especialista (esta caixa)": FiltroStacking.carregar(pasta / "especialista.joblib"),
-            "Stacking 7 padrão (caixas novas, sem chave)": FiltroStacking.carregar(pasta / "stacking7_padrao.joblib")}
 
 
 @st.cache_data
-def exemplos():
+def resultados():
     arq = RAIZ / "resultados" / "metricas_finais.json"
-    if not arq.exists():
-        return {}
-    return {f"{e['rotulo']} — {e['origem']}": e["texto"] for e in json.loads(arq.read_text(encoding="utf-8"))["exemplos_demo"]}
+    return json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else {}
 
 
 F = filtros()
+R = resultados()
 st.title("✉️ Filtro de spam, passo a passo")
 st.caption("Projeto 3 · Data Science 2 · ESEG. Cole um e-mail (texto puro ou a mensagem completa, com cabeçalhos) "
            "e acompanhe cada etapa até a decisão.")
 if F is None:
-    st.error("Os filtros ainda não foram treinados. Rode: `python scripts/09_modelos_finais.py`")
+    st.error("Os filtros não estão em `resultados/modelos/` e não foi possível baixá-los da Release do GitHub. "
+             "Baixe-os da página Releases ou rode: `python scripts/09_modelos_finais.py`")
     st.stop()
+if R:
+    fin = R["finais"]
+    st.info(f"ℹ️ Os filtros foram treinados numa única caixa de e-mail (a de um funcionário da Enron: "
+            f"{R['base']['n_email_real']} e-mails reais e {R['base']['n_spam']} spams). Em caixas diferentes eles erram muito mais: "
+            f"no SpamAssassin, {fin['especialista']['spamassassin']['real_lixeira_custo']:.0%} dos e-mails reais foram para a lixeira "
+            f"com o Especialista e {fin['generalista_sem_chave']['spamassassin']['real_lixeira_custo']:.0%} com o Stacking 7 padrão. "
+            "Leia a decisão como um exercício, não como um veredito sobre o seu e-mail.")
 
-ex = exemplos()
+ex = {f"{e['rotulo']} — {e['origem']}": e["texto"] for e in R.get("exemplos_demo", [])}
 escolha = st.selectbox("Comece com um exemplo (e-mails que o treino nunca viu) ou cole o seu abaixo:", ["(colar meu e-mail)"] + list(ex))
 texto = st.text_area("E-mail", value=ex.get(escolha, ""), height=220,
                      placeholder="Subject: ...\n\nTexto do e-mail")
@@ -80,12 +92,13 @@ k2.metric("cobertura do vocabulário", f"{cob:.0%}")
 k3.metric("contagem total", f"{int(v.sum())}")
 if cob < 0.6:
     st.warning("⚠️ Cobertura baixa: o filtro não conhece boa parte deste vocabulário (por exemplo, um texto em português "
-               "ou de outro assunto). A decisão abaixo é pouco confiável.")
+               "ou de outro assunto). A decisão abaixo é ainda menos confiável. Cobertura alta também não garante acerto: "
+               "o que pesa é se o e-mail se parece com a caixa do treino.")
 st.caption("A contagem é por *substring* e diferencia maiúsculas: 'ect' também conta dentro de 'subject' e 'project'; "
            "as 26 letras soltas também são colunas.")
 nz = np.flatnonzero(v)
 tab = pd.DataFrame({"palavra": vocab[nz], "contagem": v[nz], "presença (0/1)": 1}).sort_values("contagem", ascending=False)
-st.dataframe(tab[tab.palavra.str.len() >= 3].head(40), hide_index=True, use_container_width=True, height=260)
+st.dataframe(tab[tab.palavra.str.len() >= 3].head(40), hide_index=True, width="stretch", height=260)
 
 # 4. vetor
 st.header("4. O vetor: contagens e presença (0/1)")
@@ -94,7 +107,7 @@ grade = pd.DataFrame({"x": np.arange(3000) % 60, "y": np.arange(3000) // 60, "co
 st.altair_chart(alt.Chart(grade).mark_rect().encode(
     x=alt.X("x:O", axis=None), y=alt.Y("y:O", axis=None),
     color=alt.Color("contagem:Q", scale=alt.Scale(range=["#f0efec", "#0d366b"]), legend=None),
-    tooltip=["palavra", "n"]).properties(height=260), use_container_width=True)
+    tooltip=["palavra", "n"]).properties(height=260), width="stretch")
 
 # 5. TF-IDF
 st.header("5. TF-IDF com log")
@@ -103,7 +116,7 @@ t = esp.palavras[0][0].transform(X).toarray()[0]
 top = np.argsort(-t)[:15]
 st.caption("O log achata as repetições (contar 'free' 10 vezes não é 10 vezes mais evidência) e o IDF dá menos peso "
            "às palavras que aparecem em quase todo e-mail.")
-st.dataframe(pd.DataFrame({"palavra": vocab[top], "contagem": v[top], "TF-IDF": t[top].round(3)}), hide_index=True, use_container_width=True)
+st.dataframe(pd.DataFrame({"palavra": vocab[top], "contagem": v[top], "TF-IDF": t[top].round(3)}), hide_index=True, width="stretch")
 
 # 6-8. os dois filtros
 for nome, f in F.items():
@@ -115,13 +128,13 @@ for nome, f in F.items():
     a.altair_chart(alt.Chart(notas).mark_bar(cornerRadiusEnd=4, size=18).encode(
         y=alt.Y("modelo:N", sort=None, title=None), x=alt.X("nota:Q", title="nota"),
         color=alt.Color("modelo:N", scale=alt.Scale(domain=FAMILIAS, range=list(COR_FAMILIA.values())), legend=None),
-        tooltip=["modelo", alt.Tooltip("nota:Q", format=".3f")]).properties(height=240), use_container_width=True)
+        tooltip=["modelo", alt.Tooltip("nota:Q", format=".3f")]).properties(height=240), width="stretch")
     contr = pd.DataFrame({"modelo": FAMILIAS + ["constante"], "contribuição": [e["contribuicoes"][k] for k in FAMILIAS] + [e["intercepto"]]})
     b.markdown("**7. A soma ponderada do meta-modelo** (quanto cada nota empurra para spam ou para e-mail real)")
     b.altair_chart(alt.Chart(contr).mark_bar(cornerRadiusEnd=4, size=18).encode(
         y=alt.Y("modelo:N", sort=None, title=None), x=alt.X("contribuição:Q"),
         color=alt.condition(alt.datum["contribuição"] > 0, alt.value(LARANJA), alt.value(AZUL)),
-        tooltip=["modelo", alt.Tooltip("contribuição:Q", format="+.2f")]).properties(height=240), use_container_width=True)
+        tooltip=["modelo", alt.Tooltip("contribuição:Q", format="+.2f")]).properties(height=240), width="stretch")
     p, lim = e["prob_spam"], e["limiar"]
     st.markdown(f"**8. Probabilidade de spam = {p:.1%}**. Limiar de custo = {lim:.1%} (perder 1 e-mail real custa o mesmo que receber 9 spams).")
     st.progress(min(max(p, 0.0), 1.0))

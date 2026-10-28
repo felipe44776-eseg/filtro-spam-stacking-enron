@@ -1,6 +1,6 @@
 # Contrato de resultados: `resultados/metricas_finais.json`
 
-**Para que serve.** README, notebook-história, os dois decks e a demo **só leem** números deste arquivo. Ele é gerado pelos scripts (`scripts/08_modelos_finais.py` consolida os demais). Se um número mudar, roda-se o script de novo e todos os artefatos se atualizam, sem nada digitado à mão.
+**Para que serve.** README, notebook-história, os dois decks e a demo **só leem** números deste arquivo. Ele é gerado pelos scripts (`scripts/09_modelos_finais.py` consolida os demais). Se um número mudar, roda-se o script de novo e todos os artefatos se atualizam, sem nada digitado à mão.
 
 ## Regras
 1. **Unidades:**
@@ -13,7 +13,25 @@
 4. **Vocabulário:** chaves em português, sem acento (`real_lixeira`, `spam_passou`, `email_real`).
 5. **Versão:** `versao_contrato` sobe a cada mudança de chave. Os leitores conferem a versão e falham com uma mensagem clara.
 
-## Esquema (versão 1)
+## Versão 2 (2026-10-28, revisão crítica, D11)
+
+Só acréscimos; as chaves da versão 1 continuam. As chaves `finais.generalista` e `finais.generalista_sem_chave` guardam os nomes antigos: hoje exibem-se como "Stacking 8 (+TabPFN)" e "Stacking 7 padrão" (campo `rotulo`).
+
+| Chave | O que é |
+|---|---|
+| `finais.tabpfn`, `finais.nao_filtrar` | o TabPFN sozinho e a referência "não filtrar", no mesmo formato dos outros filtros |
+| `finais.*.rotulo` | o nome a exibir |
+| `finais.*.{cv20, externo, spamassassin, teste_trancado}.{precisao_custo, revocacao_custo, f1_custo, tcr}` | precisão, revocação e F1 do spam no limiar de custo; TCR = custo de não filtrar ÷ custo do filtro |
+| `finais.*.teste_trancado.matriz_confusao` | `spam_na_lixeira`, `real_na_caixa`, `real_na_lixeira`, `spam_na_caixa` |
+| `comparacoes_custo_20_folds` | pares de filtros no custo dos 20 folds: diferença, IC95 corrigido, redução relativa, p de Holm e teste bayesiano (ROPE de 3 por mil) |
+| `protocolo.teste_trancado.usos_descricao` | os 4 usos da base trancada |
+| `genetico.ganho_sementes_novas_ic95`, `genetico.fracao_otimismo_ic95`, `genetico.comparacoes_custo`, `genetico.piso_par`, `genetico.piso_poder` | intervalo do ganho do GA, comparações de custo e a definição do piso (80% de poder, par GA − padrão) |
+| `contra_estudo.permutacao.{n_permutacoes, modelo, mcc_permutado_media, mcc_permutado_max}` e `contra_estudo.quase_copias` | o teste de sinal com 999 permutações e o efeito das quase-cópias |
+| `terceira_base.{nao_filtrar_custo, sensibilidade_custo, por_pasta, membros, conversor_spam, fontes_spam, semelhanca_spam}` | a referência, a sensibilidade a λ, os erros por pasta e por membro, a validação do conversor no spam e a fonte do spam de cada caixa |
+
+Em `terceira_base.metodos`, o método "Stacking 7 padrão (Generalista atual)" passou a se chamar "Stacking 7 padrão", e entrou a linha "Não filtrar (referência)".
+
+## Esquema original (versão 1, ilustrativo)
 
 ```json
 {

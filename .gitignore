@@ -12,16 +12,13 @@ build/
 .env
 *.env
 CLAUDE.md
+.claude/
 
 # material de terceiros que não redistribuímos
 # texto integral de artigos (direito autoral): ver a bibliografia
 experimentos/referencias/
 # enunciado do professor
 Data-Science-2-projeto-3-*.pdf
-
-# e-mails brutos de terceiros (copyright dos remetentes; cabeçalhos com endereços): só o link e as contagens
-dados/spamassassin/
-dados/brutos_aueb_raw/
 
 # filtros treinados (dezenas de MB): vão na página Releases do GitHub
 resultados/modelos/*.joblib

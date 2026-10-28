@@ -1,5 +1,5 @@
 """Regressão completa (pytest -m lento): retreina modelos, refaz o algoritmo genético e a base externa.
-Cada teste confere um número do registro de decisões (tolerância de ±0,001 no MCC)."""
+Cada teste confere um número do registro de decisões: ±0,001 no MCC onde há retreino; 1e-5 no que sai do cache."""
 from collections import Counter
 
 import numpy as np
@@ -9,7 +9,7 @@ import pytest
 from spamfilter import caminhos, dados, externo, genetico, metricas, modelos
 from spamfilter.motor import Motor
 
-from conftest import TOL_MCC
+from conftest import TOL_CACHE, TOL_MCC
 
 pytestmark = pytest.mark.lento
 
@@ -48,9 +48,9 @@ def test_algoritmo_genetico_reproduz_a_busca(base):
     n = len(apt.memoria)
     aleatoria = genetico.busca_aleatoria(apt, n)
     assert n == 857
-    assert apt(modelos.STACKING7_PADRAO) == pytest.approx(0.9732, abs=TOL_MCC)
-    assert apt(melhor) == pytest.approx(0.9795, abs=TOL_MCC)
-    assert max(aleatoria) == pytest.approx(0.9784, abs=TOL_MCC)
+    assert apt(modelos.STACKING7_PADRAO) == pytest.approx(0.973212, abs=TOL_CACHE)
+    assert apt(melhor) == pytest.approx(0.979510, abs=TOL_CACHE)
+    assert max(aleatoria) == pytest.approx(0.978361, abs=TOL_CACHE)
     assert tuple(melhor) == modelos.STACKING7_ESPECIALISTA
     mcc_lsvc = [apt.mcc_linearsvc(k) for k in range(len(modelos.LINEARSVC))]
     assert int(np.argmax(mcc_lsvc)) == modelos.LINEARSVC_OTIMIZADO

@@ -16,7 +16,7 @@ Saída
 
 Regras dos templates
     * Número exibido entra como {{caminho|formato}}; o caminho é resolvido em DADOS na hora do build.
-      Caminho inexistente interrompe o build. Formatos: int, mcc, d1..d4, pct, custo, s3, s4, spct, p, n, txt.
+      Caminho inexistente interrompe o build. Formatos: int, mcc, d1..d4, pct, pct0, custo, s3, s4, spct, p, n, txt.
     * <link rel="stylesheet" href="..."> e <script src="..."></script> são trocados pelo conteúdo do arquivo.
     * <!--@DADOS@--> vira  <script>const DADOS = {...};</script>.
 
@@ -39,10 +39,18 @@ REGISTRO = RAIZ / "docs" / "REGISTRO_DECISOES.md"
 
 DECKS = {"banca": "banca.html", "equipe": "equipe.html"}
 
+# Corte padrão de probabilidade (predict_proba > 0,5 em spamfilter/motor.py e genetico.py). É a definição do
+# "limiar 0,5", não um resultado; o JSON não traz esse campo (sugestão: meta.limiar_padrao).
+LIMIAR_PADRAO = 0.5
+# Nível de significância usado nas frases "passa de 0,05" (convenção; o JSON não traz: sugestão meta.alfa).
+ALFA = 0.05
+
 
 # --------------------------------------------------------------------------------------------- extração
-def arred(o, sig: int = 6):
-    """Arredonda floats a `sig` algarismos significativos (reduz o tamanho do JSON embutido)."""
+def arred(o, sig: int = 10):
+    """Arredonda floats a `sig` algarismos significativos (reduz o tamanho do JSON embutido).
+    Só para o JSON embutido: os tokens {{…}} usam o valor cheio. Com poucos algarismos, o arredondamento
+    duplo muda a última casa exibida (207,6496 → 207,650 → "207,7")."""
     if isinstance(o, float):
         return float(f"{o:.{sig}g}")
     if isinstance(o, list):
@@ -53,14 +61,17 @@ def arred(o, sig: int = 6):
 
 
 def regra_d10() -> dict:
-    """Os dois limites da regra de D10 não estão no JSON: são lidos do registro de decisões."""
+    """Os limites da regra de D10 e o nº de reamostragens do bootstrap não estão no JSON: são lidos do
+    registro de decisões (seção D10, o texto pré-registrado)."""
     texto = REGISTRO.read_text(encoding="utf-8")
-    sec = texto[texto.index("### D10"):]
+    sec = texto[texto.index("### D10"):texto.index("### D11")]
     p = re.search(r"P\(redução\)\s*≥\s*([0-9]+,[0-9]+)", sec)
     t = re.search(r"não piora o MCC[^.]*?mais de\s*([0-9]+,[0-9]+)", sec)
-    if not (p and t):
+    b = re.search(r"bootstrap[^.]*?com\s*([0-9.]+)\s*reamostragens", sec)
+    if not (p and t and b):
         raise SystemExit("ERRO: não achei os limites da regra D10 em docs/REGISTRO_DECISOES.md")
-    return {"p_min": float(p.group(1).replace(",", ".")), "tol_mcc": float(t.group(1).replace(",", "."))}
+    return {"p_min": float(p.group(1).replace(",", ".")), "tol_mcc": float(t.group(1).replace(",", ".")),
+            "n_boot": int(b.group(1).replace(".", ""))}
 
 
 def extrair(R: dict) -> dict:
@@ -69,8 +80,11 @@ def extrair(R: dict) -> dict:
     pr = R["protocolo"]
     comp15 = {c["B"]: c for c in st["comparacoes_15_folds"]}
     comp_ga = {(c["A"], c["B"]): c for c in ge["comparacoes"]}
+    comp_ga_custo = {(c["A"], c["B"]): c for c in ge["comparacoes_custo"]}
+    GA_, PAD_, LSO_ = "Stacking 7 do GA (Especialista)", "Stacking 7 padrão", "LinearSVC otimizado"
     D = {
         "meta": {k: R["meta"][k] for k in ("custo_fp", "custo_fn", "seed_teste")},
+        "limiar_padrao": LIMIAR_PADRAO, "alfa": ALFA,
         "base": {k: v for k, v in b.items() if k not in ("origem", "contagem")},
         "dummy_acuracia": R["metricas_didaticas"]["dummy_acuracia"],
         "palavras": R["palavras"],
@@ -79,6 +93,7 @@ def extrair(R: dict) -> dict:
         "protocolo": {
             "teste_n": pr["teste_trancado"]["n"], "teste_real": pr["teste_trancado"]["email_real"],
             "teste_spam": pr["teste_trancado"]["spam"], "teste_usos": pr["teste_trancado"]["usos"],
+            "teste_usos_descricao": pr["teste_trancado"]["usos_descricao"],
             "folds": pr["folds_confirmacao"],
             "piso": [{"folds": int(k), "dif": v} for k, v in pr["piso_mcc_detectavel"].items()],
         },
@@ -118,11 +133,18 @@ def extrair(R: dict) -> dict:
             "mcc_padrao": ge["mcc_busca_padrao"], "mcc_ga": ge["mcc_busca_ga"],
             "mcc_aleatoria": ge["mcc_busca_aleatoria"],
             "ganho_busca": ge["ganho_busca"], "ganho_novas": ge["ganho_sementes_novas"],
-            "fracao_otimismo": ge["fracao_otimismo"], "sensibilidade": ge["sensibilidade"],
-            "piso": ge["piso"], "confirmacao": ge["confirmacao"],
-            "ga_x_padrao": comp_ga[("Stacking 7 do GA (Especialista)", "Stacking 7 padrão")],
+            "ganho_novas_ic95": ge["ganho_sementes_novas_ic95"],
+            "sensibilidade": ge["sensibilidade"],
+            "piso": ge["piso"], "piso_par": ge["piso_par"], "piso_poder": ge["piso_poder"],
+            "confirmacao": ge["confirmacao"],
+            "ga_x_padrao": comp_ga[(GA_, PAD_)],
+            "s7_x_lsvc_otim": comp_ga[(PAD_, LSO_)], "ga_x_lsvc_otim": comp_ga[(GA_, LSO_)],
+            "n_comparacoes": len(ge["comparacoes"]),
+            "custo_ga_x_padrao": comp_ga_custo[(GA_, PAD_)],
             "historico": ge["historico"],
         },
+        # comparações de custo nos 20 folds entre filtros finais (t corrigido + Holm + bayesiano); chave "A__B"
+        "custo20": {f'{c["A"]}__{c["B"]}': c for c in R["comparacoes_custo_20_folds"]},
         "corrida": R["corrida"]["resumo"],
         "tabpfn": {
             "versao_nuvem": R["tabpfn"]["versao_nuvem"], "versao_local": R["tabpfn"]["versao_local"],
@@ -137,11 +159,16 @@ def extrair(R: dict) -> dict:
             "decisao": tb["decisao"], "controle": tb["controle_dentro_da_base"],
             "cobertura": [{"base": k, "fracao": v} for k, v in tb["cobertura_vocabulario"].items()],
             "regra": regra_d10(),
+            "nao_filtrar_custo": tb["nao_filtrar_custo"], "sensibilidade_custo": tb["sensibilidade_custo"],
+            "membros": tb["membros"], "membros_d": {r["membro"]: r for r in tb["membros"]},
+            "conversor": tb["conversor_spam"], "fontes_spam": tb["fontes_spam"],
+            "fontes_spam_d": {r["base"]: r for r in tb["fontes_spam"]},
+            "semelhanca": tb["semelhanca_spam"], "por_pasta": tb["por_pasta"],
         },
         "finais": R["finais"],
         "simulador": R["simulador_limiar"],
         "contra": {
-            "permutacao": ce["permutacao"], "ablacao": ce["ablacao"],
+            "permutacao": ce["permutacao"], "ablacao": ce["ablacao"], "quase_copias": ce["quase_copias"],
             "n_palavras_enron": len(ce["palavras_enron"]), "palavras_enron": ce["palavras_enron"],
             "curva": ce["curva_aprendizado"], "sensibilidade_custo": ce["sensibilidade_custo"],
             "vencedor_por_custo": ce["vencedor_por_custo"],
@@ -152,7 +179,7 @@ def extrair(R: dict) -> dict:
         "exemplos": R["exemplos_demo"],
     }
     D["der"] = derivados(D)
-    return arred(D)
+    return D
 
 
 def derivados(D: dict) -> dict:
@@ -166,10 +193,32 @@ def derivados(D: dict) -> dict:
     ns_ = sorted({c["n"] for c in ce["curva"]})
     tab_i, tab_e = tp["interno_d"], tp["externo_d"]
     tm = tb["metodos_d"]
-    perm = ce["permutacao"]["mcc_permutado"]
+    NAO_F = "Não filtrar (referência)"
+    filtros_sa = [r for r in tb["metodos"] if r["metodo"] != NAO_F]
+    perm = ce["permutacao"]
     erros = {t["membro"]: t for t in st["tabela_erros"]}
     pesos = {p["membro"]: p["peso"] for p in st["pesos"]}
     dummy = next(t for t in tor if t["familia"] == "referência")
+    fin = D["finais"]
+    FIN5 = ["especialista", "generalista", "tabpfn", "generalista_sem_chave", "linha_de_base"]
+    STK = ["especialista", "generalista", "generalista_sem_chave"]
+    # Jaccard médio dos erros de cada membro com os outros seis (fora da diagonal)
+    mods, M = st["erros_modelos"], st["erros_matriz"]
+    jac = sorted(({"membro": m, "media": sum(M[i][j] for j in range(len(mods)) if j != i) / (len(mods) - 1)}
+                  for i, m in enumerate(mods)), key=lambda d: d["media"])
+    resg = sorted(({"membro": t["membro"], "n": t["resgata"]} for t in st["tabela_erros"]), key=lambda d: -d["n"])
+    c20 = D["custo20"]
+    red = [c20[f"{a}__linha_de_base"] for a in STK]
+    tcr_ext = [fin[f]["externo"]["tcr"] for f in FIN5]
+    tcr_sa = sorted(((fin[f]["spamassassin"]["tcr"], f) for f in FIN5), reverse=True)
+    nf_ext = fin["nao_filtrar"]["externo"]["por_base"]
+    mb = tb["membros_d"]
+    frb = {k: 1 - v["custo_por_mil"] / 1000 for k, v in nf_ext.items()}   # custo de não filtrar = 1000 × fração de spam
+    cus_b = lambda f, b: fin[f]["externo"]["por_base"][b]["custo_por_mil"]
+    tab_caro = [b for b in nf_ext if cus_b("tabpfn", b) == max(cus_b(f, b) for f in FIN5)]
+    sens = {(r["custo_fp"], r["metodo"]): r["custo_por_mil"] for r in tb["sensibilidade_custo"]}
+    sa_dif = {l: sens[(l, "Stacking 7 padrão")] - sens[(l, "Stacking 8 padrão (+TabPFN)")]
+              for l in sorted({r["custo_fp"] for r in tb["sensibilidade_custo"]})}
     return {
         "frac_spam": b["n_spam"] / b["n_emails"],
         "frac_real": b["n_email_real"] / b["n_emails"],
@@ -191,6 +240,11 @@ def derivados(D: dict) -> dict:
         "lr_resgata": erros["Reg. Logística"]["resgata"],
         "jaccard_lr_svm": st["erros_matriz"][0][1],
         "jaccard_min": min(st["erros_matriz"][i][j] for i in range(7) for j in range(i)),
+        "jaccard_medio": jac,                       # crescente: quem menos erra junto com os outros primeiro
+        "jaccard_d": {d["membro"]: d["media"] for d in jac},
+        "resgate": resg,                            # decrescente: acertos quando a maioria (≥4) erra
+        "resgate_min_top3": min(d["n"] for d in resg[:3]), "resgate_max_top3": max(d["n"] for d in resg[:3]),
+        "resgate_min": resg[-1]["n"],
         "piso20": piso20,
         "piso_razao": piso20 / ga["ganho_novas"],
         "piso_1000": next(p["dif"] for p in D["protocolo"]["piso"] if p["folds"] == 1000),
@@ -210,16 +264,51 @@ def derivados(D: dict) -> dict:
         "lsvc_custo_ext": tab_e["LinearSVC otimizado"]["custo_por_mil"],
         "s8_reducao_ext": 1 - tab_e["Stacking 8 padrão (+TabPFN)"]["custo_por_mil"] / tab_e["Stacking 7 padrão"]["custo_por_mil"],
         "sa_s8_custo": tm["Stacking 8 padrão (+TabPFN)"]["custo_por_mil"],
-        "sa_s7_custo": tm["Stacking 7 padrão (Generalista atual)"]["custo_por_mil"],
-        "sa_s7_lixeira": tm["Stacking 7 padrão (Generalista atual)"]["real_lixeira_custo"],
+        "sa_s7_custo": tm["Stacking 7 padrão"]["custo_por_mil"],
+        "sa_s7_lixeira": tm["Stacking 7 padrão"]["real_lixeira_custo"],
+        "sa_s8_lixeira": tm["Stacking 8 padrão (+TabPFN)"]["real_lixeira_custo"],
+        "sa_tab_lixeira": tm["TabPFN-3.5-Plus sozinho"]["real_lixeira_custo"],
+        "sa_lsvc_lixeira": tm["LinearSVC padrão"]["real_lixeira_custo"],
         "sa_tab_custo": tm["TabPFN-3.5-Plus sozinho"]["custo_por_mil"],
         "sa_lsvc_custo": tm["LinearSVC padrão"]["custo_por_mil"],
         "sa_lsvc_mcc": tm["LinearSVC padrão"]["mcc_custo"],
-        "sa_mcc_min": min(r["mcc_custo"] for r in tb["metodos"]),
-        "sa_mcc_max": max(r["mcc_custo"] for r in tb["metodos"]),
-        "perm_media": sum(perm) / len(perm),
-        "perm_max": max(perm),
-        "n_perm": len(perm),
+        "sa_nao_filtrar_custo": tm[NAO_F]["custo_por_mil"],
+        "sa_acaso_pr_auc": tm[NAO_F]["pr_auc"],                      # PR-AUC de quem não ordena = fração de spam
+        "sa_mcc_min": min(r["mcc_custo"] for r in filtros_sa),
+        "sa_mcc_max": max(r["mcc_custo"] for r in filtros_sa),
+        "sa_prauc_min": min(r["pr_auc"] for r in filtros_sa),
+        "sa_prauc_max": max(r["pr_auc"] for r in filtros_sa),
+        "sa_frac_real": tb["n_email_real"] / tb["n"],
+        # custo de não filtrar = 1000 × fração de spam (λ não entra: nenhum e-mail real vai para a lixeira)
+        "frac_real_base": frb,
+        "bases_maioria_real_txt": " e ".join(b for b in nf_ext if frb[b] > 0.5),
+        "tab_mais_caro_txt": " e ".join(tab_caro) if tab_caro else "nenhuma",
+        "tab_mais_caro_custo": max([cus_b("tabpfn", b) for b in tab_caro] or [float("nan")]),
+        "frac_real_ext": 1 - fin["nao_filtrar"]["externo"]["custo_por_mil"] / 1000,
+        "n_boot_reducao": round(tb["decisao"]["p_reducao"] * tb["regra"]["n_boot"]),
+        # o TabPFN como 8º membro, nas duas versões do stacking e nas duas bases externas
+        "s8esp_custo_ext": tab_e["Stacking 8 especialista (+TabPFN)"]["custo_por_mil"],
+        "s7esp_custo_ext": tab_e["Stacking 7 especialista"]["custo_por_mil"],
+        "sa_s8esp_custo": tm["Stacking 8 especialista (+TabPFN)"]["custo_por_mil"],
+        "sa_s7esp_custo": tm["Stacking 7 especialista"]["custo_por_mil"],
+        "s8esp_prauc_int": tab_i["Stacking 8 especialista (+TabPFN)"]["pr_auc"],
+        "s8esp_reducao_ext": 1 - tab_e["Stacking 8 especialista (+TabPFN)"]["custo_por_mil"] / tab_e["Stacking 7 especialista"]["custo_por_mil"],
+        # regra D10 em todos os λ testados: quanto o Stacking 8 padrão custa a menos que o Stacking 7 padrão
+        "sa_s8_s7_dif_min": min(sa_dif.values()), "sa_s8_s7_dif_max": max(sa_dif.values()),
+        "n_lambdas": len(sa_dif),
+        "conv_pares_frac": tb["conversor"]["enron4_pares"] / tb["conversor"]["enron4_spams"],
+        "tcr_ext_min": min(tcr_ext), "tcr_ext_max": max(tcr_ext),
+        "tcr_sa_max": tcr_sa[0][0], "tcr_sa_max_rotulo": fin[tcr_sa[0][1]]["rotulo"],
+        "tcr_sa_s8": fin["generalista"]["spamassassin"]["tcr"],
+        "custo_red_min": min(c["reducao_relativa"] for c in red), "custo_red_max": max(c["reducao_relativa"] for c in red),
+        "custo_holm_min": min(c["p_holm"] for c in red),
+        "knn_sa_reais": mb["kNN cosseno"]["reais_acima_de_05"], "lgbm_sa_reais": mb["LightGBM"]["reais_acima_de_05"],
+        "lr_sa_reais": mb["Reg. Logística"]["reais_acima_de_05"], "mlp_sa_reais": mb["MLP"]["reais_acima_de_05"],
+        "knn_sa_peso": mb["kNN cosseno"]["peso_meta"], "lgbm_sa_peso": mb["LightGBM"]["peso_meta"],
+        "svm_sa_peso": mb["SVM RBF"]["peso_meta"],
+        "perm_media": perm["mcc_permutado_media"],
+        "perm_max": perm["mcc_permutado_max"],
+        "n_perm": perm["n_permutacoes"],
         "curva_n_min": ns_[0], "curva_n_max": ns_[-1],
         "curva_s7_min": curva[("Stacking 7 padrão", ns_[0])], "curva_s7_max": curva[("Stacking 7 padrão", ns_[-1])],
         "curva_knn_min": curva[("kNN cosseno", ns_[0])], "curva_knn_max": curva[("kNN cosseno", ns_[-1])],
@@ -229,6 +318,47 @@ def derivados(D: dict) -> dict:
         "ex2_prob": D["exemplos"][2]["etapas"]["stacking7_padrao"]["prob_spam"],
         "ex2_cobertura": D["exemplos"][2]["cobertura"],
     }
+
+
+def afirmacoes(D: dict) -> list[str]:
+    """Frases dos slides que dependem de uma comparação. Se o JSON mudar e uma delas deixar de valer,
+    o build para, em vez de publicar um texto falso. Cada item: (frase, condição)."""
+    fin, tb, tp, der = D["finais"], D["terceira"], D["tabpfn"], D["der"]
+    F5 = ["especialista", "generalista", "tabpfn", "generalista_sem_chave", "linha_de_base"]
+    bases = list(fin["nao_filtrar"]["externo"]["por_base"])
+    lix = lambda f, b: fin[f]["externo"]["por_base"][b]["real_lixeira_custo"]
+    cus = lambda f, b: fin[f]["externo"]["por_base"][b]["custo_por_mil"]
+    tab_e, tm = tp["externo_d"], tb["metodos_d"]
+    maioria_real = [b for b in bases if der["frac_real_base"][b] > 0.5]
+    checks = [
+        ("TabPFN: o que menos manda e-mail real para a lixeira em cada caixa Enron2–6",
+         all(lix("tabpfn", b) == min(lix(f, b) for f in F5) for b in bases)),
+        ("TabPFN: o que menos manda e-mail real para a lixeira no SpamAssassin",
+         fin["tabpfn"]["spamassassin"]["real_lixeira_custo"] == min(fin[f]["spamassassin"]["real_lixeira_custo"] for f in F5)),
+        ("TabPFN: o mais barato nas caixas com maioria de e-mails reais e no SpamAssassin",
+         all(cus("tabpfn", b) == min(cus(f, b) for f in F5) for b in maioria_real)
+         and fin["tabpfn"]["spamassassin"]["custo_por_mil"] == min(fin[f]["spamassassin"]["custo_por_mil"] for f in F5)),
+        ("TabPFN: o mais barato na média do Enron2–6",
+         fin["tabpfn"]["externo"]["custo_por_mil"] == min(fin[f]["externo"]["custo_por_mil"] for f in F5)),
+        ("TabPFN: o que mais deixa passar spam no SpamAssassin (o mais parecido com não filtrar)",
+         fin["tabpfn"]["spamassassin"]["spam_passou_custo"] == max(fin[f]["spamassassin"]["spam_passou_custo"] for f in F5)),
+        ("TabPFN como 8º membro barateia o stacking nas duas versões e nas duas bases externas",
+         tab_e["Stacking 8 padrão (+TabPFN)"]["custo_por_mil"] < tab_e["Stacking 7 padrão"]["custo_por_mil"]
+         and tab_e["Stacking 8 especialista (+TabPFN)"]["custo_por_mil"] < tab_e["Stacking 7 especialista"]["custo_por_mil"]
+         and tm["Stacking 8 padrão (+TabPFN)"]["custo_por_mil"] < tm["Stacking 7 padrão"]["custo_por_mil"]
+         and tm["Stacking 8 especialista (+TabPFN)"]["custo_por_mil"] < tm["Stacking 7 especialista"]["custo_por_mil"]),
+        ("D10: o Stacking 8 padrão custa menos que o Stacking 7 padrão em todos os λ testados", der["sa_s8_s7_dif_min"] > 0),
+        ("SpamAssassin, λ = 9: nenhum filtro vence não filtrar", all(fin[f]["spamassassin"]["tcr"] < 1 for f in F5)),
+        ("Enron2–6 (média): todo filtro compensa", all(fin[f]["externo"]["tcr"] > 1 for f in F5)),
+        ("Enron2: os três stackings perdem para não filtrar",
+         all(fin[f]["externo"]["por_base"]["Enron2"]["tcr"] < 1 for f in ("especialista", "generalista", "generalista_sem_chave"))),
+        ("SpamAssassin: o spam que passa sobe em todos os filtros",
+         all(fin[f]["spamassassin"]["spam_passou_custo"] > fin[f]["cv20"]["spam_passou_custo"] for f in F5)),
+        ("Especialista: o menor custo nos 20 folds", fin["especialista"]["cv20"]["custo_por_mil"] == min(fin[f]["cv20"]["custo_por_mil"] for f in F5)),
+        ("Stacking 8: empata no topo do PR-AUC desta caixa (diferença abaixo de um milésimo)",
+         max(r["pr_auc"] for r in tp["interno"]) - fin["generalista"]["cv20"]["pr_auc"] < 1e-3),
+    ]
+    return [f"afirmação do slide não vale mais no JSON: {frase}" for frase, ok in checks if not ok]
 
 
 # --------------------------------------------------------------------------------------------- formatos
@@ -254,6 +384,7 @@ FORMATOS = {
     "mcc": lambda x: _num(x, 3),
     "d1": lambda x: _num(x, 1), "d2": lambda x: _num(x, 2), "d3": lambda x: _num(x, 3), "d4": lambda x: _num(x, 4),
     "pct": lambda x: _num(100 * x, 1) + "%",
+    "pct0": lambda x: _num(100 * x, 0) + "%",
     "custo": lambda x: _num(x, 1),
     "s3": lambda x: _sinal(x, 3), "s4": lambda x: _sinal(x, 4),
     "spct": lambda x: _sinal(100 * x, 1) + "%",
@@ -316,7 +447,7 @@ def montar(template: Path, D: dict, extra: dict | None = None) -> str:
     for k, v in (extra or {}).items():
         html = html.replace(k, v)
     html = inline(html, template.parent)
-    dados = json.dumps(D, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    dados = json.dumps(arred(D), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return html.replace("<!--@DADOS@-->", f"<script>const DADOS = {dados};</script>")
 
 
@@ -343,8 +474,8 @@ class _Texto(HTMLParser):
 
 # Nomes próprios e identificadores com dígitos (não são resultados).
 NOMES = [r"Enron\s?[1-6](?:\s?[-–]\s?[1-6])?", r"Stacking\s?\d+", r"\bS[478]\b", r"TabPFN-3\.5(?:-Plus|-Fast)?",
-         r"\bD\d{1,2}\b", r"Projeto\s3", r"Data Science\s2", r"\bIC95\b", r"RA\s46643", r"\b2D\b",
-         r"Metsis et al\., 2006", r"χ²"]
+         r"\bD\d{1,2}\b", r"Projeto\s3", r"Data Science\s2", r"\bIC95\b", r"RA\s46643", r"RA\s44776", r"\b2D\b",
+         r"Metsis et al\., 2006", r"Androutsopoulos et al\., 2000", r"χ²"]
 RE_NOMES = re.compile("|".join(NOMES))
 RE_PROIBIDA = re.compile(r"\bham\b", re.I)
 RE_GLOSSARIO = re.compile(r'<script type="application/json" id="glossario-dados">.*?</script>', re.S)
@@ -381,6 +512,9 @@ def verificar(saidas: dict[str, str]) -> list[str]:
 def main() -> int:
     R = json.loads(METRICAS.read_text(encoding="utf-8"))
     D = extrair(R)
+    falsas = afirmacoes(D)
+    if falsas:
+        raise SystemExit("ERRO no build:\n  " + "\n  ".join(falsas))
     saidas, contagem = {}, {}
     for nome, arq in DECKS.items():
         html = montar(FONTE / arq, D)
