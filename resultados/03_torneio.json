@@ -1,0 +1,303 @@
+{
+ "torneio": [
+  {
+   "modelo": "Stacking (meta LR)",
+   "mcc": 0.969639180602392,
+   "mcc_dp": 0.008581559958025552,
+   "pr_auc": 0.9969181297977837,
+   "real_lixeira": 0.01116461843593023,
+   "spam_passou": 0.016,
+   "treino_s": 13.234233903884888,
+   "familia": "combinação"
+  },
+  {
+   "modelo": "LinearSVC TF-IDF",
+   "mcc": 0.9628907157975561,
+   "mcc_dp": 0.0041153095778373025,
+   "pr_auc": 0.9960559247636482,
+   "real_lixeira": 0.016066284824556527,
+   "spam_passou": 0.014000000000000002,
+   "treino_s": 0.0646939754486084,
+   "familia": "linear"
+  },
+  {
+   "modelo": "SVM RBF SVD300",
+   "mcc": 0.9617455352774258,
+   "mcc_dp": 0.01363175921951958,
+   "pr_auc": 0.9961180980833937,
+   "real_lixeira": 0.01797364177278541,
+   "spam_passou": 0.011333333333333334,
+   "treino_s": 1.5556514263153076,
+   "familia": "kernel"
+  },
+  {
+   "modelo": "SGD (huber) TF-IDF",
+   "mcc": 0.9616159987982321,
+   "mcc_dp": 0.007102050491290429,
+   "pr_auc": 0.993030069614233,
+   "real_lixeira": 0.017154349478210904,
+   "spam_passou": 0.013333333333333332,
+   "treino_s": 0.023584318161010743,
+   "familia": "linear"
+  },
+  {
+   "modelo": "Reg. Logística TF-IDF",
+   "mcc": 0.9612455166425995,
+   "mcc_dp": 0.006783487275180771,
+   "pr_auc": 0.9961430409431895,
+   "real_lixeira": 0.018518230180355522,
+   "spam_passou": 0.010666666666666668,
+   "treino_s": 0.05734724998474121,
+   "familia": "linear"
+  },
+  {
+   "modelo": "Ridge TF-IDF",
+   "mcc": 0.9603724086259146,
+   "mcc_dp": 0.004177231559230456,
+   "pr_auc": 0.9956434306779449,
+   "real_lixeira": 0.019062818587925634,
+   "spam_passou": 0.010666666666666668,
+   "treino_s": 0.041866636276245116,
+   "familia": "linear"
+  },
+  {
+   "modelo": "MLP (rede neural)",
+   "mcc": 0.9601681472017489,
+   "mcc_dp": 0.013717503946365886,
+   "pr_auc": 0.993577139774936,
+   "real_lixeira": 0.012525162653617306,
+   "spam_passou": 0.026000000000000002,
+   "treino_s": 1.8815237522125243,
+   "familia": "rede neural"
+  },
+  {
+   "modelo": "Votação (LR+CNB+RF+LGBM)",
+   "mcc": 0.9587234474803255,
+   "mcc_dp": 0.007465753098161753,
+   "pr_auc": 0.9958057152898245,
+   "real_lixeira": 0.020694359487664276,
+   "spam_passou": 0.009333333333333334,
+   "treino_s": 2.610847234725952,
+   "familia": "combinação"
+  },
+  {
+   "modelo": "NBSVM",
+   "mcc": 0.9574137173070577,
+   "mcc_dp": 0.007110059124869916,
+   "pr_auc": 0.9923453218302069,
+   "real_lixeira": 0.01851674729837439,
+   "spam_passou": 0.016,
+   "treino_s": 0.04588780403137207,
+   "familia": "linear"
+  },
+  {
+   "modelo": "HistGradientBoosting",
+   "mcc": 0.9549896225705066,
+   "mcc_dp": 0.00805122349576343,
+   "pr_auc": 0.9950766940433475,
+   "real_lixeira": 0.01797067600882315,
+   "spam_passou": 0.020666666666666667,
+   "treino_s": 42.041610193252566,
+   "familia": "boosting"
+  },
+  {
+   "modelo": "Extra Trees",
+   "mcc": 0.9546165783495553,
+   "mcc_dp": 0.006522215627928107,
+   "pr_auc": 0.9926820405180197,
+   "real_lixeira": 0.01851674729837439,
+   "spam_passou": 0.02,
+   "treino_s": 4.109848546981811,
+   "familia": "bagging"
+  },
+  {
+   "modelo": "LightGBM",
+   "mcc": 0.9499875521797021,
+   "mcc_dp": 0.010760642966239726,
+   "pr_auc": 0.9949189912705224,
+   "real_lixeira": 0.020421509203136297,
+   "spam_passou": 0.022,
+   "treino_s": 2.188171720504761,
+   "familia": "boosting"
+  },
+  {
+   "modelo": "CatBoost",
+   "mcc": 0.948546140582067,
+   "mcc_dp": 0.013157322294461158,
+   "pr_auc": 0.9939525540985812,
+   "real_lixeira": 0.017156203080687316,
+   "spam_passou": 0.03133333333333334,
+   "treino_s": 11.280503225326537,
+   "familia": "boosting"
+  },
+  {
+   "modelo": "kNN TF-IDF cosseno",
+   "mcc": 0.9398593844707506,
+   "mcc_dp": 0.014206585686207692,
+   "pr_auc": 0.983755690906673,
+   "real_lixeira": 0.026961018739921037,
+   "spam_passou": 0.021333333333333333,
+   "treino_s": 0.014807558059692383,
+   "familia": "vizinhos"
+  },
+  {
+   "modelo": "XGBoost",
+   "mcc": 0.9362505164419002,
+   "mcc_dp": 0.01058086724329141,
+   "pr_auc": 0.9926807012506605,
+   "real_lixeira": 0.025322434150772028,
+   "spam_passou": 0.03,
+   "treino_s": 2.200427007675171,
+   "familia": "boosting"
+  },
+  {
+   "modelo": "Random Forest",
+   "mcc": 0.9290956651408473,
+   "mcc_dp": 0.011426222338571755,
+   "pr_auc": 0.9906368016526704,
+   "real_lixeira": 0.039756436634599344,
+   "spam_passou": 0.008666666666666666,
+   "treino_s": 2.9153698444366456,
+   "familia": "bagging"
+  },
+  {
+   "modelo": "kNN SVD100",
+   "mcc": 0.9165631096246107,
+   "mcc_dp": 0.01585887095819527,
+   "pr_auc": 0.9777778128891625,
+   "real_lixeira": 0.042208011269903055,
+   "spam_passou": 0.020666666666666667,
+   "treino_s": 0.3900806427001953,
+   "familia": "vizinhos"
+  },
+  {
+   "modelo": "Naive Bayes Complement",
+   "mcc": 0.8761862102531364,
+   "mcc_dp": 0.018974254586866943,
+   "pr_auc": 0.890098297300927,
+   "real_lixeira": 0.057459452445828466,
+   "spam_passou": 0.043333333333333335,
+   "treino_s": 0.007454681396484375,
+   "familia": "probabilística"
+  },
+  {
+   "modelo": "Naive Bayes Multinomial",
+   "mcc": 0.8664160409690591,
+   "mcc_dp": 0.018562412224063116,
+   "pr_auc": 0.8909544158342044,
+   "real_lixeira": 0.05718697288179577,
+   "spam_passou": 0.056666666666666664,
+   "treino_s": 0.007704257965087891,
+   "familia": "probabilística"
+  },
+  {
+   "modelo": "Árvore de Decisão",
+   "mcc": 0.8526780214591524,
+   "mcc_dp": 0.020672406783555298,
+   "pr_auc": 0.8455714133499613,
+   "real_lixeira": 0.06399488405716511,
+   "spam_passou": 0.06133333333333333,
+   "treino_s": 0.5009057998657227,
+   "familia": "árvore"
+  },
+  {
+   "modelo": "Naive Bayes Bernoulli",
+   "mcc": 0.6833097083470172,
+   "mcc_dp": 0.02083186704374137,
+   "pr_auc": 0.8048580090318922,
+   "real_lixeira": 0.07625164507219781,
+   "spam_passou": 0.25533333333333336,
+   "treino_s": 0.011041784286499023,
+   "familia": "probabilística"
+  },
+  {
+   "modelo": "Dummy (maioria)",
+   "mcc": 0.0,
+   "mcc_dp": 0.0,
+   "pr_auc": 0.2900232668965324,
+   "real_lixeira": 0.0,
+   "spam_passou": 1.0,
+   "treino_s": 0.0018316745758056641,
+   "familia": "referência"
+  }
+ ],
+ "achados": {
+  "tfidf_log": {
+   "contagem crua": {
+    "Reg. Logística": 0.920936502827457,
+    "kNN cosseno": 0.7085663545387741
+   },
+   "TF-IDF": {
+    "Reg. Logística": 0.9232415374857605,
+    "kNN cosseno": 0.7457217642302384
+   },
+   "TF-IDF com log": {
+    "Reg. Logística": 0.9612455166425995,
+    "kNN cosseno": 0.9398593844707506
+   }
+  },
+  "lr_mcc_antes": 0.9232415374857605,
+  "lr_mcc_depois": 0.9612455166425995,
+  "knn_mcc_antes": 0.7457217642302384,
+  "knn_mcc_depois": 0.9398593844707506,
+  "votacao_mcc": 0.9587234474803255,
+  "lr_mcc": 0.9612455166425995
+ },
+ "rodada2": {
+  "melhor": "Stacking (meta LR)",
+  "mcc_15_folds": {
+   "LinearSVC TF-IDF": 0.9613181622762574,
+   "Reg. Logistica TF-IDF": 0.959328342705646,
+   "SGD (huber) TF-IDF": 0.9606996126211846,
+   "SVM RBF SVD300": 0.9602315305788148,
+   "Stacking (meta LR)": 0.9701210760136004
+  },
+  "comparacoes": [
+   {
+    "A": "Stacking (meta LR)",
+    "B": "Reg. Logistica TF-IDF",
+    "dif": 0.010792733307954243,
+    "t": 3.04734902245455,
+    "p": 0.008695420143399479,
+    "P_A_melhor": 0.5869384426176096,
+    "P_equivalentes": 0.41304121440509867,
+    "P_B_melhor": 2.034297729169854e-05,
+    "p_holm": 0.034781680573597915
+   },
+   {
+    "A": "Stacking (meta LR)",
+    "B": "SGD (huber) TF-IDF",
+    "dif": 0.009421463392415586,
+    "t": 2.1088895181198994,
+    "p": 0.05344634665702972,
+    "P_A_melhor": 0.44940249093146967,
+    "P_equivalentes": 0.5502627590679899,
+    "P_B_melhor": 0.00033475000054039583,
+    "p_holm": 0.16033903997108917
+   },
+   {
+    "A": "Stacking (meta LR)",
+    "B": "SVM RBF SVD300",
+    "dif": 0.009889545434785419,
+    "t": 1.8667833518110803,
+    "p": 0.08301454243322273,
+    "P_A_melhor": 0.49182987107316445,
+    "P_equivalentes": 0.5071027963956435,
+    "P_B_melhor": 0.0010673325311920667,
+    "p_holm": 0.16602908486644546
+   },
+   {
+    "A": "Stacking (meta LR)",
+    "B": "LinearSVC TF-IDF",
+    "dif": 0.008802913737342922,
+    "t": 1.8557862248395283,
+    "p": 0.08465621421040308,
+    "P_A_melhor": 0.4022136486702565,
+    "P_equivalentes": 0.597080071609842,
+    "P_B_melhor": 0.0007062797199014481,
+    "p_holm": 0.16602908486644546
+   }
+  ]
+ },
+ "fonte": "scripts/03_modelos_independentes.py"
+}

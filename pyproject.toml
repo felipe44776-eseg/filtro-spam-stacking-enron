@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spamfilter"
+version = "0.1.0"
+description = "Filtro de spam com stacking de 7 famílias de modelos: Projeto 3, Data Science 2, ESEG"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = { text = "MIT" }
+authors = [{ name = "Phelipe Torres Pamponet da França" }, { name = "Felipe Marins" }]
+# dependências travadas em requirements.txt (instalar com: pip install -r requirements.txt && pip install -e .)
+
+[tool.setuptools]
+packages = ["spamfilter"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# padrão: só os testes rápidos (cerca de 1 min). A regressão completa: pytest -m lento
+addopts = "-m 'not lento' -p no:cacheprovider"
+markers = ["lento: retreina modelos ou refaz o algoritmo genético (vários minutos)"]
+filterwarnings = ["ignore::FutureWarning", "ignore::UserWarning"]

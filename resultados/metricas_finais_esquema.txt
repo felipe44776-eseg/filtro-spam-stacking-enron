@@ -1,0 +1,346 @@
+versao_contrato: 1
+meta.gerado_em: 2026-10-28T04:02:40
+meta.versao_pacote: 0.1.0
+meta.python: 3.11.9
+meta.seed_teste: 123
+meta.custo_fp: 9
+meta.custo_fn: 1
+base.n_emails: 5172
+base.n_email_real: 3672
+base.n_spam: 1500
+base.n_palavras: 3000
+base.fracao_zeros: 0.943663895333849
+base.palavras_distintas_mediana: 145.0
+base.duplicatas_excedentes: 541
+base.textos_distintos: 4631
+base.fracao_duplicatas_email_real: 0.9279112754158965
+base.grupos_rotulo_conflitante: 0
+base.colunas_1_letra: 26
+base.colunas_2_letras: 127
+base.duplicatas_email_real: 502
+base.duplicatas_spam: 39
+base.acuracia_regra_copia_spam: 0.572892498066512
+base.linhas_reproduzidas: 5172
+base.origem: Enron1 (caixa farmer-d + spams GP), corpus Enron-Spam da AUEB
+base.contagem: substring, sensível a maiúsculas, sobre o texto pré-processado da AUEB
+metricas_didaticas.dummy_acuracia: 0.7099767981438515
+palavras.spam: lista[12] de {palavra, log_razao}
+palavras.email_real: lista[12] de {palavra, log_razao}
+dominio: lista[8] de {palavra, fracao_email_real, fracao_spam}
+protocolo.teste_trancado.n: 1035
+protocolo.teste_trancado.email_real: 735
+protocolo.teste_trancado.spam: 300
+protocolo.teste_trancado.usos: 3
+protocolo.folds_confirmacao: 20
+protocolo.piso_mcc_detectavel.5: 0.01056334716978867
+protocolo.piso_mcc_detectavel.10: 0.009316443126719696
+protocolo.piso_mcc_detectavel.20: 0.008625660385463993
+protocolo.piso_mcc_detectavel.50: 0.008183248732413
+protocolo.piso_mcc_detectavel.100: 0.008030363673391822
+protocolo.piso_mcc_detectavel.1000: 0.007890234695259948
+nao_supervisionado.variancia_svd.2: 0.06487295031547546
+nao_supervisionado.variancia_svd.10: 0.1819685846567154
+nao_supervisionado.variancia_svd.100: 0.44625794887542725
+nao_supervisionado.direcoes: lista[3] de {direcao, correlacao_com_spam, lado_positivo, lado_negativo}
+nao_supervisionado.svd2d: lista[5172] ex: [[-0.1488, 0.0169, 1], [0.0063, -0.0544, 0], [0.4157, -0.5215, 0]]
+nao_supervisionado.kmeans: lista[9] de {k, ari, silhueta, pureza}
+nao_supervisionado.kmeans_ari: -0.07029322028829388
+nao_supervisionado.hierarquico_ari: -0.07149670994901758
+nao_supervisionado.nmf_topicos: lista[8] de {topico, palavras, n_emails, fracao_spam}
+nao_supervisionado.anomalia: lista[4] de {metodo, pr_auc, mcc}
+nao_supervisionado.anomalia_so_email_real.isolation_forest_mcc: -0.07366888379936895
+nao_supervisionado.anomalia_so_email_real.one_class_svm_mcc: -0.10553786383371885
+nao_supervisionado.anomalia_so_email_real.isolation_forest_pr_auc: 0.1840559255568929
+nao_supervisionado.anomalia_so_email_real.one_class_svm_pr_auc: 0.16824143421679455
+nao_supervisionado.anomalia_so_email_real.reconstrucao_mcc: 0.6345123867611664
+nao_supervisionado.anomalia_so_email_real.reconstrucao_pr_auc: 0.8021243055096274
+nao_supervisionado.anomalia_so_email_real.fracao_spam: 0.2900232018561485
+nao_supervisionado.anomalia_so_email_real.supervisionado_mcc: 0.9612455166425995
+nao_supervisionado.anomalia_so_email_real.supervisionado_pr_auc: 0.9961430409431895
+torneio: lista[22] de {modelo, mcc, mcc_dp, pr_auc, real_lixeira, spam_passou, treino_s, familia}
+achados.tfidf_log.contagem crua.Reg. Logística: 0.920936502827457
+achados.tfidf_log.contagem crua.kNN cosseno: 0.7085663545387741
+achados.tfidf_log.TF-IDF.Reg. Logística: 0.9232415374857605
+achados.tfidf_log.TF-IDF.kNN cosseno: 0.7457217642302384
+achados.tfidf_log.TF-IDF com log.Reg. Logística: 0.9612455166425995
+achados.tfidf_log.TF-IDF com log.kNN cosseno: 0.9398593844707506
+achados.lr_mcc_antes: 0.9232415374857605
+achados.lr_mcc_depois: 0.9612455166425995
+achados.knn_mcc_antes: 0.7457217642302384
+achados.knn_mcc_depois: 0.9398593844707506
+achados.votacao_mcc: 0.9587234474803255
+achados.lr_mcc: 0.9612455166425995
+rodada2.melhor: Stacking (meta LR)
+rodada2.mcc_15_folds.LinearSVC TF-IDF: 0.9613181622762574
+rodada2.mcc_15_folds.Reg. Logistica TF-IDF: 0.959328342705646
+rodada2.mcc_15_folds.SGD (huber) TF-IDF: 0.9606996126211846
+rodada2.mcc_15_folds.SVM RBF SVD300: 0.9602315305788148
+rodada2.mcc_15_folds.Stacking (meta LR): 0.9701210760136004
+rodada2.comparacoes: lista[4] de {A, B, dif, t, p, P_A_melhor, P_equivalentes, P_B_melhor, p_holm}
+stacking.variantes: lista[19] de {nome, tipo, mcc, mcc_dp, pr_auc, real_lixeira, spam_passou, treino_s}
+stacking.comparacoes_15_folds: lista[6] de {A, B, dif, t, p, P_A_melhor, P_equivalentes, P_B_melhor, p_holm}
+stacking.erros_em_comum.modelos: lista[7] ex: ['Reg. Logística', 'SVM RBF', 'kNN cosseno']
+stacking.erros_em_comum.matriz: lista[7] ex: [[1.0, 0.6132, 0.2352, 0.5197, 0.2128, 0.2933, 0.2753], [0.6132, 1.0, 0.2418, 0.
+stacking.tabela_erros: lista[7] de {familia, erros, só ele erra, acerta quando a maioria (≥4) erra}
+stacking.pesos_meta.Naive Bayes: 0.03309850542528091
+stacking.pesos_meta.MLP: 0.6722009305345025
+stacking.pesos_meta.LightGBM: 0.7436428130901421
+stacking.pesos_meta.Reg. Logística: 0.7786148015463888
+stacking.pesos_meta.SVM RBF: 1.0855595025886908
+stacking.pesos_meta.Extra Trees: 1.357071494389071
+stacking.pesos_meta.kNN cosseno: 1.6698333686957905
+stacking.confirmacao_20_folds: lista[9] de {metodo, mcc, pr_auc, real_lixeira, spam_passou}
+stacking.comparacao: lista[1] de {A, B, dif, t, p, P_A_melhor, P_equivalentes, P_B_melhor, p_holm}
+stacking.externo_exp02: lista[4] de {modelo, mcc, pr_auc, real_lixeira, spam_passou}
+genetico.combinacoes: 7077888
+genetico.avaliacoes: 857
+genetico.melhor: lista[8] ex: [1, 7, 1]
+genetico.melhor_descricao.Reg. Logística: C=1, cw=balanced
+genetico.melhor_descricao.SVM RBF: k=500, C=30
+genetico.melhor_descricao.kNN cosseno: k=3, w=uniform
+genetico.melhor_descricao.MLP: h=(64,), a=0.0001
+genetico.melhor_descricao.Naive Bayes: a=0.1, norm=True, usa_tf=False
+genetico.melhor_descricao.Extra Trees: n=800, mf=sqrt, msl=1, cw=balanced
+genetico.melhor_descricao.LightGBM: n=400, eta=0.05, folhas=63
+genetico.melhor_descricao.meta-modelo: C=10.0
+genetico.mcc_busca_padrao: 0.9732119013513865
+genetico.mcc_busca_ga: 0.9795097515261622
+genetico.mcc_busca_aleatoria: 0.9783605344221573
+genetico.ganho_busca: 0.006297850174775688
+genetico.ganho_sementes_novas: 0.0009655360309827055
+genetico.fracao_otimismo: 0.846687996032377
+genetico.curva_ga: lista[857] ex: [0.97321, 0.97465, 0.97465]
+genetico.curva_aleatoria: lista[857] ex: [0.97351, 0.97351, 0.97462]
+genetico.historico: lista[30] de {geracao, melhor, media, avaliacoes}
+genetico.sensibilidade: lista[8] de {gene, pior, melhor, amplitude}
+genetico.confirmacao: lista[4] de {metodo, mcc, mcc_custo, pr_auc, real_lixeira_custo, spam_passou_custo, custo_por_mil}
+genetico.comparacoes: lista[3] de {A, B, dif, t, p, P_A_melhor, P_equivalentes, P_B_melhor, p_holm}
+genetico.piso: lista[6] de {folds, menor_dif_detectavel}
+corrida.resumo: lista[22] de {etapa, candidato, mcc, mcc_custo, custo_por_mil}
+corrida.decisao: Especialista = configuração do GA do experimento 03 (#5), definida ant
+tabpfn.versao_nuvem: TabPFN-3.5-Plus
+tabpfn.versao_local: TabPFN-3.5-Fast
+tabpfn.interno: lista[6] de {metodo, mcc, pr_auc, mcc_custo, custo_por_mil}
+tabpfn.externo: lista[6] de {metodo, mcc, pr_auc, mcc_custo, real_lixeira_custo, spam_passou_custo, custo_por_mil}
+tabpfn.local_x_nuvem.tabela: lista[5] de {metodo, mcc, pr_auc, custo_por_mil}
+tabpfn.local_x_nuvem.correlacao_notas: 0.993
+terceira_base.base: SpamAssassin public corpus 20030228 (easy_ham, easy_ham_2, hard_ham, s
+terceira_base.n: 6046
+terceira_base.n_email_real: 4150
+terceira_base.n_spam: 1896
+terceira_base.copias_csv_removidas: 1
+terceira_base.tem_tabpfn: True
+terceira_base.metodos: lista[6] de {metodo, mcc, pr_auc, real_lixeira, spam_passou, mcc_custo, real_lixeira_custo, spam_passou_custo, custo_por_mil}
+terceira_base.decisao.diferenca_custo: -857.2609990076082
+terceira_base.decisao.ic95_custo: lista[2] ex: [-929.2117756690974, -789.3025188445152]
+terceira_base.decisao.p_reducao: 1.0
+terceira_base.decisao.diferenca_mcc_custo: 0.022129775387111306
+terceira_base.decisao.mcnemar.so_stacking8_acerta: 611
+terceira_base.decisao.mcnemar.so_stacking7_acerta: 308
+terceira_base.decisao.mcnemar.p: 8.780356553511894e-24
+terceira_base.decisao.stacking8_vira_generalista: True
+terceira_base.controle_dentro_da_base.mcc: 0.9675740920249761
+terceira_base.controle_dentro_da_base.pr_auc: 0.997620680550399
+terceira_base.cobertura_vocabulario.Enron1 (treino): 0.815788148695145
+terceira_base.cobertura_vocabulario.Enron3: 0.7721920800963383
+terceira_base.cobertura_vocabulario.SpamAssassin: 0.653853157581214
+finais.especialista.config.Reg. Logística: C=1, cw=balanced
+finais.especialista.config.SVM RBF: k=500, C=30
+finais.especialista.config.kNN cosseno: k=3, w=uniform
+finais.especialista.config.MLP: h=(64,), a=0.0001
+finais.especialista.config.Naive Bayes: a=0.1, norm=True, usa_tf=False
+finais.especialista.config.Extra Trees: n=800, mf=sqrt, msl=1, cw=balanced
+finais.especialista.config.LightGBM: n=400, eta=0.05, folhas=63
+finais.especialista.config.meta-modelo: C=10.0
+finais.especialista.limiar_custo: 0.7114246014641324
+finais.especialista.cv20.mcc: 0.9743634349353701
+finais.especialista.cv20.pr_auc: 0.997560110562888
+finais.especialista.cv20.real_lixeira: 0.007745628063832007
+finais.especialista.cv20.spam_passou: 0.0175
+finais.especialista.cv20.mcc_custo: 0.9615234093942922
+finais.especialista.cv20.real_lixeira_custo: 0.0036595046877354017
+finais.especialista.cv20.spam_passou_custo: 0.045625
+finais.especialista.cv20.custo_por_mil: 36.61786096069257
+finais.especialista.teste_trancado.mcc: 0.9695225262290887
+finais.especialista.teste_trancado.pr_auc: 0.9986855855986494
+finais.especialista.teste_trancado.real_lixeira: 0.009523809523809525
+finais.especialista.teste_trancado.spam_passou: 0.02
+finais.especialista.teste_trancado.mcc_custo: 0.9741736881185405
+finais.especialista.teste_trancado.real_lixeira_custo: 0.0013605442176870747
+finais.especialista.teste_trancado.spam_passou_custo: 0.03333333333333333
+finais.especialista.teste_trancado.custo_por_mil: 18.357487922705314
+finais.especialista.teste_trancado.email_real_lixeira: 1
+finais.especialista.teste_trancado.spam_passou_n: 10
+finais.especialista.teste_trancado.custo: 19
+finais.especialista.externo.mcc: 0.8779561610980403
+finais.especialista.externo.pr_auc: 0.982802044177074
+finais.especialista.externo.real_lixeira: 0.07828868477992533
+finais.especialista.externo.spam_passou: 0.029159304272640695
+finais.especialista.externo.mcc_custo: 0.8944315303403109
+finais.especialista.externo.real_lixeira_custo: 0.04042316144673365
+finais.especialista.externo.spam_passou_custo: 0.04403435259965074
+finais.especialista.externo.custo_por_mil: 207.64957027676496
+finais.especialista.spamassassin.metodo: Stacking 7 especialista
+finais.especialista.spamassassin.mcc: 0.2693008356898048
+finais.especialista.spamassassin.pr_auc: 0.6524129406785542
+finais.especialista.spamassassin.real_lixeira: 0.5814457831325301
+finais.especialista.spamassassin.spam_passou: 0.145042194092827
+finais.especialista.spamassassin.mcc_custo: 0.35032241619830007
+finais.especialista.spamassassin.real_lixeira_custo: 0.3787951807228916
+finais.especialista.spamassassin.spam_passou_custo: 0.24367088607594936
+finais.especialista.spamassassin.custo_por_mil: 2416.4737016209065
+finais.generalista.config.Reg. Logística: C=10, cw=balanced
+finais.generalista.config.SVM RBF: k=300, C=10
+finais.generalista.config.kNN cosseno: k=5, w=uniform
+finais.generalista.config.MLP: h=(128,), a=0.0001
+finais.generalista.config.Naive Bayes: a=1, norm=False, usa_tf=False
+finais.generalista.config.Extra Trees: n=400, mf=sqrt, msl=1, cw=balanced
+finais.generalista.config.LightGBM: n=400, eta=0.05, folhas=31
+finais.generalista.config.meta-modelo: C=1.0
+finais.generalista.config.oitavo_membro: TabPFN-3.5-Plus
+finais.generalista.limiar_custo: 0.8813187037520982
+finais.generalista.cv20.mcc: 0.972652123178053
+finais.generalista.cv20.pr_auc: 0.9977632690609921
+finais.generalista.cv20.real_lixeira: 0.009021717716047237
+finais.generalista.cv20.spam_passou: 0.016875
+finais.generalista.cv20.mcc_custo: 0.9564709096558197
+finais.generalista.cv20.real_lixeira_custo: 0.003574760398196758
+finais.generalista.cv20.spam_passou_custo: 0.05291666666666668
+finais.generalista.cv20.custo_por_mil: 38.19156020538703
+finais.generalista.teste_trancado.mcc: 0.9719899139935891
+finais.generalista.teste_trancado.pr_auc: 0.9987771702091441
+finais.generalista.teste_trancado.real_lixeira: 0.010884353741496598
+finais.generalista.teste_trancado.spam_passou: 0.013333333333333334
+finais.generalista.teste_trancado.mcc_custo: 0.9647383905584087
+finais.generalista.teste_trancado.real_lixeira_custo: 0.0027210884353741495
+finais.generalista.teste_trancado.spam_passou_custo: 0.043333333333333335
+finais.generalista.teste_trancado.custo_por_mil: 29.95169082125604
+finais.generalista.teste_trancado.email_real_lixeira: 2
+finais.generalista.teste_trancado.spam_passou_n: 13
+finais.generalista.teste_trancado.custo: 31
+finais.generalista.externo.mcc: 0.8861079531709428
+finais.generalista.externo.pr_auc: 0.9857405791123532
+finais.generalista.externo.real_lixeira: 0.07163413602461799
+finais.generalista.externo.spam_passou: 0.028500126954123118
+finais.generalista.externo.mcc_custo: 0.8816755826220366
+finais.generalista.externo.real_lixeira_custo: 0.021818189208862578
+finais.generalista.externo.spam_passou_custo: 0.07455371340866913
+finais.generalista.externo.custo_por_mil: 138.49550445879652
+finais.generalista.spamassassin.metodo: Stacking 8 padrão (+TabPFN)
+finais.generalista.spamassassin.mcc: 0.3142931495642684
+finais.generalista.spamassassin.pr_auc: 0.6682164267244203
+finais.generalista.spamassassin.real_lixeira: 0.5493975903614458
+finais.generalista.spamassassin.spam_passou: 0.12763713080168776
+finais.generalista.spamassassin.mcc_custo: 0.43706066460268217
+finais.generalista.spamassassin.real_lixeira_custo: 0.16048192771084338
+finais.generalista.spamassassin.spam_passou_custo: 0.4098101265822785
+finais.generalista.spamassassin.custo_por_mil: 1119.9139927224612
+finais.generalista_sem_chave.config.Reg. Logística: C=10, cw=balanced
+finais.generalista_sem_chave.config.SVM RBF: k=300, C=10
+finais.generalista_sem_chave.config.kNN cosseno: k=5, w=uniform
+finais.generalista_sem_chave.config.MLP: h=(128,), a=0.0001
+finais.generalista_sem_chave.config.Naive Bayes: a=1, norm=False, usa_tf=False
+finais.generalista_sem_chave.config.Extra Trees: n=400, mf=sqrt, msl=1, cw=balanced
+finais.generalista_sem_chave.config.LightGBM: n=400, eta=0.05, folhas=31
+finais.generalista_sem_chave.config.meta-modelo: C=1.0
+finais.generalista_sem_chave.limiar_custo: 0.8074318043547564
+finais.generalista_sem_chave.cv20.mcc: 0.9733978989043874
+finais.generalista_sem_chave.cv20.pr_auc: 0.9973253914235289
+finais.generalista_sem_chave.cv20.real_lixeira: 0.009107476039819677
+finais.generalista_sem_chave.cv20.spam_passou: 0.015625000000000003
+finais.generalista_sem_chave.cv20.mcc_custo: 0.9554467784926949
+finais.generalista_sem_chave.cv20.real_lixeira_custo: 0.004085109341862811
+finais.generalista_sem_chave.cv20.spam_passou_custo: 0.05312500000000001
+finais.generalista_sem_chave.cv20.custo_por_mil: 41.51303530016531
+finais.generalista_sem_chave.teste_trancado.mcc: 0.9719899139935891
+finais.generalista_sem_chave.teste_trancado.pr_auc: 0.9986451939155034
+finais.generalista_sem_chave.teste_trancado.real_lixeira: 0.010884353741496598
+finais.generalista_sem_chave.teste_trancado.spam_passou: 0.013333333333333334
+finais.generalista_sem_chave.teste_trancado.mcc_custo: 0.9602124654072162
+finais.generalista_sem_chave.teste_trancado.real_lixeira_custo: 0.0
+finais.generalista_sem_chave.teste_trancado.spam_passou_custo: 0.056666666666666664
+finais.generalista_sem_chave.teste_trancado.custo_por_mil: 16.42512077294686
+finais.generalista_sem_chave.teste_trancado.email_real_lixeira: 0
+finais.generalista_sem_chave.teste_trancado.spam_passou_n: 17
+finais.generalista_sem_chave.teste_trancado.custo: 17
+finais.generalista_sem_chave.externo.mcc: 0.8717372184348436
+finais.generalista_sem_chave.externo.pr_auc: 0.9831539916233643
+finais.generalista_sem_chave.externo.real_lixeira: 0.08836444087087707
+finais.generalista_sem_chave.externo.spam_passou: 0.029384590755275535
+finais.generalista_sem_chave.externo.mcc_custo: 0.8908949164874673
+finais.generalista_sem_chave.externo.real_lixeira_custo: 0.032255420021850646
+finais.generalista_sem_chave.externo.spam_passou_custo: 0.05433788367823328
+finais.generalista_sem_chave.externo.custo_por_mil: 177.45264644656623
+finais.generalista_sem_chave.spamassassin.metodo: Stacking 7 padrão (Generalista atual)
+finais.generalista_sem_chave.spamassassin.mcc: 0.2758326252465484
+finais.generalista_sem_chave.spamassassin.pr_auc: 0.6841670011617627
+finais.generalista_sem_chave.spamassassin.real_lixeira: 0.6395180722891566
+finais.generalista_sem_chave.spamassassin.spam_passou: 0.09440928270042194
+finais.generalista_sem_chave.spamassassin.mcc_custo: 0.41493088921557086
+finais.generalista_sem_chave.spamassassin.real_lixeira_custo: 0.3074698795180723
+finais.generalista_sem_chave.spamassassin.spam_passou_custo: 0.2478902953586498
+finais.generalista_sem_chave.spamassassin.custo_por_mil: 1977.1749917300695
+finais.linha_de_base.config.LinearSVC: C=1, cw=balanced
+finais.linha_de_base.limiar_custo: None
+finais.linha_de_base.cv20.mcc: 0.9600360147598712
+finais.linha_de_base.cv20.pr_auc: 0.9952487306589312
+finais.linha_de_base.cv20.real_lixeira: 0.017364032495451334
+finais.linha_de_base.cv20.spam_passou: 0.015000000000000003
+finais.linha_de_base.cv20.mcc_custo: 0.9392323048470077
+finais.linha_de_base.cv20.real_lixeira_custo: 0.0047665403469735424
+finais.linha_de_base.cv20.spam_passou_custo: 0.074375
+finais.linha_de_base.cv20.custo_por_mil: 52.02933599705589
+finais.linha_de_base.teste_trancado.mcc: 0.9630758788126589
+finais.linha_de_base.teste_trancado.pr_auc: 0.9967968027898415
+finais.linha_de_base.teste_trancado.real_lixeira: 0.017687074829931974
+finais.linha_de_base.teste_trancado.spam_passou: 0.01
+finais.linha_de_base.teste_trancado.mcc_custo: 0.9388284620328314
+finais.linha_de_base.teste_trancado.real_lixeira_custo: 0.004081632653061225
+finais.linha_de_base.teste_trancado.spam_passou_custo: 0.07666666666666666
+finais.linha_de_base.teste_trancado.custo_por_mil: 48.309178743961354
+finais.linha_de_base.teste_trancado.email_real_lixeira: 3
+finais.linha_de_base.teste_trancado.spam_passou_n: 23
+finais.linha_de_base.teste_trancado.custo: 50
+finais.linha_de_base.externo.mcc: 0.8206844086821663
+finais.linha_de_base.externo.pr_auc: 0.978933185734755
+finais.linha_de_base.externo.real_lixeira: 0.16136866190989976
+finais.linha_de_base.externo.spam_passou: 0.022158785959770347
+finais.linha_de_base.externo.mcc_custo: 0.8339567452655998
+finais.linha_de_base.externo.real_lixeira_custo: 0.02479475924924502
+finais.linha_de_base.externo.spam_passou_custo: 0.11704958357349264
+finais.linha_de_base.externo.custo_por_mil: 156.9389266490603
+finais.linha_de_base.spamassassin.metodo: LinearSVC padrão
+finais.linha_de_base.spamassassin.mcc: 0.4904644569641831
+finais.linha_de_base.spamassassin.pr_auc: 0.7699273510067921
+finais.linha_de_base.spamassassin.real_lixeira: 0.36819277108433734
+finais.linha_de_base.spamassassin.spam_passou: 0.10443037974683544
+finais.linha_de_base.spamassassin.mcc_custo: 0.5526881217632776
+finais.linha_de_base.spamassassin.real_lixeira_custo: 0.06289156626506025
+finais.linha_de_base.spamassassin.spam_passou_custo: 0.4462025316455696
+finais.linha_de_base.spamassassin.custo_por_mil: 528.4485610320874
+simulador_limiar.especialista: lista[99] de {limiar, real_lixeira, spam_passou, custo_por_mil}
+simulador_limiar.generalista: lista[99] de {limiar, real_lixeira, spam_passou, custo_por_mil}
+simulador_limiar.generalista_sem_chave: lista[99] de {limiar, real_lixeira, spam_passou, custo_por_mil}
+contra_estudo.permutacao.mcc_real: 0.9612455166425995
+contra_estudo.permutacao.mcc_permutado: lista[30] ex: [0.00393286252251755, -0.0035013150165773927, -0.01388005595847933]
+contra_estudo.permutacao.p: 0.03225806451612903
+contra_estudo.ablacao: lista[3] de {variante, mcc_esta_caixa, mcc_enron2_6, pr_auc_enron2_6, mcc_spamassassin, pr_auc_spamassassin}
+contra_estudo.palavras_enron: lista[35] ex: ['enron', 'daren', 'farmer']
+contra_estudo.curva_aprendizado: lista[25] de {metodo, n, mean, std}
+contra_estudo.sensibilidade_custo: lista[32] de {onde, custo_fp, metodo, custo_por_mil, real_lixeira, spam_passou}
+contra_estudo.vencedor_por_custo: lista[8] de {onde, custo_fp, metodo, custo_por_mil}
+contra_estudo.emails_reais_na_lixeira: lista[10] de {divisao, linha_csv, prob_spam, texto}
+contra_estudo.n_emails_reais_na_lixeira: 15
+contra_estudo.pesos_palavras.spam: lista[15] de {palavra, peso}
+contra_estudo.pesos_palavras.email_real: lista[15] de {palavra, peso}
+exemplos_demo: lista[3] de {rotulo, origem, texto, texto_aueb, cobertura, colunas_nao_zero, palavras_encontradas, vetor_nao_zero, etapas}
+fontes.01_dados: scripts/01_dados_e_qualidade.py
+fontes.02_nao_supervisionado: scripts/02_exploracao_nao_supervisionada.py
+fontes.03_torneio: scripts/03_modelos_independentes.py
+fontes.04_stacking: scripts/04_stacking.py
+fontes.05_genetico: scripts/05_algoritmo_genetico.py
+fontes.06_corrida_tabpfn: scripts/06_corrida_e_tabpfn.py
+fontes.07_contra_estudo: scripts/07_contra_estudo.py
+fontes.08_terceira_base: scripts/08_terceira_base.py
+fontes.finais: scripts/09_modelos_finais.py
+fonte: scripts/09_modelos_finais.py

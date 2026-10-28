@@ -1,0 +1,15 @@
+23:00:29 inicio | python 3.11.9 | sklearn 1.9.1 | SMOKE=False
+23:00:30 desenvolvimento 4137 | teste trancado 1035 (735 reais, 300 spam)
+23:00:33 confirmação: 320 tarefas, 0 pendentes
+23:00:37 notas do TabPFN | nuvem: 20 divisões + externo=False | local: 0 divisões
+23:00:41 fim
+23:04:24 inicio | python 3.11.9 | sklearn 1.9.1 | SMOKE=False
+23:04:25 desenvolvimento 4137 | teste trancado 1035 (735 reais, 300 spam)
+23:04:27 confirmação: 320 tarefas, 0 pendentes
+23:04:29 notas do TabPFN | nuvem: 20 divisões + externo=True | local: 0 divisões
+23:04:34 fim
+02:24:40 inicio | python 3.11.9 | sklearn 1.9.1 | SMOKE=False
+02:24:41 desenvolvimento 4137 | teste trancado 1035 (735 reais, 300 spam)
+02:24:45 confirmação: 320 tarefas, 0 pendentes
+02:24:54 notas do TabPFN | nuvem: 20 divisões + externo=True | local: 5 divisões
+02:25:01 fim

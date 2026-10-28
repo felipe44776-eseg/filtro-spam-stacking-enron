@@ -1,0 +1,16 @@
+.........                                                                [100%]
+============================== slowest durations ==============================
+90.78s call     tests/test_regressao_lenta.py::test_algoritmo_genetico_reproduz_a_busca
+27.91s call     tests/test_regressao_lenta.py::test_retreinar_familias_pesadas[Extra Trees]
+20.30s call     tests/test_regressao_lenta.py::test_retreinar_familias_pesadas[LightGBM]
+9.18s call     tests/test_regressao_lenta.py::test_retreinar_familias_pesadas[MLP]
+6.73s call     tests/test_regressao_lenta.py::test_retreinar_familias_pesadas[SVM RBF]
+4.62s call     tests/test_regressao_lenta.py::test_vetorizar_enron1_do_zero_reproduz_o_csv
+3.84s call     tests/test_regressao_lenta.py::test_reg_logistica_tfidf_log_5_folds
+2.91s call     tests/test_regressao_lenta.py::test_base_externa
+2.32s setup    tests/test_regressao_lenta.py::test_retreinar_familias_pesadas[SVM RBF]
+0.79s setup    tests/test_regressao_lenta.py::test_reg_logistica_tfidf_log_5_folds
+0.31s call     tests/test_regressao_lenta.py::test_vetores_gravados_do_enron1_sao_o_csv
+
+(16 durations < 0.005s hidden.  Use -vv to show these durations.)
+9 passed, 27 deselected in 173.75s (0:02:53)

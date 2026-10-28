@@ -1,0 +1,160 @@
+22:28:07 [     19s] inicio | tabpfn-client 0.6.1 (TabPFN-3.5-Plus) | 1 divisões | paralelo 1 | Currently, you have used 20000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:28:29 [     42s] c201_0 interno 1/5: treino 2647 | prevê 662 | 22s | Currently, you have used 30000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:28:52 [     65s] c201_0 interno 2/5: treino 2647 | prevê 662 | 23s | Currently, you have used 40000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:29:21 [     94s] c201_0 interno 3/5: treino 2647 | prevê 662 | 29s | Currently, you have used 50000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:29:45 [    118s] c201_0 interno 4/5: treino 2647 | prevê 662 | 24s | Currently, you have used 60000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:30:12 [    145s] c201_0 interno 5/5: treino 2648 | prevê 661 | 27s | Currently, you have used 70000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:30:38 [    171s] c201_0 final: treino 3309 | prevê 828 | 26s
+22:30:39 [    171s] OK c201_0 (152s) | Currently, you have used 80000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:30:39 [    171s] fim
+22:32:02 [     14s] inicio | tabpfn-client 0.6.1 (TabPFN-3.5-Plus) | 21 divisões | paralelo 3 | Currently, you have used 80000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:32:02 [     14s] OK c201_0 (cache) | Currently, you have used 80000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:32:25 [     36s] c201_2 interno 1/5: treino 2648 | prevê 662 | 22s | Currently, you have used 110000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:32:27 [     38s] c201_1 interno 1/5: treino 2648 | prevê 662 | 24s | Currently, you have used 110000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:32:28 [     40s] c201_3 interno 1/5: treino 2648 | prevê 662 | 26s | Currently, you have used 110000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:32:49 [     60s] c201_1 interno 2/5: treino 2648 | prevê 662 | 21s | Currently, you have used 140000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:32:49 [     60s] c201_2 interno 2/5: treino 2648 | prevê 662 | 24s | Currently, you have used 140000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:32:52 [     63s] c201_3 interno 2/5: treino 2648 | prevê 662 | 23s | Currently, you have used 140000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:33:10 [     82s] c201_2 interno 3/5: treino 2648 | prevê 662 | 21s | Currently, you have used 170000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:33:12 [     83s] c201_3 interno 3/5: treino 2648 | prevê 662 | 20s | Currently, you have used 170000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:33:14 [     85s] c201_1 interno 3/5: treino 2648 | prevê 662 | 25s | Currently, you have used 170000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:33:32 [    104s] c201_3 interno 4/5: treino 2648 | prevê 662 | 20s | Currently, you have used 200000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:33:33 [    105s] c201_2 interno 4/5: treino 2648 | prevê 662 | 23s | Currently, you have used 200000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:33:34 [    105s] c201_1 interno 4/5: treino 2648 | prevê 662 | 20s | Currently, you have used 200000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:01 [    133s] c201_3 interno 5/5: treino 2648 | prevê 662 | 29s | Currently, you have used 230000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:01 [    133s] c201_1 interno 5/5: treino 2648 | prevê 662 | 27s | Currently, you have used 230000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:03 [    134s] c201_2 interno 5/5: treino 2648 | prevê 662 | 30s | Currently, you have used 230000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:23 [    154s] c201_3 final: treino 3310 | prevê 827 | 21s
+22:34:23 [    155s] OK c201_3 (140s) | Currently, you have used 260000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:26 [    158s] c201_2 final: treino 3310 | prevê 827 | 23s
+22:34:27 [    158s] OK c201_2 (144s) | Currently, you have used 260000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:28 [    159s] c201_1 final: treino 3310 | prevê 827 | 27s
+22:34:28 [    160s] OK c201_1 (146s) | Currently, you have used 260000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:47 [    178s] c201_4 interno 1/5: treino 2647 | prevê 662 | 24s | Currently, you have used 290000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:47 [    178s] c202_0 interno 1/5: treino 2647 | prevê 662 | 20s | Currently, you have used 290000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:34:49 [    181s] c202_1 interno 1/5: treino 2648 | prevê 662 | 21s | Currently, you have used 290000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:35:09 [    201s] c201_4 interno 2/5: treino 2647 | prevê 662 | 22s | Currently, you have used 320000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:35:10 [    201s] c202_0 interno 2/5: treino 2647 | prevê 662 | 23s | Currently, you have used 320000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:35:11 [    202s] c202_1 interno 2/5: treino 2648 | prevê 662 | 21s | Currently, you have used 320000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:35:31 [    222s] c202_1 interno 3/5: treino 2648 | prevê 662 | 20s | Currently, you have used 350000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:35:33 [    224s] c201_4 interno 3/5: treino 2647 | prevê 662 | 23s | Currently, you have used 350000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:35:35 [    226s] c202_0 interno 3/5: treino 2647 | prevê 662 | 24s | Currently, you have used 350000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:35:59 [    250s] c202_1 interno 4/5: treino 2648 | prevê 662 | 28s | Currently, you have used 380000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:36:04 [    256s] c202_0 interno 4/5: treino 2647 | prevê 662 | 29s | Currently, you have used 380000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:36:05 [    256s] c201_4 interno 4/5: treino 2647 | prevê 662 | 32s | Currently, you have used 380000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:36:26 [    277s] c202_1 interno 5/5: treino 2648 | prevê 662 | 27s | Currently, you have used 410000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:36:31 [    283s] c201_4 interno 5/5: treino 2648 | prevê 661 | 26s | Currently, you have used 410000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:36:31 [    283s] c202_0 interno 5/5: treino 2648 | prevê 661 | 27s | Currently, you have used 410000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:36:51 [    303s] c202_1 final: treino 3310 | prevê 827 | 25s
+22:36:51 [    303s] OK c202_1 (143s) | Currently, you have used 430000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:37:01 [    312s] c201_4 final: treino 3309 | prevê 828 | 29s
+22:37:02 [    314s] OK c201_4 (158s) | Currently, you have used 450000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:37:03 [    314s] c202_0 final: treino 3309 | prevê 828 | 31s
+22:37:06 [    317s] OK c202_0 (159s) | Currently, you have used 450000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:37:11 [    323s] c202_2 interno 1/5: treino 2648 | prevê 662 | 19s | Currently, you have used 450000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:37:38 [    350s] c202_4 interno 1/5: treino 2648 | prevê 662 | 32s | Currently, you have used 480000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:37:39 [    350s] c202_3 interno 1/5: treino 2647 | prevê 662 | 33s | Currently, you have used 480000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:37:39 [    350s] c202_2 interno 2/5: treino 2648 | prevê 662 | 27s | Currently, you have used 480000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:01 [    373s] c202_2 interno 3/5: treino 2648 | prevê 662 | 22s | Currently, you have used 510000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:01 [    373s] c202_4 interno 2/5: treino 2648 | prevê 662 | 23s | Currently, you have used 510000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:03 [    375s] c202_3 interno 2/5: treino 2647 | prevê 662 | 24s | Currently, you have used 510000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:27 [    398s] c202_3 interno 3/5: treino 2648 | prevê 661 | 23s | Currently, you have used 540000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:27 [    399s] c202_4 interno 3/5: treino 2648 | prevê 662 | 26s | Currently, you have used 540000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:27 [    399s] c202_2 interno 4/5: treino 2648 | prevê 662 | 26s | Currently, you have used 540000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:49 [    420s] c202_3 interno 4/5: treino 2647 | prevê 662 | 22s | Currently, you have used 570000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:49 [    421s] c202_2 interno 5/5: treino 2648 | prevê 662 | 21s | Currently, you have used 570000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:38:51 [    423s] c202_4 interno 4/5: treino 2648 | prevê 662 | 24s | Currently, you have used 570000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:12 [    444s] c202_3 interno 5/5: treino 2647 | prevê 662 | 23s | Currently, you have used 600000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:14 [    446s] c202_4 interno 5/5: treino 2648 | prevê 662 | 23s | Currently, you have used 600000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:35 [    466s] c202_4 final: treino 3310 | prevê 827 | 20s
+22:39:35 [    466s] c202_3 final: treino 3309 | prevê 828 | 22s
+22:39:35 [    467s] OK c202_3 (149s) | Currently, you have used 620000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:35 [    467s] c202_2 final: treino 3310 | prevê 827 | 45s
+22:39:35 [    467s] OK c202_4 (149s) | Currently, you have used 620000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:36 [    467s] OK c202_2 (164s) | Currently, you have used 620000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:56 [    487s] c203_2 interno 1/5: treino 2647 | prevê 662 | 20s | Currently, you have used 650000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:58 [    489s] c203_1 interno 1/5: treino 2648 | prevê 662 | 23s | Currently, you have used 650000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:39:59 [    491s] c203_0 interno 1/5: treino 2647 | prevê 662 | 24s | Currently, you have used 650000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:40:17 [    508s] c203_2 interno 2/5: treino 2647 | prevê 662 | 21s | Currently, you have used 680000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:40:19 [    511s] c203_1 interno 2/5: treino 2648 | prevê 662 | 21s | Currently, you have used 680000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:40:22 [    513s] c203_0 interno 2/5: treino 2647 | prevê 662 | 22s | Currently, you have used 680000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:40:37 [    529s] c203_2 interno 3/5: treino 2647 | prevê 662 | 21s | Currently, you have used 710000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:40:39 [    530s] c203_1 interno 3/5: treino 2648 | prevê 662 | 19s | Currently, you have used 710000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:40:44 [    536s] c203_0 interno 3/5: treino 2647 | prevê 662 | 22s | Currently, you have used 710000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:40:58 [    550s] c203_2 interno 4/5: treino 2648 | prevê 661 | 21s | Currently, you have used 740000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:00 [    552s] c203_1 interno 4/5: treino 2648 | prevê 662 | 21s | Currently, you have used 740000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:05 [    557s] c203_0 interno 4/5: treino 2647 | prevê 662 | 21s | Currently, you have used 740000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:17 [    568s] c203_2 interno 5/5: treino 2647 | prevê 662 | 18s | Currently, you have used 770000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:19 [    570s] c203_1 interno 5/5: treino 2648 | prevê 662 | 18s | Currently, you have used 770000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:25 [    576s] c203_0 interno 5/5: treino 2648 | prevê 661 | 19s | Currently, you have used 770000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:38 [    590s] c203_2 final: treino 3309 | prevê 828 | 21s
+22:41:38 [    590s] OK c203_2 (123s) | Currently, you have used 800000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:40 [    591s] c203_1 final: treino 3310 | prevê 827 | 21s
+22:41:40 [    591s] OK c203_1 (125s) | Currently, you have used 800000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:44 [    596s] c203_0 final: treino 3309 | prevê 828 | 20s
+22:41:45 [    596s] OK c203_0 (130s) | Currently, you have used 800000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:41:58 [    609s] c203_3 interno 1/5: treino 2648 | prevê 662 | 19s | Currently, you have used 830000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:00 [    612s] c203_4 interno 1/5: treino 2648 | prevê 662 | 20s | Currently, you have used 830000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:03 [    614s] c204_0 interno 1/5: treino 2647 | prevê 662 | 18s | Currently, you have used 830000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:17 [    629s] c203_3 interno 2/5: treino 2648 | prevê 662 | 19s | Currently, you have used 860000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:18 [    630s] c203_4 interno 2/5: treino 2648 | prevê 662 | 18s | Currently, you have used 860000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:21 [    633s] c204_0 interno 2/5: treino 2647 | prevê 662 | 18s | Currently, you have used 860000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:37 [    649s] c203_3 interno 3/5: treino 2648 | prevê 662 | 19s | Currently, you have used 880000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:40 [    652s] c204_0 interno 3/5: treino 2647 | prevê 662 | 19s | Currently, you have used 880000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:42:56 [    668s] c203_3 interno 4/5: treino 2648 | prevê 662 | 19s | Currently, you have used 900000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:43:08 [    679s] c204_0 interno 4/5: treino 2648 | prevê 661 | 27s | Currently, you have used 910000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:43:16 [    687s] c203_3 interno 5/5: treino 2648 | prevê 662 | 19s | Currently, you have used 910000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:43:28 [    700s] c204_0 interno 5/5: treino 2647 | prevê 662 | 20s | Currently, you have used 930000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:43:37 [    708s] c203_3 final: treino 3310 | prevê 827 | 21s
+22:43:37 [    708s] OK c203_3 (118s) | Currently, you have used 930000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:43:49 [    721s] c204_0 final: treino 3309 | prevê 828 | 21s
+22:43:50 [    721s] OK c204_0 (125s) | Currently, you have used 960000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:43:55 [    727s] c204_1 interno 1/5: treino 2648 | prevê 662 | 18s | Currently, you have used 960000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:43:58 [    730s] c203_4 interno 3/5: treino 2648 | prevê 662 | 100s | Currently, you have used 960000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:08 [    740s] c204_2 interno 1/5: treino 2647 | prevê 662 | 18s | Currently, you have used 980000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:13 [    745s] c204_1 interno 2/5: treino 2648 | prevê 662 | 18s | Currently, you have used 990000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:19 [    751s] c203_4 interno 4/5: treino 2648 | prevê 662 | 20s | Currently, you have used 1000000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:28 [    760s] c204_2 interno 2/5: treino 2647 | prevê 662 | 20s | Currently, you have used 1010000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:35 [    766s] c204_1 interno 3/5: treino 2648 | prevê 662 | 21s | Currently, you have used 1020000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:39 [    771s] c203_4 interno 5/5: treino 2648 | prevê 662 | 20s | Currently, you have used 1030000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:49 [    780s] c204_2 interno 3/5: treino 2647 | prevê 662 | 20s | Currently, you have used 1040000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:44:58 [    790s] c204_1 interno 4/5: treino 2648 | prevê 662 | 23s | Currently, you have used 1050000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:02 [    793s] c203_4 final: treino 3310 | prevê 827 | 22s
+22:45:02 [    794s] OK c203_4 (202s) | Currently, you have used 1060000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:08 [    799s] c204_2 interno 4/5: treino 2648 | prevê 661 | 19s | Currently, you have used 1070000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:16 [    808s] c204_1 interno 5/5: treino 2648 | prevê 662 | 18s | Currently, you have used 1080000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:23 [    814s] c204_3 interno 1/5: treino 2648 | prevê 662 | 20s | Currently, you have used 1090000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:28 [    820s] c204_2 interno 5/5: treino 2647 | prevê 662 | 21s | Currently, you have used 1100000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:35 [    827s] c204_1 final: treino 3310 | prevê 827 | 19s
+22:45:35 [    827s] OK c204_1 (118s) | Currently, you have used 1110000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:43 [    835s] c204_3 interno 2/5: treino 2648 | prevê 662 | 20s | Currently, you have used 1120000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:50 [    842s] c204_2 final: treino 3309 | prevê 828 | 22s
+22:45:51 [    842s] OK c204_2 (121s) | Currently, you have used 1130000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:45:56 [    847s] c204_4 interno 1/5: treino 2648 | prevê 662 | 20s | Currently, you have used 1140000 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:02 [    853s] c204_3 interno 3/5: treino 2648 | prevê 662 | 18s | Currently, you have used 1150618 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:13 [    864s] externo interno 1/5: treino 4137 | prevê 1035 | 22s | Currently, you have used 1160618 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:15 [    866s] c204_4 interno 2/5: treino 2648 | prevê 662 | 19s | Currently, you have used 1170618 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:23 [    875s] c204_3 interno 4/5: treino 2648 | prevê 662 | 21s | Currently, you have used 1170618 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:34 [    886s] c204_4 interno 3/5: treino 2648 | prevê 662 | 19s | Currently, you have used 1201236 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:37 [    889s] externo interno 2/5: treino 4137 | prevê 1035 | 24s | Currently, you have used 1201236 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:42 [    894s] c204_3 interno 5/5: treino 2648 | prevê 662 | 19s | Currently, you have used 1201236 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:52 [    904s] c204_4 interno 4/5: treino 2648 | prevê 662 | 18s | Currently, you have used 1231854 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:46:59 [    910s] externo interno 3/5: treino 4138 | prevê 1034 | 21s | Currently, you have used 1231854 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:47:03 [    914s] c204_3 final: treino 3310 | prevê 827 | 21s
+22:47:03 [    914s] OK c204_3 (121s) | Currently, you have used 1241854 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:47:10 [    922s] c204_4 interno 5/5: treino 2648 | prevê 662 | 17s | Currently, you have used 1241854 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:47:23 [    935s] externo interno 4/5: treino 4138 | prevê 1034 | 24s | Currently, you have used 1262472 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:47:29 [    940s] c204_4 final: treino 3310 | prevê 827 | 19s
+22:47:29 [    941s] OK c204_4 (114s) | Currently, you have used 1262472 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:47:45 [    957s] externo interno 5/5: treino 4138 | prevê 1034 | 21s | Currently, you have used 1273090 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+22:59:28 [   1660s] ERRO externo: ConnectError: [Errno 11001] getaddrinfo failed
+22:59:28 [   1660s] fim
+23:00:28 [     20s] inicio | tabpfn-client 0.6.1 (TabPFN-3.5-Plus) | 1 divisões | paralelo 1 | Currently, you have used 1355075 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+23:00:52 [     44s] externo interno 1/5: treino 4137 | prevê 1035 | 24s | Currently, you have used 1365693 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+23:01:13 [     65s] externo interno 2/5: treino 4137 | prevê 1035 | 21s | Currently, you have used 1376311 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+23:01:37 [     89s] externo interno 3/5: treino 4138 | prevê 1034 | 23s | Currently, you have used 1386929 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+23:01:54 [    106s] externo interno 4/5: treino 4138 | prevê 1034 | 17s | Currently, you have used 1397547 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+23:02:12 [    124s] externo interno 5/5: treino 4138 | prevê 1034 | 17s | Currently, you have used 1408165 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+23:04:01 [    233s] externo final: treino 5172 | prevê 28150 | 110s
+23:04:02 [    234s] OK externo (214s) | Currently, you have used 1490150 of the allowed limit of 20000000 credits. The limit will reset at 2026-11-01 00:00:00 UTC.
+23:04:02 [    234s] fim

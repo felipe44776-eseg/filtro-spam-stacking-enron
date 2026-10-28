@@ -1,0 +1,502 @@
+{
+ "stacking": {
+  "variantes": [
+   {
+    "nome": "Stacking 7 (1 por família)",
+    "tipo": "combinação",
+    "mcc": 0.974811196841464,
+    "mcc_dp": 0.010558870248114319,
+    "pr_auc": 0.9972706611182304,
+    "real_lixeira": 0.008057612596429826,
+    "spam_passou": 0.01611111111111111,
+    "treino_s": 42.31278823216756
+   },
+   {
+    "nome": "Stacking 13 (todos)",
+    "tipo": "combinação",
+    "mcc": 0.9740398606068958,
+    "mcc_dp": 0.009834901008251904,
+    "pr_auc": 0.9972767824318464,
+    "real_lixeira": 0.008397941800229462,
+    "spam_passou": 0.01638888888888889,
+    "treino_s": 65.56425547599792
+   },
+   {
+    "nome": "Stacking 13 + L1",
+    "tipo": "combinação",
+    "mcc": 0.973071865314633,
+    "mcc_dp": 0.010167330281940385,
+    "pr_auc": 0.9972138219709624,
+    "real_lixeira": 0.008851842838214217,
+    "spam_passou": 0.016666666666666666,
+    "treino_s": 65.56425547599792
+   },
+   {
+    "nome": "Média 13 (votação)",
+    "tipo": "combinação",
+    "mcc": 0.9687254430791892,
+    "mcc_dp": 0.009397911867245999,
+    "pr_auc": 0.9970975009957902,
+    "real_lixeira": 0.011916544016811722,
+    "spam_passou": 0.015555555555555555,
+    "treino_s": 65.56425547599792
+   },
+   {
+    "nome": "Stacking 4 (LR+NB+RF+LGBM)",
+    "tipo": "combinação",
+    "mcc": 0.965934535401355,
+    "mcc_dp": 0.009812321538755872,
+    "pr_auc": 0.995949653867719,
+    "real_lixeira": 0.012143687685181965,
+    "spam_passou": 0.01888888888888889,
+    "treino_s": 21.32649998664856
+   },
+   {
+    "nome": "Caruana 13",
+    "tipo": "combinação",
+    "mcc": 0.9649349412621556,
+    "mcc_dp": 0.010416517948543983,
+    "pr_auc": 0.9962835896986905,
+    "real_lixeira": 0.011803165332004465,
+    "spam_passou": 0.021111111111111112,
+    "treino_s": 65.56425547599792
+   },
+   {
+    "nome": "LinearSVC",
+    "tipo": "modelo único",
+    "mcc": 0.9594734481197348,
+    "mcc_dp": 0.012685469362097492,
+    "pr_auc": 0.9953007020878505,
+    "real_lixeira": 0.018271737996731912,
+    "spam_passou": 0.01388888888888889,
+    "treino_s": 0.04366482098897298
+   },
+   {
+    "nome": "MLP (rede neural)",
+    "tipo": "modelo único",
+    "mcc": 0.9586315322405554,
+    "mcc_dp": 0.014494310923857617,
+    "pr_auc": 0.9947789366515881,
+    "real_lixeira": 0.014866128166201175,
+    "spam_passou": 0.02277777777777778,
+    "treino_s": 1.8552312533060709
+   },
+   {
+    "nome": "Ridge",
+    "tipo": "modelo único",
+    "mcc": 0.9584875619584481,
+    "mcc_dp": 0.010741315804108718,
+    "pr_auc": 0.9949250638746924,
+    "real_lixeira": 0.020200720833478195,
+    "spam_passou": 0.010833333333333334,
+    "treino_s": 0.03412281672159831
+   },
+   {
+    "nome": "Reg. Logística",
+    "tipo": "modelo único",
+    "mcc": 0.9552456030400455,
+    "mcc_dp": 0.012280458979857918,
+    "pr_auc": 0.9950064491376099,
+    "real_lixeira": 0.021335087129684356,
+    "spam_passou": 0.012777777777777777,
+    "treino_s": 0.03939603169759114
+   },
+   {
+    "nome": "SVM RBF (SVD300)",
+    "tipo": "modelo único",
+    "mcc": 0.9552388234059906,
+    "mcc_dp": 0.009955853791699039,
+    "pr_auc": 0.9948266547122964,
+    "real_lixeira": 0.02167676837912905,
+    "spam_passou": 0.011944444444444445,
+    "treino_s": 1.2084349155426026
+   },
+   {
+    "nome": "SGD (huber)",
+    "tipo": "modelo único",
+    "mcc": 0.9551856003668575,
+    "mcc_dp": 0.011665283280230651,
+    "pr_auc": 0.9931683824920658,
+    "real_lixeira": 0.019178960624567826,
+    "spam_passou": 0.017777777777777778,
+    "treino_s": 0.0141966978708903
+   },
+   {
+    "nome": "Extra Trees",
+    "tipo": "modelo único",
+    "mcc": 0.9529645879045532,
+    "mcc_dp": 0.012418037554597021,
+    "pr_auc": 0.9923561856147564,
+    "real_lixeira": 0.018499074814480026,
+    "spam_passou": 0.02222222222222222,
+    "treino_s": 2.867540788650513
+   },
+   {
+    "nome": "NBSVM",
+    "tipo": "modelo único",
+    "mcc": 0.9503210699378097,
+    "mcc_dp": 0.011189919411231954,
+    "pr_auc": 0.9903119501041416,
+    "real_lixeira": 0.02133817751973021,
+    "spam_passou": 0.019444444444444445,
+    "treino_s": 0.03819460868835449
+   },
+   {
+    "nome": "LightGBM",
+    "tipo": "modelo único",
+    "mcc": 0.9445768662770415,
+    "mcc_dp": 0.013198144917628394,
+    "pr_auc": 0.993183035215718,
+    "real_lixeira": 0.02213144201462527,
+    "spam_passou": 0.025555555555555554,
+    "treino_s": 1.96440536181132
+   },
+   {
+    "nome": "kNN cosseno",
+    "tipo": "modelo único",
+    "mcc": 0.9310602102326987,
+    "mcc_dp": 0.011407703112897877,
+    "pr_auc": 0.9789348109827569,
+    "real_lixeira": 0.03257135903765254,
+    "spam_passou": 0.021111111111111112,
+    "treino_s": 0.00798505147298177
+   },
+   {
+    "nome": "XGBoost",
+    "tipo": "modelo único",
+    "mcc": 0.9285671703800725,
+    "mcc_dp": 0.01779943180590751,
+    "pr_auc": 0.9901288394187269,
+    "real_lixeira": 0.02712531917934692,
+    "spam_passou": 0.03638888888888889,
+    "treino_s": 2.1074610392252606
+   },
+   {
+    "nome": "Random Forest",
+    "tipo": "modelo único",
+    "mcc": 0.9263892042219606,
+    "mcc_dp": 0.00960315638337597,
+    "pr_auc": 0.989511898101424,
+    "real_lixeira": 0.040858626244364864,
+    "spam_passou": 0.01,
+    "treino_s": 2.160224692026774
+   },
+   {
+    "nome": "Naive Bayes Compl.",
+    "tipo": "modelo único",
+    "mcc": 0.8718704754032575,
+    "mcc_dp": 0.023935302284799717,
+    "pr_auc": 0.8916494205810267,
+    "real_lixeira": 0.056176530805394274,
+    "spam_passou": 0.051666666666666666,
+    "treino_s": 0.004104932149251302
+   }
+  ],
+  "comparacoes_15_folds": [
+   {
+    "A": "Stacking 7 (1 por família)",
+    "B": "Stacking 4 (LR+NB+RF+LGBM)",
+    "dif": 0.008876661440108938,
+    "t": 2.5307009765428803,
+    "p": 0.023998380561133917,
+    "P_A_melhor": 0.3767508104681244,
+    "P_equivalentes": 0.6232008100674036,
+    "P_B_melhor": 4.83794644720037e-05,
+    "p_holm": 0.1439902833668035
+   },
+   {
+    "A": "Stacking 7 (1 por família)",
+    "B": "Caruana 13",
+    "dif": 0.009876255579308343,
+    "t": 2.4646733843864013,
+    "p": 0.027262732718634934,
+    "P_A_melhor": 0.48790014702779244,
+    "P_equivalentes": 0.5119951403998175,
+    "P_B_melhor": 0.00010471257239008658,
+    "p_holm": 0.1439902833668035
+   },
+   {
+    "A": "Stacking 7 (1 por família)",
+    "B": "LinearSVC",
+    "dif": 0.015337748721729187,
+    "t": 2.2268365805311343,
+    "p": 0.04288421881607796,
+    "P_A_melhor": 0.7743754723805408,
+    "P_equivalentes": 0.22438466198144935,
+    "P_B_melhor": 0.0012398656380098183,
+    "p_holm": 0.17153687526431183
+   },
+   {
+    "A": "Stacking 7 (1 por família)",
+    "B": "Média 13 (votação)",
+    "dif": 0.006085753762274715,
+    "t": 1.6391003968176414,
+    "p": 0.12346163590518253,
+    "P_A_melhor": 0.15481424197722446,
+    "P_equivalentes": 0.8448412797472569,
+    "P_B_melhor": 0.00034447827551864485,
+    "p_holm": 0.37038490771554755
+   },
+   {
+    "A": "Stacking 7 (1 por família)",
+    "B": "Stacking 13 + L1",
+    "dif": 0.0017393315268310265,
+    "t": 0.6147553272152958,
+    "p": 0.5485783393894644,
+    "P_A_melhor": 0.005598929986799681,
+    "P_equivalentes": 0.9939095111225534,
+    "P_B_melhor": 0.0004915588906468926,
+    "p_holm": 1.0
+   },
+   {
+    "A": "Stacking 7 (1 por família)",
+    "B": "Stacking 13 (todos)",
+    "dif": 0.000771336234568154,
+    "t": 0.31710213304809226,
+    "p": 0.7558456089019141,
+    "P_A_melhor": 0.0009870823931270077,
+    "P_equivalentes": 0.9987264613519591,
+    "P_B_melhor": 0.0002864562549138583,
+    "p_holm": 1.0
+   }
+  ],
+  "erros_em_comum": {
+   "modelos": [
+    "Reg. Logística",
+    "SVM RBF",
+    "kNN cosseno",
+    "MLP",
+    "Naive Bayes",
+    "Extra Trees",
+    "LightGBM"
+   ],
+   "matriz": [
+    [
+     1.0,
+     0.6132,
+     0.2352,
+     0.5197,
+     0.2128,
+     0.2933,
+     0.2753
+    ],
+    [
+     0.6132,
+     1.0,
+     0.2418,
+     0.4296,
+     0.195,
+     0.3367,
+     0.2926
+    ],
+    [
+     0.2352,
+     0.2418,
+     1.0,
+     0.2148,
+     0.2092,
+     0.1637,
+     0.1484
+    ],
+    [
+     0.5197,
+     0.4296,
+     0.2148,
+     1.0,
+     0.2136,
+     0.2789,
+     0.2163
+    ],
+    [
+     0.2128,
+     0.195,
+     0.2092,
+     0.2136,
+     1.0,
+     0.1316,
+     0.1712
+    ],
+    [
+     0.2933,
+     0.3367,
+     0.1637,
+     0.2789,
+     0.1316,
+     1.0,
+     0.3683
+    ],
+    [
+     0.2753,
+     0.2926,
+     0.1484,
+     0.2163,
+     0.1712,
+     0.3683,
+     1.0
+    ]
+   ]
+  },
+  "tabela_erros": [
+   {
+    "familia": "Reg. Logística",
+    "erros": 316,
+    "só ele erra": 11,
+    "acerta quando a maioria (≥4) erra": 31
+   },
+   {
+    "familia": "SVM RBF",
+    "erros": 318,
+    "só ele erra": 17,
+    "acerta quando a maioria (≥4) erra": 31
+   },
+   {
+    "familia": "kNN cosseno",
+    "erros": 519,
+    "só ele erra": 194,
+    "acerta quando a maioria (≥4) erra": 95
+   },
+   {
+    "familia": "MLP",
+    "erros": 301,
+    "só ele erra": 17,
+    "acerta quando a maioria (≥4) erra": 61
+   },
+   {
+    "familia": "Naive Bayes",
+    "erros": 932,
+    "só ele erra": 470,
+    "acerta quando a maioria (≥4) erra": 50
+   },
+   {
+    "familia": "Extra Trees",
+    "erros": 341,
+    "só ele erra": 61,
+    "acerta quando a maioria (≥4) erra": 94
+   },
+   {
+    "familia": "LightGBM",
+    "erros": 402,
+    "só ele erra": 98,
+    "acerta quando a maioria (≥4) erra": 97
+   }
+  ],
+  "pesos_meta": {
+   "Naive Bayes": 0.03309850542528091,
+   "MLP": 0.6722009305345025,
+   "LightGBM": 0.7436428130901421,
+   "Reg. Logística": 0.7786148015463888,
+   "SVM RBF": 1.0855595025886908,
+   "Extra Trees": 1.357071494389071,
+   "kNN cosseno": 1.6698333686957905
+  },
+  "confirmacao_20_folds": [
+   {
+    "metodo": "Stacking 7",
+    "mcc": 0.9733978989043877,
+    "pr_auc": 0.9973253914235289,
+    "real_lixeira": 0.009107476039819675,
+    "spam_passou": 0.015625
+   },
+   {
+    "metodo": "LinearSVC",
+    "mcc": 0.960036014759871,
+    "pr_auc": 0.9952487306589312,
+    "real_lixeira": 0.01736403249545133,
+    "spam_passou": 0.015
+   },
+   {
+    "metodo": "MLP",
+    "mcc": 0.9560087571388756,
+    "pr_auc": 0.9940825306074915,
+    "real_lixeira": 0.014980182873830964,
+    "spam_passou": 0.026041666666666668
+   },
+   {
+    "metodo": "Reg. Logística",
+    "mcc": 0.9545576930042042,
+    "pr_auc": 0.994949285786331,
+    "real_lixeira": 0.021278928948069858,
+    "spam_passou": 0.013750000000000002
+   },
+   {
+    "metodo": "SVM RBF",
+    "mcc": 0.9543438350846124,
+    "pr_auc": 0.9950960950247436,
+    "real_lixeira": 0.02196064967724739,
+    "spam_passou": 0.0125
+   },
+   {
+    "metodo": "Extra Trees",
+    "mcc": 0.9505296913727784,
+    "pr_auc": 0.9922101487977748,
+    "real_lixeira": 0.019321987738877493,
+    "spam_passou": 0.02375
+   },
+   {
+    "metodo": "LightGBM",
+    "mcc": 0.9419871272076948,
+    "pr_auc": 0.9928983660086175,
+    "real_lixeira": 0.024430112760606797,
+    "spam_passou": 0.023958333333333335
+   },
+   {
+    "metodo": "kNN cosseno",
+    "mcc": 0.9266645721374012,
+    "pr_auc": 0.9766917380118472,
+    "real_lixeira": 0.036514793310850745,
+    "spam_passou": 0.01875
+   },
+   {
+    "metodo": "Naive Bayes",
+    "mcc": 0.8687523070210892,
+    "pr_auc": 0.8888002697481923,
+    "real_lixeira": 0.0583896846643257,
+    "spam_passou": 0.05125
+   }
+  ],
+  "comparacao": [
+   {
+    "A": "Stacking 7",
+    "B": "LinearSVC",
+    "dif": 0.013361884144516518,
+    "t": 4.137195541417547,
+    "p": 0.0005601048842774625,
+    "P_A_melhor": 0.8445723266646347,
+    "P_equivalentes": 0.15542731293730183,
+    "P_B_melhor": 3.603980635036308e-07,
+    "p_holm": 0.0005601048842774625
+   }
+  ],
+  "externo_exp02": [
+   {
+    "modelo": "LinearSVC",
+    "mcc": 0.8206844086821663,
+    "pr_auc": 0.978933185734755,
+    "real_lixeira": 0.16136866190989976,
+    "spam_passou": 0.02215878595977035
+   },
+   {
+    "modelo": "Reg. Logística",
+    "mcc": 0.8182804724682274,
+    "pr_auc": 0.9795689001597403,
+    "real_lixeira": 0.16660799472743637,
+    "spam_passou": 0.01990528431123136
+   },
+   {
+    "modelo": "Stacking 4 (LR+NB+RF+LGBM)",
+    "mcc": 0.844156857061791,
+    "pr_auc": 0.9851091633255014,
+    "real_lixeira": 0.12965638785200953,
+    "spam_passou": 0.029718151779584822
+   },
+   {
+    "modelo": "Stacking 7 (1 por família)",
+    "mcc": 0.8717372184348436,
+    "pr_auc": 0.9831552035814793,
+    "real_lixeira": 0.08836444087087707,
+    "spam_passou": 0.029384590755275535
+   }
+  ]
+ },
+ "fonte": "scripts/04_stacking.py"
+}

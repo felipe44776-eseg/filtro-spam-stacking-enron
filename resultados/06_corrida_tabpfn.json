@@ -1,0 +1,301 @@
+{
+ "corrida": {
+  "resumo": [
+   {
+    "etapa": "corrida",
+    "candidato": "#1",
+    "mcc": 0.9754114763903742,
+    "mcc_custo": 0.966182468366332,
+    "custo_por_mil": 39.03419612241441
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#10",
+    "mcc": 0.9751026924295212,
+    "mcc_custo": 0.9552691286144807,
+    "custo_por_mil": 38.677718778659845
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#2",
+    "mcc": 0.9768630374767924,
+    "mcc_custo": 0.9596944719452065,
+    "custo_por_mil": 39.76263077651017
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#3",
+    "mcc": 0.9759837300281294,
+    "mcc_custo": 0.9650040371676795,
+    "custo_por_mil": 39.517872059536536
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#4",
+    "mcc": 0.9768582876519222,
+    "mcc_custo": 0.9596930500064442,
+    "custo_por_mil": 39.76219266424829
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#5 (GA exp. 03)",
+    "mcc": 0.9759924058927794,
+    "mcc_custo": 0.9615004723944873,
+    "custo_por_mil": 39.03638668372384
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#6",
+    "mcc": 0.9765836006172645,
+    "mcc_custo": 0.9626695655921559,
+    "custo_por_mil": 38.552710746601704
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#7",
+    "mcc": 0.9759924058927794,
+    "mcc_custo": 0.9615004723944873,
+    "custo_por_mil": 39.03638668372384
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#8",
+    "mcc": 0.9763034357548239,
+    "mcc_custo": 0.9650136393346376,
+    "custo_por_mil": 37.5860890594606
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "#9",
+    "mcc": 0.97654647853401,
+    "mcc_custo": 0.9620814297149843,
+    "custo_por_mil": 38.7946947525834
+   },
+   {
+    "etapa": "corrida",
+    "candidato": "padrão",
+    "mcc": 0.9734500966240892,
+    "mcc_custo": 0.9511761460110467,
+    "custo_por_mil": 44.23254414711225
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#1",
+    "mcc": 0.9709997319183594,
+    "mcc_custo": 0.9611884787829507,
+    "custo_por_mil": 36.256564382057256
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#10",
+    "mcc": 0.9736486592016359,
+    "mcc_custo": 0.9579546903934553,
+    "custo_por_mil": 36.61727681101006
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#2",
+    "mcc": 0.9712928446652771,
+    "mcc_custo": 0.9615300758443377,
+    "custo_por_mil": 37.10168293523533
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#3",
+    "mcc": 0.9730295386015001,
+    "mcc_custo": 0.9621110467633279,
+    "custo_por_mil": 36.86028307893615
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#4",
+    "mcc": 0.970993165668026,
+    "mcc_custo": 0.9568456491216135,
+    "custo_por_mil": 35.169315785476876
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#5 (GA exp. 03)",
+    "mcc": 0.9727344639779612,
+    "mcc_custo": 0.961546346394097,
+    "custo_por_mil": 34.1993352376613
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#6",
+    "mcc": 0.9727326075171383,
+    "mcc_custo": 0.9615427637235985,
+    "custo_por_mil": 34.19948127508193
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#7",
+    "mcc": 0.9727344639779612,
+    "mcc_custo": 0.961546346394097,
+    "custo_por_mil": 34.1993352376613
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#8",
+    "mcc": 0.9733077182165777,
+    "mcc_custo": 0.9594693328959222,
+    "custo_por_mil": 36.979741689010396
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "#9",
+    "mcc": 0.973616622815175,
+    "mcc_custo": 0.9615114290833533,
+    "custo_por_mil": 36.13316276162604
+   },
+   {
+    "etapa": "verificação",
+    "candidato": "padrão",
+    "mcc": 0.9733457011846859,
+    "mcc_custo": 0.9597174109743432,
+    "custo_por_mil": 38.79352645321838
+   }
+  ],
+  "decisao": "Especialista = configuração do GA do experimento 03 (#5), definida antes da corrida"
+ },
+ "tabpfn": {
+  "versao_nuvem": "TabPFN-3.5-Plus",
+  "versao_local": "TabPFN-3.5-Fast",
+  "interno": [
+   {
+    "metodo": "Stacking 7 especialista",
+    "mcc": 0.9743634349353704,
+    "pr_auc": 0.9975601105628881,
+    "mcc_custo": 0.961523409394292,
+    "custo_por_mil": 36.61786096069257
+   },
+   {
+    "metodo": "Stacking 8 especialista (+TabPFN)",
+    "mcc": 0.9746623491958342,
+    "pr_auc": 0.9979083034476359,
+    "mcc_custo": 0.9572162857597941,
+    "custo_por_mil": 37.890504062761046
+   },
+   {
+    "metodo": "Stacking 8 padrão (+TabPFN)",
+    "mcc": 0.9726521231780533,
+    "pr_auc": 0.9977632690609921,
+    "mcc_custo": 0.9564709096558197,
+    "custo_por_mil": 38.19156020538703
+   },
+   {
+    "metodo": "Stacking 7 padrão",
+    "mcc": 0.9733978989043877,
+    "pr_auc": 0.9973253914235289,
+    "mcc_custo": 0.9554467784926949,
+    "custo_por_mil": 41.51303530016531
+   },
+   {
+    "metodo": "LinearSVC otimizado",
+    "mcc": 0.9626690072072869,
+    "pr_auc": 0.995649824793057,
+    "mcc_custo": 0.9405715790097933,
+    "custo_por_mil": 50.03402671900648
+   },
+   {
+    "metodo": "TabPFN-3.5-Plus",
+    "mcc": 0.9624591199909045,
+    "pr_auc": 0.9965389268617895,
+    "mcc_custo": 0.922418736758801,
+    "custo_por_mil": 55.594401509442775
+   }
+  ],
+  "externo": [
+   {
+    "metodo": "TabPFN-3.5-Plus",
+    "mcc": 0.8811883322608957,
+    "pr_auc": 0.9866641740616175,
+    "mcc_custo": 0.803118647387582,
+    "real_lixeira_custo": 0.008603294154033502,
+    "spam_passou_custo": 0.166274346031084,
+    "custo_por_mil": 125.99455970375143
+   },
+   {
+    "metodo": "Stacking 8 especialista (+TabPFN)",
+    "mcc": 0.8981578909821797,
+    "pr_auc": 0.9854682511658528,
+    "mcc_custo": 0.8734631385814493,
+    "real_lixeira_custo": 0.01864072970834849,
+    "spam_passou_custo": 0.0850704012056931,
+    "custo_por_mil": 130.19120409328724
+   },
+   {
+    "metodo": "LinearSVC otimizado",
+    "mcc": 0.8245730506068518,
+    "pr_auc": 0.9790166218837293,
+    "mcc_custo": 0.8290182035729036,
+    "real_lixeira_custo": 0.015340493741684395,
+    "spam_passou_custo": 0.1293165081382496,
+    "custo_por_mil": 135.84149878497828
+   },
+   {
+    "metodo": "Stacking 8 padrão (+TabPFN)",
+    "mcc": 0.8861079531709428,
+    "pr_auc": 0.9857405791123531,
+    "mcc_custo": 0.8816755826220367,
+    "real_lixeira_custo": 0.021818189208862575,
+    "spam_passou_custo": 0.07455371340866913,
+    "custo_por_mil": 138.49550445879655
+   },
+   {
+    "metodo": "Stacking 7 padrão",
+    "mcc": 0.8717372184348436,
+    "pr_auc": 0.9831539916233643,
+    "mcc_custo": 0.8908949164874673,
+    "real_lixeira_custo": 0.032255420021850646,
+    "spam_passou_custo": 0.05433788367823328,
+    "custo_por_mil": 177.45264644656623
+   },
+   {
+    "metodo": "Stacking 7 especialista",
+    "mcc": 0.8779561610980403,
+    "pr_auc": 0.982802044177074,
+    "mcc_custo": 0.8944315303403106,
+    "real_lixeira_custo": 0.04042316144673365,
+    "spam_passou_custo": 0.04403435259965074,
+    "custo_por_mil": 207.64957027676496
+   }
+  ],
+  "local_x_nuvem": {
+   "tabela": [
+    {
+     "metodo": "Stacking 7 padrão",
+     "mcc": 0.9720108273744579,
+     "pr_auc": 0.9968707534644201,
+     "custo_por_mil": 46.89319991354584
+    },
+    {
+     "metodo": "Stacking 8 padrão + TabPFN-3.5-Fast (local)",
+     "mcc": 0.9725383601053487,
+     "pr_auc": 0.9969338359298907,
+     "custo_por_mil": 42.783998971896565
+    },
+    {
+     "metodo": "Stacking 8 padrão + TabPFN-3.5-Plus (nuvem)",
+     "mcc": 0.9713913272946939,
+     "pr_auc": 0.9975100627308386,
+     "custo_por_mil": 47.135914106630686
+    },
+    {
+     "metodo": "TabPFN-3.5-Fast (local)",
+     "mcc": 0.9565145760876209,
+     "pr_auc": 0.9960716172565819,
+     "custo_por_mil": 55.35869711254812
+    },
+    {
+     "metodo": "TabPFN-3.5-Plus (nuvem)",
+     "mcc": 0.9612834277196329,
+     "pr_auc": 0.9963472970268598,
+     "custo_por_mil": 64.05902248392128
+    }
+   ],
+   "correlacao_notas": 0.993
+  }
+ },
+ "fonte": "scripts/06_corrida_e_tabpfn.py"
+}

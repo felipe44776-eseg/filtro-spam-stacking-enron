@@ -1,0 +1,24 @@
+16:23:59 inicio | python 3.11.9 | sklearn 1.9.1 | SMOKE=False
+16:24:00 desenvolvimento 4137 | teste trancado 1035 (735 reais, 300 spam)
+16:24:01 busca: 600 tarefas, 600 pendentes
+16:27:07 busca: bloco 1/8 ok | 75 tarefas | 4 em paralelo | RAM livre 5.2 GB | 186s (total 186s)
+16:31:06 busca: bloco 2/8 ok | 75 tarefas | 3 em paralelo | RAM livre 4.7 GB | 239s (total 425s)
+16:34:53 busca: bloco 3/8 ok | 75 tarefas | 3 em paralelo | RAM livre 4.7 GB | 226s (total 652s)
+16:39:19 busca: bloco 4/8 ok | 75 tarefas | 3 em paralelo | RAM livre 4.6 GB | 266s (total 918s)
+16:42:36 busca: bloco 5/8 ok | 75 tarefas | 3 em paralelo | RAM livre 4.7 GB | 197s (total 1115s)
+16:46:37 busca: bloco 6/8 ok | 75 tarefas | 3 em paralelo | RAM livre 4.7 GB | 241s (total 1356s)
+16:50:54 busca: bloco 7/8 ok | 75 tarefas | 3 em paralelo | RAM livre 4.6 GB | 257s (total 1613s)
+16:54:55 busca: bloco 8/8 ok | 75 tarefas | 3 em paralelo | RAM livre 4.7 GB | 241s (total 1854s)
+16:56:32 GA: 857 avaliações únicas em 86s
+16:56:36 confirmação: 320 tarefas, 320 pendentes
+17:00:27 confirmação: bloco 1/4 ok | 80 tarefas | 3 em paralelo | RAM livre 4.7 GB | 231s (total 231s)
+17:06:41 confirmação: bloco 2/4 ok | 80 tarefas | 3 em paralelo | RAM livre 4.6 GB | 374s (total 604s)
+17:11:33 confirmação: bloco 3/4 ok | 80 tarefas | 3 em paralelo | RAM livre 4.6 GB | 292s (total 897s)
+17:19:14 confirmação: bloco 4/4 ok | 80 tarefas | 3 em paralelo | RAM livre 4.4 GB | 461s (total 1358s)
+17:19:22 teste trancado: 16 tarefas, 16 pendentes
+17:20:12 teste trancado: bloco 1/2 ok | 8 tarefas | 3 em paralelo | RAM livre 4.2 GB | 49s (total 49s)
+17:21:39 teste trancado: bloco 2/2 ok | 8 tarefas | 3 em paralelo | RAM livre 4.4 GB | 87s (total 136s)
+17:21:42 externo: 16 tarefas, 16 pendentes
+17:22:45 externo: bloco 1/2 ok | 8 tarefas | 3 em paralelo | RAM livre 4.1 GB | 63s (total 63s)
+17:24:41 externo: bloco 2/2 ok | 8 tarefas | 3 em paralelo | RAM livre 4.2 GB | 116s (total 179s)
+17:24:43 fim

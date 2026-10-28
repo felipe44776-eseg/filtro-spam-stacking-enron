@@ -1,0 +1,8 @@
+# TabPFN-3.5 em CPU, no MESMO ambiente do requirements.txt (opcional).
+# Serve só para refazer a réplica local do experimento 05 (cerca de 3 h em CPU para 5 divisões).
+# Exige conta na Prior Labs, licença aceita e a chave na variável TABPFN_TOKEN (ver dados/LEIA-ME.md).
+# Linux/macOS: use o PyTorch só de CPU (cerca de 200 MB em vez de cerca de 2 GB):
+#   pip install -r requirements-tabpfn-local.txt --extra-index-url https://download.pytorch.org/whl/cpu
+tabpfn==9.2.0
+torch==2.14.1
+huggingface_hub==2.3.0

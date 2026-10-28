@@ -1,0 +1,753 @@
+{
+ "contra_estudo": {
+  "permutacao": {
+   "mcc_real": 0.9612455166425995,
+   "mcc_permutado": [
+    0.00393286252251755,
+    -0.0035013150165773927,
+    -0.01388005595847933,
+    0.0019293273277645572,
+    0.0105811824876231,
+    -0.01060025932292156,
+    -0.006308926582194426,
+    -0.0022889021713012017,
+    0.014108625399741614,
+    -0.012321062505894749,
+    0.004517692577238608,
+    -0.004209187991287411,
+    0.009117257139718346,
+    0.022721202450908824,
+    0.003871412488448646,
+    -0.02791785898011128,
+    0.014341605772755972,
+    -0.0339443692098801,
+    -0.02904870002892305,
+    0.03102701942704806,
+    0.009578353424694241,
+    0.016845643559042677,
+    -0.011449192441544208,
+    0.03125614897027058,
+    0.009702551717737788,
+    -0.003938671706496103,
+    0.0006488368555383423,
+    -0.015798069093587795,
+    0.009402275375307937,
+    -0.028379678897952308
+   ],
+   "p": 0.03225806451612903
+  },
+  "ablacao": [
+   {
+    "variante": "todas as 3000 colunas",
+    "mcc_esta_caixa": 0.9612455166425995,
+    "mcc_enron2_6": 0.8528462035474137,
+    "pr_auc_enron2_6": 0.9887272433130783,
+    "mcc_spamassassin": 0.41051550060942016,
+    "pr_auc_spamassassin": 0.7955852944017556
+   },
+   {
+    "variante": "sem as 35 palavras da Enron",
+    "mcc_esta_caixa": 0.9589575812096541,
+    "mcc_enron2_6": 0.8473108843495761,
+    "pr_auc_enron2_6": 0.9869650050845493,
+    "mcc_spamassassin": 0.46001826292952713,
+    "pr_auc_spamassassin": 0.7989033070997531
+   },
+   {
+    "variante": "sem as da Enron e sem 1-2 letras",
+    "mcc_esta_caixa": 0.9525766338697634,
+    "mcc_enron2_6": 0.8321319674205468,
+    "pr_auc_enron2_6": 0.9840808147429818,
+    "mcc_spamassassin": 0.47847721164183404,
+    "pr_auc_spamassassin": 0.7732385724496412
+   }
+  ],
+  "palavras_enron": [
+   "enron",
+   "daren",
+   "farmer",
+   "hpl",
+   "sitara",
+   "mmbtu",
+   "ect",
+   "hou",
+   "melissa",
+   "cotten",
+   "chokshi",
+   "tenaska",
+   "forwarded",
+   "paliourg",
+   "clynes",
+   "pat",
+   "ami",
+   "gary",
+   "robert",
+   "smith",
+   "george",
+   "mary",
+   "noms",
+   "nom",
+   "actuals",
+   "xls",
+   "meter",
+   "teco",
+   "volumes",
+   "nomination",
+   "btu",
+   "aimee",
+   "lauri",
+   "stacey",
+   "susan"
+  ],
+  "curva_aprendizado": [
+   {
+    "metodo": "LinearSVC",
+    "n": 250,
+    "mean": 0.8817449270361065,
+    "std": 0.045377084798616935
+   },
+   {
+    "metodo": "LinearSVC",
+    "n": 500,
+    "mean": 0.9042900178360551,
+    "std": 0.034900682915748535
+   },
+   {
+    "metodo": "LinearSVC",
+    "n": 1000,
+    "mean": 0.9362774183012762,
+    "std": 0.006124005233048484
+   },
+   {
+    "metodo": "LinearSVC",
+    "n": 2000,
+    "mean": 0.9504265204632854,
+    "std": 0.015194954090644202
+   },
+   {
+    "metodo": "LinearSVC",
+    "n": 3310,
+    "mean": 0.9577315617981087,
+    "std": 0.012500352815549969
+   },
+   {
+    "metodo": "Reg. Logística",
+    "n": 250,
+    "mean": 0.8789101229387125,
+    "std": 0.04563428369649328
+   },
+   {
+    "metodo": "Reg. Logística",
+    "n": 500,
+    "mean": 0.9021997461432247,
+    "std": 0.042177078524969956
+   },
+   {
+    "metodo": "Reg. Logística",
+    "n": 1000,
+    "mean": 0.9312720410309749,
+    "std": 0.009756466724641713
+   },
+   {
+    "metodo": "Reg. Logística",
+    "n": 2000,
+    "mean": 0.9463377729970105,
+    "std": 0.012770352804125739
+   },
+   {
+    "metodo": "Reg. Logística",
+    "n": 3310,
+    "mean": 0.9511787326913022,
+    "std": 0.015647674252597506
+   },
+   {
+    "metodo": "Stacking 7 padrão",
+    "n": 250,
+    "mean": 0.8765387385817839,
+    "std": 0.04347722196709537
+   },
+   {
+    "metodo": "Stacking 7 padrão",
+    "n": 500,
+    "mean": 0.9207473266994952,
+    "std": 0.037836255683248325
+   },
+   {
+    "metodo": "Stacking 7 padrão",
+    "n": 1000,
+    "mean": 0.9552805668529345,
+    "std": 0.00883714716579955
+   },
+   {
+    "metodo": "Stacking 7 padrão",
+    "n": 2000,
+    "mean": 0.9610743753042857,
+    "std": 0.011844076681720163
+   },
+   {
+    "metodo": "Stacking 7 padrão",
+    "n": 3310,
+    "mean": 0.9720108273744579,
+    "std": 0.011266498259653184
+   },
+   {
+    "metodo": "TabPFN-3.5-Plus",
+    "n": 250,
+    "mean": 0.8799991626106717,
+    "std": 0.03454939582201732
+   },
+   {
+    "metodo": "TabPFN-3.5-Plus",
+    "n": 500,
+    "mean": 0.907689275274618,
+    "std": 0.036390499868198124
+   },
+   {
+    "metodo": "TabPFN-3.5-Plus",
+    "n": 1000,
+    "mean": 0.9393045620772625,
+    "std": 0.015620742352115297
+   },
+   {
+    "metodo": "TabPFN-3.5-Plus",
+    "n": 2000,
+    "mean": 0.9545274655289477,
+    "std": 0.0066110790356204135
+   },
+   {
+    "metodo": "TabPFN-3.5-Plus",
+    "n": 3310,
+    "mean": 0.9612834277196329,
+    "std": 0.006804238799515425
+   },
+   {
+    "metodo": "kNN cosseno",
+    "n": 250,
+    "mean": 0.7874347952753294,
+    "std": 0.044540452538723775
+   },
+   {
+    "metodo": "kNN cosseno",
+    "n": 500,
+    "mean": 0.8332016225639055,
+    "std": 0.049255546998248856
+   },
+   {
+    "metodo": "kNN cosseno",
+    "n": 1000,
+    "mean": 0.8826703872920987,
+    "std": 0.015199955808346282
+   },
+   {
+    "metodo": "kNN cosseno",
+    "n": 2000,
+    "mean": 0.9098693777832516,
+    "std": 0.014862724593236695
+   },
+   {
+    "metodo": "kNN cosseno",
+    "n": 3310,
+    "mean": 0.9218348247838083,
+    "std": 0.015908829910649947
+   }
+  ],
+  "sensibilidade_custo": [
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 1,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 69.37983162772733,
+    "real_lixeira": 0.13941599036662647,
+    "spam_passou": 0.03634469895541471
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 1,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 69.15475984534035,
+    "real_lixeira": 0.1463705080438505,
+    "spam_passou": 0.029079529579697706
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 1,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 43.120812165397396,
+    "real_lixeira": 0.04042316144673365,
+    "spam_passou": 0.04403435259965074
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 1,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 45.26202462505215,
+    "real_lixeira": 0.057083015519674374,
+    "spam_passou": 0.03677641955850035
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 3,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 85.22421109120856,
+    "real_lixeira": 0.03439354913480414,
+    "spam_passou": 0.07468710633176182
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 3,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 83.77640938322067,
+    "real_lixeira": 0.033813928218461076,
+    "spam_passou": 0.0755543021855215
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 3,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 84.2530016932393,
+    "real_lixeira": 0.04042316144673365,
+    "spam_passou": 0.04403435259965074
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 3,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 83.0993490074712,
+    "real_lixeira": 0.03894322725934066,
+    "spam_passou": 0.0460657731424969
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 9,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 135.84149878497828,
+    "real_lixeira": 0.015340493741684395,
+    "spam_passou": 0.1293165081382496
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 9,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 156.9389266490603,
+    "real_lixeira": 0.02479475924924502,
+    "spam_passou": 0.11704958357349264
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 9,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 207.64957027676496,
+    "real_lixeira": 0.04042316144673365,
+    "spam_passou": 0.04403435259965074
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 9,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 177.45264644656623,
+    "real_lixeira": 0.032255420021850646,
+    "spam_passou": 0.05433788367823328
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 20,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 218.5608771232114,
+    "real_lixeira": 0.015340493741684395,
+    "spam_passou": 0.1293165081382496
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 20,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 212.0278023433969,
+    "real_lixeira": 0.013368209473391814,
+    "spam_passou": 0.149945293971824
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 20,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 197.27398120050856,
+    "real_lixeira": 0.012667723378763918,
+    "spam_passou": 0.13982479676799062
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 20,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 182.7392530765331,
+    "real_lixeira": 0.009834794640693612,
+    "spam_passou": 0.17328299712660206
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 1,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 15.22878222315686,
+    "real_lixeira": 0.01089594270416855,
+    "spam_passou": 0.02583333333333333
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 1,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 15.651487537166522,
+    "real_lixeira": 0.01183204116399541,
+    "spam_passou": 0.025
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 1,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 10.454672905385276,
+    "real_lixeira": 0.006639316714760861,
+    "spam_passou": 0.019791666666666666
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 1,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 11.24006215352622,
+    "real_lixeira": 0.008511658496447982,
+    "spam_passou": 0.017916666666666668
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 3,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 27.3743494032911,
+    "real_lixeira": 0.007149810520460313,
+    "spam_passou": 0.041875
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 3,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 26.649200591159477,
+    "real_lixeira": 0.007149520796393515,
+    "spam_passou": 0.039375
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 3,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 19.155509407730637,
+    "real_lixeira": 0.004850705188378588,
+    "spam_passou": 0.030416666666666665
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 3,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 21.87487221725695,
+    "real_lixeira": 0.005617170207094763,
+    "spam_passou": 0.034166666666666665
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 9,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 50.03402671900648,
+    "real_lixeira": 0.004510858858023619,
+    "spam_passou": 0.073125
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 9,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 52.02933599705589,
+    "real_lixeira": 0.0047665403469735424,
+    "spam_passou": 0.074375
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 9,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 36.61786096069257,
+    "real_lixeira": 0.003659504687735401,
+    "spam_passou": 0.045625
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 9,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 41.51303530016531,
+    "real_lixeira": 0.00408510934186281,
+    "spam_passou": 0.053125
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 20,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 79.88480568260812,
+    "real_lixeira": 0.0029789428548250645,
+    "spam_passou": 0.12958333333333333
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 20,
+    "metodo": "LinearSVC padrão",
+    "custo_por_mil": 87.79886558131656,
+    "real_lixeira": 0.003574615536163358,
+    "spam_passou": 0.12770833333333334
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 20,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 57.77211152585738,
+    "real_lixeira": 0.0017874526301150783,
+    "spam_passou": 0.11166666666666666
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 20,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 67.07673974379195,
+    "real_lixeira": 0.0023837047595869692,
+    "spam_passou": 0.11458333333333333
+   }
+  ],
+  "vencedor_por_custo": [
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 1,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 43.120812165397396
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 3,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 83.0993490074712
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 9,
+    "metodo": "LinearSVC otimizado",
+    "custo_por_mil": 135.84149878497828
+   },
+   {
+    "onde": "Enron2-6",
+    "custo_fp": 20,
+    "metodo": "Stacking 7 padrão",
+    "custo_por_mil": 182.7392530765331
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 1,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 10.454672905385276
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 3,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 19.155509407730637
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 9,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 36.61786096069257
+   },
+   {
+    "onde": "esta caixa (20 folds)",
+    "custo_fp": 20,
+    "metodo": "Stacking 7 especialista",
+    "custo_por_mil": 57.77211152585738
+   }
+  ],
+  "emails_reais_na_lixeira": [
+   {
+    "divisao": "c201_4",
+    "linha_csv": 1286,
+    "prob_spam": 0.9964747386678201,
+    "texto": "Subject: re : hoop it up\n281 . 343 . 8233"
+   },
+   {
+    "divisao": "c201_3",
+    "linha_csv": 339,
+    "prob_spam": 0.9864102795063473,
+    "texto": "Subject: fw : whose needs ? ? ? ? ? ? ? ?\n> perfect ! ! ! ! ! ! ! ! !\n>\n> * * proprietary * *\n>\n> a husband and wife are getting all snugly\n> > > in bed . the passion is heating up . but then the wife stops and says\n> \" i\n> > > don ' t feel like it , i just want you to hold me . \" the husband says\n> > > \" what ? ? \" the wife explains that he must not be in tune with her\n> > emotional\n> > > needs a"
+   },
+   {
+    "divisao": "c201_2",
+    "linha_csv": 3519,
+    "prob_spam": 0.9861938076164899,
+    "texto": "Subject: reminder - logistics - happy hour\nin celebration of everyone ' s hard work and dedication .\ncongratulations on your promotions ! ! ! ! !\nwelcome all new hires ! ! ! ! ! ! !\nand good luck to those leaving us ."
+   },
+   {
+    "divisao": "c201_4",
+    "linha_csv": 414,
+    "prob_spam": 0.9782556732433224,
+    "texto": "Subject: http : / / www . pge - texas . com / www / gtt . nsf / htmlmedia / operations . html\n"
+   },
+   {
+    "divisao": "c201_1",
+    "linha_csv": 2918,
+    "prob_spam": 0.9762329314261982,
+    "texto": "Subject: welcome to the next wave in digital music\nif you have trouble viewing this page , please click here . to unsubscribe ,\nplease click here .\n[ image ]\nnow , you can have your music your way \u0001 * online and off . plus , get a $ 50 rebate\nby mail .\nmusic online has always played by online rules \u0001 * big , slow \u0001 ) downloading files ,\ncomplications in organizing song lists and worse \u0001 * you were"
+   },
+   {
+    "divisao": "c201_3",
+    "linha_csv": 490,
+    "prob_spam": 0.9758617327275753,
+    "texto": "Subject: half day of vac on 2 / 28\n12 . 20 dentist appt on 2 / 29"
+   },
+   {
+    "divisao": "c201_3",
+    "linha_csv": 2341,
+    "prob_spam": 0.9700775540675978,
+    "texto": "Subject: digitize your memories with compaq scanners\ntired of searching for your photos or important files ?\nquit looking . we have a solution . we \u000f ' re offering a compaq tested and\napproved agfa ( tm ) snapscan touch usb scanner for just $ 99 .\nor for sharper photo reproduction , an epson ( tm ) perfection 1200 u\nusb scanner is available for just $ 199 .\npicture having all your photos on your h"
+   },
+   {
+    "divisao": "c201_4",
+    "linha_csv": 1877,
+    "prob_spam": 0.9459916780554581,
+    "texto": "Subject: re : table and buffet\nis it very dark in color ? and how big around is it ?"
+   },
+   {
+    "divisao": "c201_3",
+    "linha_csv": 410,
+    "prob_spam": 0.9421049446112577,
+    "texto": "Subject: valentines day help\nred - neck valentine ' s love poem\ncollards is green\nmy dog ' s name is blue\nand i ' m so lucky\nto have a sweet thang like you .\nyore hair is like cornsilk\na - flapping in the breeze\nsofter than old blue ' s\nand without all them fleas .\nyou move like the bass ,\nwhich excite me in may .\nyou ain ' t got no scales\nbut i luv you anyway .\nyo ' re as satisfy ' n as okry\njist"
+   },
+   {
+    "divisao": "c201_4",
+    "linha_csv": 3423,
+    "prob_spam": 0.9350879315536471,
+    "texto": "Subject: hunter singing at christmas program\nhere ' s a video of the three and four year old kids singing at the christmas\nprogram at church last year .\nit ' s about a minute and half in length .\nhunter drowns out the other kids with his monotonal singing .\nhe ' s holding a staff and is dressed as a shepherd with a black headband on\nthe row below the back row angels .\nto view this video , you ' ll"
+   }
+  ],
+  "n_emails_reais_na_lixeira": 15,
+  "pesos_palavras": {
+   "spam": [
+    {
+     "palavra": "ali",
+     "peso": 4.427077770233154
+    },
+    {
+     "palavra": "http",
+     "peso": 4.309560775756836
+    },
+    {
+     "palavra": "money",
+     "peso": 4.185002326965332
+    },
+    {
+     "palavra": "remove",
+     "peso": 3.768463373184204
+    },
+    {
+     "palavra": "sex",
+     "peso": 3.599872589111328
+    },
+    {
+     "palavra": "sec",
+     "peso": 3.4803006649017334
+    },
+    {
+     "palavra": "our",
+     "peso": 3.4405813217163086
+    },
+    {
+     "palavra": "fact",
+     "peso": 3.3482415676116943
+    },
+    {
+     "palavra": "pain",
+     "peso": 3.342886447906494
+    },
+    {
+     "palavra": "meds",
+     "peso": 3.3302388191223145
+    },
+    {
+     "palavra": "mobile",
+     "peso": 3.1934609413146973
+    },
+    {
+     "palavra": "invest",
+     "peso": 3.1877739429473877
+    },
+    {
+     "palavra": "alt",
+     "peso": 3.1448092460632324
+    },
+    {
+     "palavra": "best",
+     "peso": 3.07916522026062
+    },
+    {
+     "palavra": "men",
+     "peso": 3.0780656337738037
+    }
+   ],
+   "email_real": [
+    {
+     "palavra": "enron",
+     "peso": -9.719712257385254
+    },
+    {
+     "palavra": "the",
+     "peso": -5.4753851890563965
+    },
+    {
+     "palavra": "deal",
+     "peso": -4.581770896911621
+    },
+    {
+     "palavra": "aren",
+     "peso": -4.57526159286499
+    },
+    {
+     "palavra": "daren",
+     "peso": -4.530666351318359
+    },
+    {
+     "palavra": "will",
+     "peso": -4.381653308868408
+    },
+    {
+     "palavra": "hpl",
+     "peso": -4.2789764404296875
+    },
+    {
+     "palavra": "attached",
+     "peso": -4.145120143890381
+    },
+    {
+     "palavra": "hotmail",
+     "peso": -4.080826282501221
+    },
+    {
+     "palavra": "gas",
+     "peso": -4.080212116241455
+    },
+    {
+     "palavra": "texas",
+     "peso": -4.0379414558410645
+    },
+    {
+     "palavra": "sitara",
+     "peso": -3.955232620239258
+    },
+    {
+     "palavra": "day",
+     "peso": -3.917327642440796
+    },
+    {
+     "palavra": "meter",
+     "peso": -3.793137788772583
+    },
+    {
+     "palavra": "question",
+     "peso": -3.730978488922119
+    }
+   ]
+  }
+ },
+ "fonte": "scripts/07_contra_estudo.py"
+}

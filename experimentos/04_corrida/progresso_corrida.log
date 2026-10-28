@@ -1,0 +1,12 @@
+17:35:23 inicio | python 3.11.9 | sklearn 1.9.1 | SMOKE=False
+17:35:24 desenvolvimento 4137 | teste trancado 1035 (735 reais, 300 spam)
+17:35:25 busca: 600 tarefas, 0 pendentes
+17:37:01 GA: 857 avaliações únicas em 95s
+17:37:05 confirmação: 320 tarefas, 0 pendentes
+17:37:08 corrida: 11 candidatos, 23 configurações distintas de modelos de base
+17:37:08 corrida: 460 tarefas, 180 pendentes
+17:39:28 corrida: bloco 1/4 ok | 45 tarefas | 3 em paralelo | RAM livre 4.3 GB | 141s (total 141s)
+17:44:23 corrida: bloco 2/4 ok | 45 tarefas | 3 em paralelo | RAM livre 3.8 GB | 295s (total 436s)
+17:47:50 corrida: bloco 3/4 ok | 45 tarefas | 3 em paralelo | RAM livre 4.4 GB | 207s (total 643s)
+17:51:58 corrida: bloco 4/4 ok | 45 tarefas | 3 em paralelo | RAM livre 4.3 GB | 248s (total 891s)
+17:52:12 fim

@@ -1,0 +1,41 @@
+22:28:00 [     18s] inicio | tabpfn 9.2.0 (TabPFN-3.5-Fast, CPU) | 1 divisões | paralelo 1 | RAM livre 3.2 GB
+22:40:51 [    790s] c201_0 interno 1/5: treino 2647 | prevê 662 | 771s | RAM livre 7.4 GB
+22:40:51 [    790s] OK c201_0 (piloto) | RAM livre 7.4 GB
+22:40:51 [    790s] fim
+23:14:00 [     26s] inicio | tabpfn 9.2.0 (TabPFN-3.5-Fast, CPU) | 5 divisões | paralelo 1 | RAM livre 3.0 GB
+23:20:22 [    407s] c201_0 interno 1/5: treino 2647 | prevê 662 | 381s | RAM livre 7.3 GB
+23:26:32 [    778s] c201_0 interno 2/5: treino 2647 | prevê 662 | 370s | RAM livre 8.1 GB
+23:32:24 [   1130s] c201_0 interno 3/5: treino 2647 | prevê 662 | 352s | RAM livre 8.3 GB
+23:38:11 [   1477s] c201_0 interno 4/5: treino 2647 | prevê 662 | 347s | RAM livre 8.6 GB
+23:43:52 [   1818s] c201_0 interno 5/5: treino 2648 | prevê 661 | 341s | RAM livre 8.6 GB
+23:51:10 [   2256s] c201_0 final: treino 3309 | prevê 828 | 438s
+23:51:10 [   2256s] OK c201_0 (2230s) | RAM livre 8.3 GB
+23:57:00 [   2605s] c201_1 interno 1/5: treino 2648 | prevê 662 | 349s | RAM livre 8.5 GB
+00:02:54 [   2960s] c201_1 interno 2/5: treino 2648 | prevê 662 | 355s | RAM livre 8.5 GB
+00:08:48 [   3313s] c201_1 interno 3/5: treino 2648 | prevê 662 | 353s | RAM livre 8.6 GB
+00:14:52 [   3677s] c201_1 interno 4/5: treino 2648 | prevê 662 | 364s | RAM livre 8.5 GB
+00:20:57 [   4043s] c201_1 interno 5/5: treino 2648 | prevê 662 | 365s | RAM livre 8.2 GB
+00:28:48 [   4514s] c201_1 final: treino 3310 | prevê 827 | 471s
+00:28:49 [   4514s] OK c201_1 (2258s) | RAM livre 8.0 GB
+00:35:04 [   4890s] c201_2 interno 1/5: treino 2648 | prevê 662 | 375s | RAM livre 8.0 GB
+00:41:22 [   5267s] c201_2 interno 2/5: treino 2648 | prevê 662 | 377s | RAM livre 8.0 GB
+00:47:45 [   5651s] c201_2 interno 3/5: treino 2648 | prevê 662 | 384s | RAM livre 8.3 GB
+00:54:05 [   6031s] c201_2 interno 4/5: treino 2648 | prevê 662 | 380s | RAM livre 8.3 GB
+01:00:30 [   6416s] c201_2 interno 5/5: treino 2648 | prevê 662 | 385s | RAM livre 8.3 GB
+01:08:14 [   6879s] c201_2 final: treino 3310 | prevê 827 | 462s
+01:08:14 [   6879s] OK c201_2 (2364s) | RAM livre 8.8 GB
+01:14:22 [   7248s] c201_3 interno 1/5: treino 2648 | prevê 662 | 368s | RAM livre 8.7 GB
+01:20:26 [   7611s] c201_3 interno 2/5: treino 2648 | prevê 662 | 364s | RAM livre 8.7 GB
+01:26:21 [   7966s] c201_3 interno 3/5: treino 2648 | prevê 662 | 355s | RAM livre 8.7 GB
+01:32:23 [   8328s] c201_3 interno 4/5: treino 2648 | prevê 662 | 362s | RAM livre 8.8 GB
+01:38:23 [   8688s] c201_3 interno 5/5: treino 2648 | prevê 662 | 359s | RAM livre 8.9 GB
+01:45:55 [   9140s] c201_3 final: treino 3310 | prevê 827 | 452s
+01:45:55 [   9141s] OK c201_3 (2261s) | RAM livre 8.8 GB
+01:52:02 [   9507s] c201_4 interno 1/5: treino 2647 | prevê 662 | 366s | RAM livre 8.8 GB
+01:58:11 [   9876s] c201_4 interno 2/5: treino 2647 | prevê 662 | 369s | RAM livre 8.8 GB
+02:04:20 [  10245s] c201_4 interno 3/5: treino 2647 | prevê 662 | 369s | RAM livre 8.7 GB
+02:10:26 [  10612s] c201_4 interno 4/5: treino 2647 | prevê 662 | 366s | RAM livre 8.7 GB
+02:16:22 [  10967s] c201_4 interno 5/5: treino 2648 | prevê 661 | 355s | RAM livre 8.8 GB
+02:24:01 [  11426s] c201_4 final: treino 3309 | prevê 828 | 458s
+02:24:01 [  11427s] OK c201_4 (2285s) | RAM livre 8.8 GB
+02:24:01 [  11427s] fim

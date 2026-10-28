@@ -1,0 +1,103 @@
+{
+ "terceira_base": {
+  "base": "SpamAssassin public corpus 20030228 (easy_ham, easy_ham_2, hard_ham, spam, spam_2)",
+  "n": 6046,
+  "n_email_real": 4150,
+  "n_spam": 1896,
+  "copias_csv_removidas": 1,
+  "tem_tabpfn": true,
+  "metodos": [
+   {
+    "metodo": "TabPFN-3.5-Plus sozinho",
+    "mcc": 0.33706827681122675,
+    "pr_auc": 0.6345099192306989,
+    "real_lixeira": 0.4081927710843373,
+    "spam_passou": 0.2289029535864979,
+    "mcc_custo": 0.35666170195001806,
+    "real_lixeira_custo": 0.04602409638554217,
+    "spam_passou_custo": 0.6988396624472574,
+    "custo_por_mil": 503.47337082368506
+   },
+   {
+    "metodo": "LinearSVC padrão",
+    "mcc": 0.4904644569641831,
+    "pr_auc": 0.7699273510067921,
+    "real_lixeira": 0.36819277108433734,
+    "spam_passou": 0.10443037974683544,
+    "mcc_custo": 0.5526881217632776,
+    "real_lixeira_custo": 0.06289156626506025,
+    "spam_passou_custo": 0.4462025316455696,
+    "custo_por_mil": 528.4485610320874
+   },
+   {
+    "metodo": "Stacking 8 especialista (+TabPFN)",
+    "mcc": 0.2996143268992979,
+    "pr_auc": 0.6391593193713431,
+    "real_lixeira": 0.5036144578313253,
+    "spam_passou": 0.18037974683544303,
+    "mcc_custo": 0.3871934342750154,
+    "real_lixeira_custo": 0.13590361445783133,
+    "spam_passou_custo": 0.5031645569620253,
+    "custo_por_mil": 997.3536222295733
+   },
+   {
+    "metodo": "Stacking 8 padrão (+TabPFN)",
+    "mcc": 0.3142931495642684,
+    "pr_auc": 0.6682164267244203,
+    "real_lixeira": 0.5493975903614458,
+    "spam_passou": 0.12763713080168776,
+    "mcc_custo": 0.43706066460268217,
+    "real_lixeira_custo": 0.16048192771084338,
+    "spam_passou_custo": 0.4098101265822785,
+    "custo_por_mil": 1119.9139927224612
+   },
+   {
+    "metodo": "Stacking 7 padrão (Generalista atual)",
+    "mcc": 0.2758326252465484,
+    "pr_auc": 0.6841670011617627,
+    "real_lixeira": 0.6395180722891566,
+    "spam_passou": 0.09440928270042194,
+    "mcc_custo": 0.41493088921557086,
+    "real_lixeira_custo": 0.3074698795180723,
+    "spam_passou_custo": 0.2478902953586498,
+    "custo_por_mil": 1977.1749917300695
+   },
+   {
+    "metodo": "Stacking 7 especialista",
+    "mcc": 0.2693008356898048,
+    "pr_auc": 0.6524129406785542,
+    "real_lixeira": 0.5814457831325301,
+    "spam_passou": 0.145042194092827,
+    "mcc_custo": 0.35032241619830007,
+    "real_lixeira_custo": 0.3787951807228916,
+    "spam_passou_custo": 0.24367088607594936,
+    "custo_por_mil": 2416.4737016209065
+   }
+  ],
+  "decisao": {
+   "diferenca_custo": -857.2609990076082,
+   "ic95_custo": [
+    -929.2117756690974,
+    -789.3025188445152
+   ],
+   "p_reducao": 1.0,
+   "diferenca_mcc_custo": 0.022129775387111306,
+   "mcnemar": {
+    "so_stacking8_acerta": 611,
+    "so_stacking7_acerta": 308,
+    "p": 8.780356553511894e-24
+   },
+   "stacking8_vira_generalista": true
+  },
+  "controle_dentro_da_base": {
+   "mcc": 0.9675740920249761,
+   "pr_auc": 0.997620680550399
+  },
+  "cobertura_vocabulario": {
+   "Enron1 (treino)": 0.815788148695145,
+   "Enron3": 0.7721920800963383,
+   "SpamAssassin": 0.653853157581214
+  }
+ },
+ "fonte": "scripts/08_terceira_base.py"
+}

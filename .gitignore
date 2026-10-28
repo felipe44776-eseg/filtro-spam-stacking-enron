@@ -1,0 +1,38 @@
+# ambientes e caches do Python
+.venv/
+.venv-*/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
+build/
+
+# segredos e contexto local (a chave do TabPFN fica só na variável de ambiente TABPFN_TOKEN)
+.env
+*.env
+CLAUDE.md
+
+# material de terceiros que não redistribuímos
+# texto integral de artigos (direito autoral): ver a bibliografia
+experimentos/referencias/
+# enunciado do professor
+Data-Science-2-projeto-3-*.pdf
+
+# e-mails brutos de terceiros (copyright dos remetentes; cabeçalhos com endereços): só o link e as contagens
+dados/spamassassin/
+dados/brutos_aueb_raw/
+
+# filtros treinados (dezenas de MB): vão na página Releases do GitHub
+resultados/modelos/*.joblib
+
+# e-mails pessoais (Fase 11): nunca publicar
+minha_caixa/
+
+# arquivos temporários de execução
+*_tmp.npz
+experimentos/**/*.out
+experimentos/**/*.err
+
+# logs de execução locais (caminhos da máquina)
+resultados/*.log

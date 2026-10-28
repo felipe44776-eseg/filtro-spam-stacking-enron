@@ -1,0 +1,170 @@
+{
+ "base": {
+  "n_emails": 5172,
+  "n_email_real": 3672,
+  "n_spam": 1500,
+  "n_palavras": 3000,
+  "fracao_zeros": 0.943663895333849,
+  "palavras_distintas_mediana": 145.0,
+  "duplicatas_excedentes": 541,
+  "textos_distintos": 4631,
+  "fracao_duplicatas_email_real": 0.9279112754158965,
+  "grupos_rotulo_conflitante": 0,
+  "colunas_1_letra": 26,
+  "colunas_2_letras": 127,
+  "duplicatas_email_real": 502,
+  "duplicatas_spam": 39,
+  "acuracia_regra_copia_spam": 0.572892498066512,
+  "linhas_reproduzidas": 5172,
+  "origem": "Enron1 (caixa farmer-d + spams GP), corpus Enron-Spam da AUEB",
+  "contagem": "substring, sensível a maiúsculas, sobre o texto pré-processado da AUEB"
+ },
+ "metricas_didaticas": {
+  "dummy_acuracia": 0.7099767981438515
+ },
+ "palavras": {
+  "spam": [
+   {
+    "palavra": "drug",
+    "log_razao": 4.299550412849643
+   },
+   {
+    "palavra": "meds",
+    "log_razao": 4.290459441148391
+   },
+   {
+    "palavra": "viagra",
+    "log_razao": 4.2243976904702984
+   },
+   {
+    "palavra": "prescription",
+    "log_razao": 4.12859707969934
+   },
+   {
+    "palavra": "php",
+    "log_razao": 4.054679305829669
+   },
+   {
+    "palavra": "paliourg",
+    "log_razao": 4.054679305829669
+   },
+   {
+    "palavra": "drugs",
+    "log_razao": 4.0312864262549635
+   },
+   {
+    "palavra": "sex",
+    "log_razao": 4.0311028021830015
+   },
+   {
+    "palavra": "cheap",
+    "log_razao": 3.7895923739987163
+   },
+   {
+    "palavra": "rx",
+    "log_razao": 3.653968200701063
+   },
+   {
+    "palavra": "biz",
+    "log_razao": 3.5354865970805394
+   },
+   {
+    "palavra": "thousand",
+    "log_razao": 3.2058886293413895
+   }
+  ],
+  "email_real": [
+   {
+    "palavra": "enron",
+    "log_razao": -6.000189986065229
+   },
+   {
+    "palavra": "daren",
+    "log_razao": -5.640136317286712
+   },
+   {
+    "palavra": "mmbtu",
+    "log_razao": -5.056537174577617
+   },
+   {
+    "palavra": "forwarded",
+    "log_razao": -5.0037181797380335
+   },
+   {
+    "palavra": "volumes",
+    "log_razao": -4.787564361786472
+   },
+   {
+    "palavra": "sitara",
+    "log_razao": -4.712176405555607
+   },
+   {
+    "palavra": "hpl",
+    "log_razao": -4.513669733412512
+   },
+   {
+    "palavra": "actuals",
+    "log_razao": -4.332881015180828
+   },
+   {
+    "palavra": "nomination",
+    "log_razao": -4.269907674870173
+   },
+   {
+    "palavra": "melissa",
+    "log_razao": -4.254824377101007
+   },
+   {
+    "palavra": "noms",
+    "log_razao": -4.231355732172663
+   },
+   {
+    "palavra": "btu",
+    "log_razao": -3.9699904197852773
+   }
+  ]
+ },
+ "dominio": [
+  {
+   "palavra": "enron",
+   "fracao_email_real": 0.4025054466230937,
+   "fracao_spam": 0.0
+  },
+  {
+   "palavra": "ect",
+   "fracao_email_real": 1.0,
+   "fracao_spam": 1.0
+  },
+  {
+   "palavra": "hou",
+   "fracao_email_real": 0.4207516339869281,
+   "fracao_spam": 0.31133333333333335
+  },
+  {
+   "palavra": "hpl",
+   "fracao_email_real": 0.33360566448801743,
+   "fracao_spam": 0.0026666666666666666
+  },
+  {
+   "palavra": "daren",
+   "fracao_email_real": 0.28050108932461876,
+   "fracao_spam": 0.0
+  },
+  {
+   "palavra": "farmer",
+   "fracao_email_real": 0.18872549019607843,
+   "fracao_spam": 0.005333333333333333
+  },
+  {
+   "palavra": "meter",
+   "fracao_email_real": 0.22685185185185186,
+   "fracao_spam": 0.028
+  },
+  {
+   "palavra": "forwarded",
+   "fracao_email_real": 0.24727668845315903,
+   "fracao_spam": 0.0006666666666666666
+  }
+ ],
+ "fonte": "scripts/01_dados_e_qualidade.py"
+}

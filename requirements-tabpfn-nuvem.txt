@@ -1,0 +1,9 @@
+# Ambiente SEPARADO para o TabPFN na nuvem (TabPFN-3.5-Plus via tabpfn-client).
+# Separado porque o tabpfn-client exige pandas 2.x e scikit-learn 1.9.0, que mudariam o ambiente principal.
+#   python -m venv .venv-tabpfn-nuvem
+#   .venv-tabpfn-nuvem\Scripts\python.exe -m pip install -r requirements-tabpfn-nuvem.txt
+tabpfn-client==0.6.1
+tabpfn-common-utils==0.2.19
+numpy==2.4.6
+pandas==2.3.3
+scikit-learn==1.9.0
