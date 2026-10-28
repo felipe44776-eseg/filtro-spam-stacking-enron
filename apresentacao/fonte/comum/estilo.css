@@ -93,8 +93,22 @@ abbr[data-g] { text-decoration: underline dotted var(--tinta-muda); text-underli
 
 /* ------------------------------------------------------------------ tabela */
 .tabela { width: 100%; border-collapse: collapse; font-size: 14px; color: var(--tinta-2); font-variant-numeric: tabular-nums; }
-.tabela th { text-align: left; font-size: 12px; font-weight: 650; color: var(--tinta-muda); text-transform: uppercase; letter-spacing: .05em; padding: 6px 8px; border-bottom: 1px solid var(--eixo); }
+.tabela th { text-align: left; font-size: 13px; font-weight: 650; color: var(--tinta-muda); padding: 6px 8px; border-bottom: 1px solid var(--eixo); vertical-align: bottom; }
 .tabela td { padding: 7px 8px; border-bottom: 1px solid var(--grade); }
+.tabela.grande { font-size: 16px; }
+.tabela.grande td { padding: 11px 8px; }
+.nb { white-space: nowrap; }
+.licoes { display: grid; grid-template-rows: repeat(5, 1fr); gap: 10px; height: 100%; }
+.licao { display: grid; grid-template-columns: 230px 1fr; gap: 24px; align-items: center; border-top: 1px solid var(--grade); padding-top: 8px; }
+.licao .numero { font-size: 36px; }
+.licao .numero small { display: block; font-size: 13px; font-weight: 400; color: var(--tinta-muda); letter-spacing: 0; margin-top: 2px; }
+.licao h3 { font-size: 19px; font-weight: 650; margin-bottom: 3px; }
+.licao p { font-size: 16px; line-height: 1.4; color: var(--tinta-2); }
+.matriz { display: grid; grid-template-columns: auto 1fr 1fr; gap: 4px; font-size: 14px; }
+.matriz > div { padding: 8px 10px; border-radius: 6px; background: var(--papel); border: 1px solid var(--grade); line-height: 1.3; }
+.matriz > .cab-m { background: none; border: 0; font-size: 12px; color: var(--tinta-muda); padding: 2px 6px; align-self: end; }
+.matriz > .erro { background: #fff4ee; border-color: #f6d3c2; }
+.matriz b { color: var(--tinta); }
 .tabela td.n, .tabela th.n { text-align: right; }
 .tabela tr.forte td { color: var(--tinta); font-weight: 600; }
 
@@ -147,8 +161,9 @@ abbr[data-g] { text-decoration: underline dotted var(--tinta-muda); text-underli
 .cam-controles { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 .cam-controles .rot { font-size: 12px; color: var(--tinta-muda); text-transform: uppercase; letter-spacing: .08em; margin-right: 4px; }
 .cam-grade { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap: 12px 30px; }
-.cam-card { position: relative; background: var(--papel); border: 1px solid var(--grade); border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; overflow: hidden; }
-.cam-card::after { content: "→"; position: absolute; right: -24px; top: 50%; transform: translateY(-50%); color: var(--tinta-muda); font-size: 18px; }
+.cam-card { position: relative; background: var(--papel); border: 1px solid var(--grade); border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; min-width: 0; }
+.cam-card::after { content: "→"; position: absolute; right: -22px; top: 50%; transform: translateY(-50%); color: var(--tinta-muda); font-size: 18px; }
+.cam-card:nth-child(3n)::after { content: none; }
 .cam-card h4 { font-size: 13px; font-weight: 650; color: var(--tinta); display: flex; gap: 8px; align-items: baseline; }
 .cam-card h4 .passo { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--tinta); color: #fff; font-size: 11px; flex: none; }
 .cam-card h4 .sub { font-weight: 400; color: var(--tinta-muda); font-size: 12px; }
@@ -188,7 +203,9 @@ abbr[data-g] { text-decoration: underline dotted var(--tinta-muda); text-underli
 
 /* ------------------------------------------------------------------ abas, linha do tempo */
 .lt { display: flex; flex-direction: column; gap: 18px; height: 100%; }
-.lt-etapas { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; position: relative; }
+.lt-etapas { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; position: relative; counter-reset: etapa; }
+.lt-etapas li { counter-increment: etapa; }
+.lt-etapas .bola::before { content: counter(etapa); }
 .lt-etapas::before { content: ""; position: absolute; left: 4%; right: 4%; top: 13px; height: 2px; background: var(--grade); }
 .lt-etapas button {
   position: relative; width: 100%; background: none; border: 0; cursor: pointer;
@@ -199,9 +216,10 @@ abbr[data-g] { text-decoration: underline dotted var(--tinta-muda); text-underli
 .lt-etapas button[aria-pressed="true"] { color: var(--tinta); font-weight: 650; }
 .lt-etapas button[aria-pressed="true"] .bola { background: var(--tinta); border-color: var(--tinta); color: #fff; }
 .lt-painel { display: none; flex: 1; min-height: 0; }
-.lt-painel.ativo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.lt-painel .cartao { display: flex; flex-direction: column; gap: 6px; }
-.lt-painel .cartao p { font-size: 15px; }
+.lt-painel.ativo { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 16px; }
+.lt-painel .cartao { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px; }
+.lt-painel .cartao p { font-size: 22px; line-height: 1.42; color: var(--tinta); }
+.lt-painel .cartao .rotulo-caixa { font-size: 12px; }
 .lt-rodape { display: flex; justify-content: space-between; align-items: center; }
 [data-painel]:not(.lt-painel) { display: none; }
 [data-painel].ativo:not(.lt-painel) { display: block; }
@@ -234,7 +252,10 @@ abbr[data-g] { text-decoration: underline dotted var(--tinta-muda); text-underli
   position: fixed; right: 12px; bottom: 10px; z-index: 60;
   font: 12px/1 var(--fonte); color: rgba(255, 255, 255, .8); background: rgba(0, 0, 0, .42);
   padding: 6px 10px; border-radius: 999px; font-variant-numeric: tabular-nums; user-select: none;
+  transition: opacity .4s;
 }
+body.ocioso .hud { opacity: 0; }
+body.ocioso { cursor: none; }
 .hud button { background: none; border: 0; color: inherit; cursor: pointer; padding: 0 2px; font-size: 12px; }
 body.com-notas .hud { right: calc(var(--notas-w) + 12px); }
 #painel-notas {
@@ -258,10 +279,10 @@ body.com-notas #painel-notas { display: block; }
 #ajuda dt { font-family: var(--mono); color: var(--tinta); }
 #glossario {
   position: fixed; top: 0; left: 0; width: 440px; height: 100vh; z-index: 75; background: var(--papel);
-  box-shadow: 8px 0 30px rgba(0, 0, 0, .25); transform: translateX(-105%); transition: transform .2s;
-  display: flex; flex-direction: column;
+  box-shadow: 8px 0 30px rgba(0, 0, 0, .25); transform: translateX(-105%); transition: transform .2s, visibility .2s;
+  display: flex; flex-direction: column; visibility: hidden;
 }
-body.com-glossario #glossario { transform: none; }
+body.com-glossario #glossario { transform: none; visibility: visible; }
 #glossario .gp-topo { padding: 18px 20px 12px; border-bottom: 1px solid var(--grade); }
 #glossario .gp-topo h3 { font-size: 18px; margin-bottom: 8px; }
 #glossario input { width: 100%; font: 15px var(--fonte); padding: 8px 10px; border: 1px solid var(--eixo); border-radius: 8px; }
@@ -284,7 +305,7 @@ body.com-glossario #glossario { transform: none; }
 @media print {
   html, body { background: #fff; scroll-snap-type: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .quadro { position: static; width: auto !important; height: auto; overflow: visible; break-after: page; page-break-after: always; }
-  .quadro:last-of-type { break-after: auto; page-break-after: auto; }
+  .quadro.ultimo { break-after: auto; page-break-after: auto; }
   .slide { position: relative; left: auto; top: auto; transform: none !important; box-shadow: none; }
   .no-print, .hud, #painel-notas, #ajuda, #glossario, .g-dica, .link-lt { display: none !important; }
 }

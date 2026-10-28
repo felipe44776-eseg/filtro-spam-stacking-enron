@@ -145,7 +145,8 @@ def extrair(R: dict) -> dict:
             "n_palavras_enron": len(ce["palavras_enron"]), "palavras_enron": ce["palavras_enron"],
             "curva": ce["curva_aprendizado"], "sensibilidade_custo": ce["sensibilidade_custo"],
             "vencedor_por_custo": ce["vencedor_por_custo"],
-            "reais_lixeira": [dict(r, texto=r["texto"][:240]) for r in ce["emails_reais_na_lixeira"]],
+            "reais_lixeira": [dict(r, texto=re.sub(r"[\x00-\x08\x0b-\x1f\x7f]", "", r["texto"])[:240])
+                              for r in ce["emails_reais_na_lixeira"]],
             "n_reais_lixeira": ce["n_emails_reais_na_lixeira"], "pesos_palavras": ce["pesos_palavras"],
         },
         "exemplos": R["exemplos_demo"],

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projeto 3 · Classificação de spam · apresentações</title>
+<style>
+  :root { --fundo: #fcfcfb; --tinta: #0b0b0b; --tinta-2: #52514e; --muda: #898781; --grade: #e1e0d9; --real: #2a78d6; --spam: #eb6834;
+          --fonte: system-ui, "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--fundo); color: var(--tinta); font-family: var(--fonte); -webkit-font-smoothing: antialiased; }
+  main { max-width: 920px; margin: 0 auto; padding: 64px 28px; }
+  .sobre { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-2); margin-bottom: 10px; }
+  h1 { font-size: 44px; line-height: 1.08; letter-spacing: -.02em; margin-bottom: 14px; }
+  p.lead { font-size: 19px; line-height: 1.5; color: var(--tinta-2); max-width: 720px; }
+  .cartoes { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 36px 0; }
+  a.cartao { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--grade); border-radius: 12px; padding: 22px 24px; transition: border-color .15s, transform .15s; }
+  a.cartao:hover { border-color: var(--tinta-2); transform: translateY(-2px); }
+  a.cartao h2 { font-size: 22px; margin-bottom: 8px; }
+  a.cartao p { font-size: 15px; line-height: 1.5; color: var(--tinta-2); }
+  a.cartao .meta { margin-top: 14px; font-size: 13px; color: var(--muda); }
+  .m { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 15px; color: var(--tinta-2); }
+  dt { font-family: ui-monospace, Consolas, monospace; color: var(--tinta); }
+  h3 { font-size: 15px; margin: 28px 0 10px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--grade); font-size: 14px; color: var(--muda); line-height: 1.6; }
+  @media (max-width: 700px) { .cartoes { grid-template-columns: 1fr; } h1 { font-size: 34px; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="sobre">Data Science 2 · ESEG · Projeto 3</div>
+  <h1>O filtro aprende a caixa, não o spam</h1>
+  <p class="lead">Classificação de 5172 e-mails em <span class="m" style="background:var(--spam)"></span>spam ou <span class="m" style="background:var(--real)"></span>e-mail real. Duas apresentações, cada uma num único arquivo que abre sem internet.</p>
+
+  <div class="cartoes">
+    <a class="cartao" href="banca/index.html">
+      <h2>Banca</h2>
+      <p>Versão técnica: protocolo, torneio, stacking, algoritmo genético, TabPFN, regra pré-registrada, simulador de limiar e contra-estudo.</p>
+      <div class="meta">21 slides, com reserva</div>
+    </a>
+    <a class="cartao" href="equipe/index.html">
+      <h2>Equipe</h2>
+      <p>Versão didática: o mesmo arco em linguagem simples, com analogias, linha do tempo clicável e glossário de siglas.</p>
+      <div class="meta">20 slides, com glossário</div>
+    </a>
+  </div>
+
+  <h3>Atalhos dentro das apresentações</h3>
+  <dl>
+    <dt>→ ← espaço</dt><dd>avançar e voltar</dd>
+    <dt>F</dt><dd>tela cheia</dd>
+    <dt>N</dt><dd>notas do apresentador e cronômetro</dd>
+    <dt>G</dt><dd>glossário (deck da equipe)</dd>
+    <dt>P</dt><dd>imprimir ou salvar em PDF (margens: nenhuma; gráficos de plano de fundo: ligado)</dd>
+  </dl>
+
+  <footer>Professor: Marino Catarino · Autores: Phelipe Torres Pamponet da França (RA 46643) e Felipe Marins.<br>
+  Todos os números vêm de <code>resultados/metricas_finais.json</code>; os slides são gerados por <code>apresentacao/build.py</code>.</footer>
+</main>
+</body>
+</html>
