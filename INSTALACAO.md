@@ -26,7 +26,7 @@ O Colab costuma ter outra versão do Python. Se a instalação reclamar da vers�
 # 1. Python 3.11: https://www.python.org/downloads/ (marque "Add python.exe to PATH")
 py -3.11 --version
 
-# 2. Baixar o projeto
+# 2. Baixar o projeto numa pasta de caminho curto (ex.: C:\projetos), por causa do limite de 260 caracteres do Windows
 git clone https://github.com/felipe44776-eseg/filtro-spam-stacking-enron.git
 cd filtro-spam-stacking-enron
 
@@ -43,7 +43,7 @@ pip install -e . --no-deps
 pytest
 ```
 
-Resultado esperado no passo 5: `31 passed, 10 deselected` em menos de 1 minuto.
+Resultado esperado no passo 5: `31 passed, 11 deselected` em menos de 1 minuto.
 
 ---
 
@@ -96,6 +96,7 @@ O TabPFN (Prior Labs) é usado nos experimentos 05, 07, 08 e 09. **Nada disso é
 
 | Sintoma | Causa provável e solução |
 |---|---|
+| `pip` falha com "Long Path" ou "No such file or directory" (Windows) | O caminho da pasta ficou longo demais: o Windows limita caminhos a 260 caracteres, e alguns pacotes têm pastas profundas. Clone numa pasta curta, como `C:\projetos\`, ou ative caminhos longos: https://pip.pypa.io/warnings/enable-long-paths |
 | `pip` instala, mas `import spamfilter` falha | Faltou `pip install -e . --no-deps` com o ambiente ativado |
 | Erro de versão do Python | Use 3.11. No Windows, `py -0` lista as versões instaladas |
 | Execução lenta ou "MemoryError" | Feche o navegador. O motor escolhe sozinho de 1 a 4 processos conforme a memória livre, mas abaixo de 2 GB tudo fica lento |

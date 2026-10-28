@@ -7,7 +7,7 @@ Sete passos, do mais rápido ao mais completo. Cada um diz o que fazer e o que d
 ```powershell
 pytest
 ```
-**Esperado:** `31 passed, 10 deselected`. Os testes conferem:
+**Esperado:** `31 passed, 11 deselected`. Os testes conferem:
 - que a contagem por substring reproduz o CSV;
 - que nenhum e-mail repetido fica dos dois lados de uma divisão;
 - as métricas em casos conhecidos;
